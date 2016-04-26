@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class WebService extends AsyncTask{
 
-    private final String URL_long = "http://10.0.2.2:5000/register";
+    private final String URL_long = "http://localhost:5000/register"; //on emulator, change localhost with 10.0.2.2
 
     Gson gson;
 
