@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class WebService extends AsyncTask{
 
-    private final String URL_long = "http://localhost:5000/register"; //on emulator, change localhost with 10.0.2.2
+    private final String URL_long = "http://10.0.2.2:5000/register"; //on emulator, change localhost with 10.0.2.2
 
     Gson gson;
 
@@ -50,8 +51,6 @@ public class WebService extends AsyncTask{
         urlConnection.setConnectTimeout(10000);
         urlConnection.setReadTimeout(10000);
         urlConnection.setRequestProperty("Content-Type","application/json");
-        System.out.println("OKya");
-
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("password","hugo");
@@ -68,6 +67,11 @@ public class WebService extends AsyncTask{
     }
 
     public void getPoints() throws Exception {
-            InputStream inputStream = sendRequest(new URL(URL_long));
+        InputStream inputStream = sendRequest(new URL(URL_long));
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+            System.out.println(inputLine);
+        in.close();
     }
 }
