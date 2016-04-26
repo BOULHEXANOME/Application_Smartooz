@@ -5,6 +5,19 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Paramètres</string>
     <string name="title_activity_parcours">Parcours</string>
+    <string name="title_activity_login">Connexion</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Identifiant ou Email</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="action_sign_in">Se connecter</string>
+    <string name="action_sign_in_short">Connexion</string>
+    <string name="error_invalid_email">Adresse mail invalide</string>
+    <string name="error_invalid_password">Mot de passe trop court</string>
+    <string name="error_incorrect_password">Mot de passe incorrect</string>
+    <string name="error_field_required">Ce champ est requis</string>
+    <string name="create_account_button_text">Créer son compte</string>
+
 </resources>
