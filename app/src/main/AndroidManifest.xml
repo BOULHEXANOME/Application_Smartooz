@@ -36,8 +36,8 @@
 
         <activity
             android:name=".Parcours"
-            android:label="@string/title_activity_parcours">
-        </activity>
+            android:label="@string/title_activity_parcours"></activity>
+        <activity android:name=".InscriptionActivity"></activity>
     </application>
 
 </manifest>
