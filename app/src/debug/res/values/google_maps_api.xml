@@ -18,4 +18,5 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyD9dP2zJwpgmUvlFuA7uWFYIHdFg1pnf3Y
     </string>
+    <string name="google_app_id">semiotic-axis-129209</string>
 </resources>
