@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Application_Smartooz</string>
+    <string name="app_name">SmartOoz</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -19,5 +19,8 @@
     <string name="error_incorrect_password">Mot de passe incorrect</string>
     <string name="error_field_required">Ce champ est requis</string>
     <string name="create_account_button_text">Créer son compte</string>
+
+    <!-- Strings related to sign up -->
+    <string name="error_different_pass">Mots de passe différents</string>
 
 </resources>
