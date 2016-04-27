@@ -5,8 +5,19 @@ package boulhexanome.application_smartooz;
  */
 public class User {
 
+    private static User mInstance = null;
+
     private String username;
     private String password;
+
+    public static User getInstance(){
+        if(mInstance == null)
+        {
+            mInstance = new User();
+        }
+        return mInstance;
+    }
+
 
     public String getPassword() {
         return password;
@@ -32,8 +43,8 @@ public class User {
                 '}';
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public User() {
+        username = "";
+        password = "";
     }
 }

@@ -10,10 +10,21 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
-public class InscriptionActivity extends AppCompatActivity {
+import java.util.concurrent.ExecutionException;
+
+import boulhexanome.application_smartooz.WebServices.Inscription;
+
+public class InscriptionActivity extends AppCompatActivity implements Inscription.AsyncResponse{
+
+    Inscription inscription_thread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +33,11 @@ public class InscriptionActivity extends AppCompatActivity {
 
     Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
 
-    mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {
+        assert mEmailSignUpButton != null;
+        mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            boolean infoOk= checkInfo();
-            if(infoOk) {
+            if(inscriptionManager()){
                 Intent myIntent = new Intent(InscriptionActivity.this, LoginActivity.class);
                 InscriptionActivity.this.startActivity(myIntent);
             }
@@ -98,5 +109,38 @@ public class InscriptionActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    protected boolean inscriptionManager() {
+        boolean infoOk = checkInfo();
+        Inscription inscription_thread = new Inscription();
+        inscription_thread.delegate = this;
+        if (infoOk) {
+
+            String pseudo = ((EditText) findViewById(R.id.pseudo_editText)).getText().toString();
+            String mail = ((EditText) findViewById(R.id.mail_EditText)).getText().toString();
+            String mdp = ((EditText) findViewById(R.id.mdp_editText)).getText().toString();
+
+            JsonObject user = new JsonObject();
+            user.addProperty("password", mdp);
+            user.addProperty("username", pseudo);
+            user.addProperty("email", mail);
+
+            inscription_thread.execute(user);
+        }
+        return false;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        if (results.get("status").toString() == "OK"){
+            User.getInstance().setPassword(results.get("password").toString());
+            User.getInstance().setUsername(results.get("username").toString());
+            Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+        } else if (results.get("status").toString() == "KO"){
+            Toast.makeText(InscriptionActivity.this, results.get("error").toString(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+        }
     }
 }

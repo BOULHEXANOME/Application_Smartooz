@@ -40,7 +40,7 @@
         <activity
             android:name=".Parcours"
             android:label="@string/title_activity_parcours"></activity>
-        <activity android:name=".test_login">
+        <activity android:name=".test_login"></activity>
         <activity android:name=".InscriptionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
