@@ -22,7 +22,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
-    Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
+        Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
 
         assert mEmailSignUpButton != null;
         mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {

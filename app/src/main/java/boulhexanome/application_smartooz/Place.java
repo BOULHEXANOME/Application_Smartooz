@@ -1,5 +1,9 @@
 package boulhexanome.application_smartooz;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.Arrays;
 
 /**
@@ -7,8 +11,8 @@ import java.util.Arrays;
  */
 public class Place {
 
-    private float latitude;
-    private float longitude;;
+    private double latitude;
+    private double longitude;;
     private String address;
     private String phone;
     private String website;
@@ -20,19 +24,19 @@ public class Place {
     private int numberOfVotes;
     private String[] keywords;
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -134,13 +138,13 @@ public class Place {
                 '}';
     }
 
-    public Place(float latitude, float longitude, String name) {
+    public Place(double latitude, double longitude, String name) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
     }
 
-    public Place(float latitude, float longitude, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
+    public Place(double latitude, double longitude, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
@@ -155,5 +159,10 @@ public class Place {
         this.keywords = keywords;
     }
 
+    public MarkerOptions toMarkerOptions(){
+        return new MarkerOptions()
+                .position(new LatLng(latitude,longitude))
+                .title(name);
+    }
 
 }
