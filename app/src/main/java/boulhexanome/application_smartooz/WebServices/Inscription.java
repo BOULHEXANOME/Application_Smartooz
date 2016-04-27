@@ -25,10 +25,10 @@ import java.net.URL;
 /**
  * Created by Aiebobo on 26/04/2016.
  */
-public class Inscription extends AsyncTask<JsonObject, Void, JsonObject> {
+public class Inscription extends AsyncTask<JsonObject, Void, Void> {
 
     private final String URL_long = "http://10.0.2.2:5000/register";
-    private JsonObject user = null;
+    private JsonObject result = null;
     private int status = 0;
     public AsyncResponse delegate=null;
 
@@ -36,14 +36,14 @@ public class Inscription extends AsyncTask<JsonObject, Void, JsonObject> {
     public interface AsyncResponse {
         void processFinish(JsonObject results);
     }
+
     @Override
-    protected void onPostExecute(JsonObject jsonObject) {
-        super.onPostExecute(jsonObject);
-        delegate.processFinish(jsonObject);
+    protected void onPostExecute(Void aVoid) {
+        delegate.processFinish(result);
     }
 
     @Override
-    protected JsonObject doInBackground(JsonObject... params) {
+    protected Void doInBackground(JsonObject... params) {
         try {
             // Ouverture de la connexion
             URL url = new URL(URL_long);
@@ -51,32 +51,32 @@ public class Inscription extends AsyncTask<JsonObject, Void, JsonObject> {
             urlConnection.setRequestMethod("POST");
             urlConnection.setConnectTimeout(10000);
             urlConnection.setReadTimeout(10000);
-            urlConnection.setRequestProperty("Content-Type","application/json");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
 
-            if(params.length > 0)
-            {
+            if (params.length > 0) {
                 final JsonObject realjObject = params[0];
                 OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
                 out.write(realjObject.toString());
-                System.out.println(realjObject.toString());
                 out.close();
             }
 
-            if (urlConnection.getInputStream()!=null) {
-                user = parseJson(urlConnection.getInputStream());
-                return user;
+            if (urlConnection.getInputStream() != null) {
+                result = parseJson(urlConnection.getInputStream());
             }
+
             return null;
+
         } catch (ProtocolException e) {
-            Log.e("ProtocolException","Inscription.java : protocol exception");
+            Log.e("ProtocolException", "Inscription.java : protocol exception");
             e.printStackTrace();
+            return null;
         } catch (MalformedURLException e) {
-            Log.e("MalformedURLException","Inscription.java : MalformedURLException");
+            Log.e("MalformedURLException", "Inscription.java : MalformedURLException");
             e.printStackTrace();
+            return null;
         } catch (IOException e) {
-            Log.e("IOException","Inscription.java : IOException");
+            Log.e("IOException", "Inscription.java : IOException");
             e.printStackTrace();
-        } finally {
             return null;
         }
     }
@@ -99,7 +99,6 @@ public class Inscription extends AsyncTask<JsonObject, Void, JsonObject> {
         } catch (IOException e) {
             Log.e("IOException", "identifyUser : IOException");
             e.printStackTrace();
-        } finally {
             return null;
         }
     }

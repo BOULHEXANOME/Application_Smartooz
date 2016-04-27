@@ -8,7 +8,7 @@ public class User {
     private static User mInstance = null;
 
     private String username;
-    private String password;
+    private String email;
 
     public static User getInstance(){
         if(mInstance == null)
@@ -19,8 +19,8 @@ public class User {
     }
 
 
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
     public String getUsername() {
@@ -31,20 +31,20 @@ public class User {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 
     public User() {
         username = "";
-        password = "";
+        email = "";
     }
 }

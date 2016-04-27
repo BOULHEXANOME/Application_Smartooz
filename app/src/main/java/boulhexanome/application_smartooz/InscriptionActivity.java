@@ -2,29 +2,20 @@ package boulhexanome.application_smartooz;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.util.concurrent.ExecutionException;
-
 import boulhexanome.application_smartooz.WebServices.Inscription;
 
 public class InscriptionActivity extends AppCompatActivity implements Inscription.AsyncResponse{
-
-    Inscription inscription_thread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,14 +124,17 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
     @Override
     public void processFinish(JsonObject results) {
-        if (results.get("status").toString() == "OK"){
-            User.getInstance().setPassword(results.get("password").toString());
-            User.getInstance().setUsername(results.get("username").toString());
-            Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
-        } else if (results.get("status").toString() == "KO"){
-            Toast.makeText(InscriptionActivity.this, results.get("error").toString(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+        System.out.println(results.toString());
+        if (results != null) {
+            if (results.get("status").toString() == "OK") {
+                User.getInstance().setEmail(results.get("email").toString());
+                User.getInstance().setUsername(results.get("username").toString());
+                Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+            } else if (results.get("status").toString() == "KO") {
+                Toast.makeText(InscriptionActivity.this, results.get("error").toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
