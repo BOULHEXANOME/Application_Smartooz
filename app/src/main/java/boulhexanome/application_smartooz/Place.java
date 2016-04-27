@@ -134,6 +134,12 @@ public class Place {
                 '}';
     }
 
+    public Place(float latitude, float longitude, String name) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+    }
+
     public Place(float latitude, float longitude, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
         this.latitude = latitude;
         this.longitude = longitude;
