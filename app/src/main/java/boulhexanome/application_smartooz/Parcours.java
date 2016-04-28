@@ -2,6 +2,7 @@ package boulhexanome.application_smartooz;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -11,14 +12,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.maps.android.PolyUtil;
 
-public class Parcours extends AppCompatActivity implements OnMapReadyCallback {
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import boulhexanome.application_smartooz.WebServices.GetItineraire;
+import boulhexanome.application_smartooz.WebServices.Inscription;
+
+public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
 
     private GoogleMap mMap;
     private ActionBar toolbar;
@@ -65,13 +81,24 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback {
         }
         mMap.setMyLocationEnabled(true);
 
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(45.781000, 4.876105))
-                .title("Point A"));
+        Place pointA = new Place(45.781000,4.876105,"Point A");
+        Place pointB = new Place(45.759289,4.888261,"Point B");
 
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(45.771796, 4.873551))
-                .title("Point B"));
+
+        Marker markerA = mMap.addMarker(pointA.toMarkerOptions());
+        Marker markerB = mMap.addMarker(pointB.toMarkerOptions());
+
+        JsonObject params = new JsonObject();
+        params.addProperty("lat1",markerA.getPosition().latitude);
+        params.addProperty("long1",markerA.getPosition().longitude);
+        params.addProperty("lat2",markerB.getPosition().latitude);
+        params.addProperty("long2",markerB.getPosition().longitude);
+
+        GetItineraire getItineraire = new GetItineraire();
+        getItineraire.delegate = this;
+        getItineraire.execute(params);
+
+
     }
 
     @Override
@@ -91,5 +118,22 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        JsonArray resultsArray = results.getAsJsonArray("routes");
+        JsonObject routes = resultsArray.get(0).getAsJsonObject();
+        String show = routes.get("overview_polyline").getAsJsonObject().get("points").toString();
+        show = show.substring(1,show.length()-1);
+        show = show.replace("\\\\", "\\");
+
+        System.out.println(show);
+
+        List<LatLng> listePoints = PolyUtil.decode(show);
+        Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                .addAll(listePoints));
+
+        System.out.println(listePoints.toString());
     }
 }

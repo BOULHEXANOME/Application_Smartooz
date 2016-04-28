@@ -2,31 +2,33 @@ package boulhexanome.application_smartooz;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.google.gson.JsonObject;
 
-public class InscriptionActivity extends AppCompatActivity {
+import boulhexanome.application_smartooz.WebServices.Inscription;
+
+public class InscriptionActivity extends AppCompatActivity implements Inscription.AsyncResponse{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
-    Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
+        Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
 
-    mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {
+        assert mEmailSignUpButton != null;
+        mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            boolean infoOk= checkInfo();
-            if(infoOk) {
+            if(inscriptionManager()){
                 Intent myIntent = new Intent(InscriptionActivity.this, LoginActivity.class);
                 InscriptionActivity.this.startActivity(myIntent);
             }
@@ -99,5 +101,41 @@ public class InscriptionActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    protected boolean inscriptionManager() {
+        boolean infoOk = checkInfo();
+        Inscription inscription_thread = new Inscription();
+        inscription_thread.delegate = this;
+        if (infoOk) {
+
+            String pseudo = ((EditText) findViewById(R.id.pseudo_editText)).getText().toString();
+            String mail = ((EditText) findViewById(R.id.mail_EditText)).getText().toString();
+            String mdp = ((EditText) findViewById(R.id.mdp_editText)).getText().toString();
+
+            JsonObject user = new JsonObject();
+            user.addProperty("password", mdp);
+            user.addProperty("username", pseudo);
+            user.addProperty("email", mail);
+
+            inscription_thread.execute(user);
+        }
+        return false;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        System.out.println(results.toString());
+        if (results != null) {
+            if (results.get("status").toString() == "OK") {
+                User.getInstance().setEmail(results.get("email").toString());
+                User.getInstance().setUsername(results.get("username").toString());
+                Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+            } else if (results.get("status").toString() == "KO") {
+                Toast.makeText(InscriptionActivity.this, results.get("error").toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
