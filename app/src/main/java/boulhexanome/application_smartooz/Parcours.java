@@ -93,8 +93,6 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
         for (int i = 0; i < circuit.getPlaces().size(); i++){
             mMap.addMarker(circuit.getPlaces().get(i).toMarkerOptions());
         }
-
-
         GetItineraire getItineraire = new GetItineraire();
         getItineraire.delegate = this;
         getItineraire.execute(circuit);
@@ -125,8 +123,7 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
     public void processFinish(JsonObject results) {
         JsonArray resultsArray = results.getAsJsonArray("routes");
         JsonObject routes = resultsArray.get(0).getAsJsonObject();
-        String show = routes.get("overview_polyline").getAsJsonObject().get("points").toString();
-        show = show.substring(1,show.length()-1);
+        String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
         show = show.replace("\\\\", "\\");
 
         System.out.println(show);

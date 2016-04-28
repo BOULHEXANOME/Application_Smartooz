@@ -153,7 +153,8 @@ public class Place {
     public MarkerOptions toMarkerOptions(){
         return new MarkerOptions()
                 .position(position)
-                .title(name);
+                .title(name)
+                .snippet(description);
     }
 
     public JsonObject toJsonObject(){
