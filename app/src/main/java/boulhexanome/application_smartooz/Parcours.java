@@ -2,37 +2,32 @@ package boulhexanome.application_smartooz;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.maps.android.PolyUtil;
 
-import org.json.JSONArray;
-
-import java.util.ArrayList;
 import java.util.List;
 
+import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.WebServices.GetItineraire;
-import boulhexanome.application_smartooz.WebServices.Inscription;
+
+import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
 
 public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
 
@@ -81,22 +76,28 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
         }
         mMap.setMyLocationEnabled(true);
 
-        Place pointA = new Place(45.781000,4.876105,"Point A");
-        Place pointB = new Place(45.759289,4.888261,"Point B");
+        Place pointA = new Place(new LatLng(45.770861, 4.873173),"Point A");
+        Place pointB = new Place(new LatLng(45.763579, 4.890372),"Point B");
+        Place pointC = new Place(new LatLng(45.758049, 4.882280),"Point C");
+        Place pointD = new Place(new LatLng(45.769907, 4.863175),"Point D");
 
 
-        Marker markerA = mMap.addMarker(pointA.toMarkerOptions());
-        Marker markerB = mMap.addMarker(pointB.toMarkerOptions());
+        Circuit circuit = new Circuit();
+        circuit.setName("Circuit 1");
+        circuit.addPlace(pointA);
+        circuit.addPlace(pointB);
+        circuit.addPlace(pointC);
+        circuit.addPlace(pointD);
+        circuit.addPlace(pointA);
 
-        JsonObject params = new JsonObject();
-        params.addProperty("lat1",markerA.getPosition().latitude);
-        params.addProperty("long1",markerA.getPosition().longitude);
-        params.addProperty("lat2",markerB.getPosition().latitude);
-        params.addProperty("long2",markerB.getPosition().longitude);
+        for (int i = 0; i < circuit.getPlaces().size(); i++){
+            mMap.addMarker(circuit.getPlaces().get(i).toMarkerOptions());
+        }
+
 
         GetItineraire getItineraire = new GetItineraire();
         getItineraire.delegate = this;
-        getItineraire.execute(params);
+        getItineraire.execute(circuit);
 
 
     }
