@@ -68,7 +68,8 @@ public class InscriptionActivity extends AppCompatActivity {
         EditText mailConf =(EditText) findViewById(R.id.confMail_editText);
 
         if(!mail.getText().toString().contains("@")) {
-
+            dispDialog("L'adresse mail est invalide.", "Erreur : mail invalide");
+            return false;
         }
 
         if(!mail.getText().toString().equals(mailConf.getText().toString())){
