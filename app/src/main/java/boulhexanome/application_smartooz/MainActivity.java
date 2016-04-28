@@ -41,6 +41,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        Button bouton_creer = (Button) findViewById(R.id.bouton_creer_parcours);
+        bouton_creer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CreerParcours.class);
+                startActivity(intent);
+            }
+        });
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
