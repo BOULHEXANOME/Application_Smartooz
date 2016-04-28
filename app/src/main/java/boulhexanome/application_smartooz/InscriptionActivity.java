@@ -33,7 +33,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 InscriptionActivity.this.startActivity(myIntent);
             }
         }
-    });
+        });
     }
 
     protected boolean checkInfo(){

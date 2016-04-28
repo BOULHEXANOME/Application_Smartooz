@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Entrez un ou plusieurs mots-clefs pour définir le thème de votre parcours, séparés par un point-virgule."
         android:id="@+id/motsclefs_text"
         android:layout_gravity="center_horizontal"
@@ -27,14 +27,35 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/motsclefs_editText"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.28"
+        android:layout_weight="0.44"
         android:background="@drawable/textfield_border"
         android:layout_margin="20dp"
         android:hint="Exemple : musées ; culture ; facile ; accès handicapés"
         android:padding="10dp"
         android:textAlignment="textStart" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Entrez un nom pour votre parcours."
+        android:id="@+id/nomParcours_text"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Exemple : Mon parcours"
+        android:ems="10"
+        android:id="@+id/nomParcours_editText"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/textfield_border"
+        android:layout_margin="20dp"
+        android:padding="10dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -43,4 +64,10 @@
         android:id="@+id/rechercheParcours_button"
         android:layout_gravity="center_horizontal"
         android:layout_margin="20dp" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:id="@+id/listViewTest"
+        android:visibility="invisible" />
 </LinearLayout>

@@ -22,5 +22,6 @@
 
     <!-- Strings related to sign up -->
     <string name="error_different_pass">Mots de passe différents</string>
+    <string name="search_hint">Recherche</string>
 
 </resources>
