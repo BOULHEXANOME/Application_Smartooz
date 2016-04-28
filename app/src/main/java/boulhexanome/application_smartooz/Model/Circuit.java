@@ -1,6 +1,14 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Model;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+
+import boulhexanome.application_smartooz.Model.Place;
 
 /**
  * Created by nicol_000 on 27/04/2016.
@@ -14,7 +22,7 @@ public class Circuit {
     private float noteOn5;
     private int idUser;
     private String[] keywords;
-    private Place[] places;
+    private ArrayList<Place> places;
 
     public String getName() {
         return name;
@@ -64,11 +72,11 @@ public class Circuit {
         this.keywords = keywords;
     }
 
-    public Place[] getPlaces() {
+    public ArrayList<Place> getPlaces() {
         return places;
     }
 
-    public void setPlaces(Place[] places) {
+    public void setPlaces(ArrayList<Place> places) {
         this.places = places;
     }
 
@@ -81,11 +89,11 @@ public class Circuit {
                 ", noteOn5=" + noteOn5 +
                 ", idUser=" + idUser +
                 ", keywords=" + Arrays.toString(keywords) +
-                ", places=" + Arrays.toString(places) +
+                ", places=" + places +
                 '}';
     }
 
-    public Circuit(String name, String description, float lengthKm, float noteOn5, int idUser, String[] keywords, Place[] places) {
+    public Circuit(String name, String description, float lengthKm, float noteOn5, int idUser, String[] keywords, ArrayList<Place> places) {
         this.name = name;
         this.description = description;
         this.lengthKm = lengthKm;
@@ -95,5 +103,20 @@ public class Circuit {
         this.places = places;
     }
 
+    public Circuit(String name, ArrayList<Place> places) {
+        this.name = name;
+        this.places = places;
+    }
 
+    public Circuit() {
+        this.places = new ArrayList<Place>();
+    }
+
+    public void addPlace(Place place){
+        this.places.add(place);
+    }
+
+    public void addAllPlaces(Collection<Place> places){
+        this.places.addAll(places);
+    }
 }

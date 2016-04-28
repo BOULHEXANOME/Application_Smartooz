@@ -8,6 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+
+import static boulhexanome.application_smartooz.Tools.parseJson;
 
 /**
  * Created by Nicolas on 28/04/2016.
@@ -76,28 +80,6 @@ public class PostTask extends AsyncTask<JsonObject, Void, Void> {
             return null;
         } catch (IOException e) {
             Log.e("IOException", "Inscription.java : IOException");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    protected JsonObject parseJson(InputStream is) {
-        BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        StringBuilder stringBuilder = new StringBuilder();
-        String inputLine;
-        Gson gson = new Gson();
-        try {
-            while ((inputLine = in.readLine()) != null) {
-                stringBuilder.append(inputLine);
-            }
-            String line = stringBuilder.toString();
-            JsonParser parser = new JsonParser();
-            JsonElement jsnelement = (JsonElement) parser.parse(line);
-            JsonObject jsnobject = jsnelement.getAsJsonObject();
-            in.close();
-            return jsnobject;
-        } catch (IOException e) {
-            Log.e("IOException", "identifyUser : IOException");
             e.printStackTrace();
             return null;
         }
