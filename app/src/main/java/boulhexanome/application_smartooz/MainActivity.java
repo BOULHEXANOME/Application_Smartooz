@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,6 +43,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+
+        TextView usernameText = (TextView) header.findViewById(R.id.username_textview_header);
+        usernameText.setText(User.getInstance().getUsername());
+        TextView emailText = (TextView) header.findViewById(R.id.email_textview_header);
+        emailText.setText(User.getInstance().getEmail());
+
     }
 
     @Override
