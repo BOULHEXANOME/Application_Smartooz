@@ -2,15 +2,11 @@ package boulhexanome.application_smartooz.WebServices;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,14 +19,18 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * Created by Aiebobo on 26/04/2016.
+ * Created by Nicolas on 28/04/2016.
  */
-public class Inscription extends AsyncTask<JsonObject, Void, Void> {
+public class PostTask extends AsyncTask<JsonObject, Void, Void> {
 
-    private final String URL_long = "http://10.0.2.2:5000/register";
+    private String postURL;
     private JsonObject result = null;
     private int status = 0;
     public AsyncResponse delegate=null;
+
+    public PostTask(String URL) {
+        this.postURL = URL;
+    }
 
 
     public interface AsyncResponse {
@@ -46,7 +46,7 @@ public class Inscription extends AsyncTask<JsonObject, Void, Void> {
     protected Void doInBackground(JsonObject... params) {
         try {
             // Ouverture de la connexion
-            URL url = new URL(URL_long);
+            URL url = new URL(postURL);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setConnectTimeout(10000);
