@@ -85,6 +85,7 @@
             android:name=".CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
             android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

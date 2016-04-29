@@ -25,6 +25,7 @@ public class VisiterLyonActivity extends AppCompatActivity {
 
     private List<String> motsSelectionnes;
     private ActionBar toolbar;
+    private List<String> motsClefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,29 +42,85 @@ public class VisiterLyonActivity extends AppCompatActivity {
         assert edittext != null;
 
         motsSelectionnes = new ArrayList<String>();
+        motsClefs = new ArrayList<String>();
 
-        final List<String> motsClefs = new ArrayList<String>();
         motsClefs.add("banane");
         motsClefs.add("babouin");
         motsClefs.add("pomme");
         motsClefs.add("clementine");
+        motsClefs.add("orange");
+        motsClefs.add("pomelo");
+        motsClefs.add("fraise");
 
-        final ListView list = (ListView) findViewById(R.id.motsClefs_listView);
+        final ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
+        final ListView listMotsChoisis = (ListView) findViewById(R.id.motsChoisis_listView);
         final ListAdapter adapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
-        list.setAdapter(adapt);
+        final ListAdapter adaptChoisi = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        assert listMotsProposes != null;
+        listMotsProposes.setAdapter(adapt);
+        listMotsChoisis.setAdapter(adaptChoisi);
+
+        listMotsProposes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String texte = (String) list.getItemAtPosition(position);
-                if(!motsSelectionnes.contains(texte))
-                {
-                    motsSelectionnes.add(texte);
-                    view.setBackgroundColor(Color.GRAY);
+                String texte = (String) listMotsProposes.getItemAtPosition(position);
+
+                motsSelectionnes.add(texte);
+                motsClefs.remove(texte);
+
+                if(edittext.getText().toString().length() > 0) {
+                    String searchString = edittext.getText().toString();
+                    List<String> newMotsClefs = new ArrayList<String>();
+                    for(String mot:motsClefs) {
+                        if(mot.startsWith(searchString)) {
+                            newMotsClefs.add(mot);
+                        }
+                    }
+
+                    ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                    listMotsProposes.setAdapter(newAdapt);
+
                 } else {
-                    motsSelectionnes.remove(texte);
-                    view.setBackgroundColor(Color.TRANSPARENT);
+                    ListAdapter newAdaptProposes = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                    listMotsProposes.setAdapter(newAdaptProposes);
                 }
+
+                ListAdapter newAdaptChoisi = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
+                listMotsChoisis.setAdapter(newAdaptChoisi);
+
+                System.out.println(motsSelectionnes);
+            }
+        });
+
+        listMotsChoisis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String texte = (String) listMotsChoisis.getItemAtPosition(position);
+
+                motsSelectionnes.remove(texte);
+                motsClefs.add(texte);
+
+                if(edittext.getText().toString().length() > 0) {
+                    String searchString = edittext.getText().toString();
+                    List<String> newMotsClefs = new ArrayList<String>();
+                    for (String mot : motsClefs) {
+                        if (mot.startsWith(searchString)) {
+                            newMotsClefs.add(mot);
+                        }
+                    }
+
+                    ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                    listMotsProposes.setAdapter(newAdapt);
+                } else {
+                    ListAdapter newAdaptProposes = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                    listMotsProposes.setAdapter(newAdaptProposes);
+                }
+
+                ListAdapter newAdaptChoisis = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
+                listMotsChoisis.setAdapter(newAdaptChoisis);
+
+
 
                 System.out.println(motsSelectionnes);
             }
@@ -81,19 +138,7 @@ public class VisiterLyonActivity extends AppCompatActivity {
                 }
 
                 ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
-                list.setAdapter(newAdapt);
-
-                // marche pas
-
-                for (int i = 0; i < list.getAdapter().getCount(); i++) {
-                    if (motsSelectionnes.contains((String) list.getAdapter().getItem(i))) {
-                        System.out.println("Position : " +i);
-                        View vue = getViewByPosition(i, list);
-                        System.out.println("Vue : "+vue);
-                        System.out.println(vue.getContentDescription());
-                        vue.setBackgroundColor(Color.GRAY);
-                    }
-                }
+                listMotsProposes.setAdapter(newAdapt);
             }
 
             @Override
@@ -106,25 +151,6 @@ public class VisiterLyonActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 // TODO Auto-generated method stub
-
-            }
-        });
-
-        SeekBar deniveleSeekBar = (SeekBar) findViewById(R.id.denivele_seekBar);
-        final TextView deniveleValue = (TextView) findViewById(R.id.denivVal_textView);
-        deniveleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                deniveleValue.setText(String.valueOf(progress) + " m");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
@@ -147,18 +173,5 @@ public class VisiterLyonActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-        System.out.println("Premiere position : "+firstListItemPosition+ " et dernière position : "+lastListItemPosition);
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
 }
