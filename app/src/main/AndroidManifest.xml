@@ -34,9 +34,9 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -53,12 +53,17 @@
         <activity
             android:name=".Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".InscriptionActivity" />
+        <activity android:name=".InscriptionActivity">
+
+        </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".VisiterLyonActivity" />
-        <activity android:name=".ListCircuit" />
+            android:label="@string/title_activity_login">
+        </activity>
+
+        <activity android:name=".VisiterLyonActivity"></activity>
+        <activity android:name=".ListCircuit"></activity>
+
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -73,9 +78,13 @@
             android:label="@string/title_activity_creer_parcours" />
         <activity android:name=".CreerParcours_AjoutTag" />
         <activity
+            android:name=".CircuitDetailsActivity"
+            android:label="@string/title_activity_circuit_details"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
