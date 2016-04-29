@@ -7,10 +7,11 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <!--
@@ -47,16 +48,17 @@
         <activity
             android:name=".Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".InscriptionActivity" />
+        <activity android:name=".InscriptionActivity">
+
+        </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".VisiterLyonActivity">
-
+            android:label="@string/title_activity_login">
         </activity>
-        <activity android:name=".ListCircuit">
 
-        </activity>
+        <activity android:name=".VisiterLyonActivity"></activity>
+        <activity android:name=".ListCircuit"></activity>
+
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -65,17 +67,22 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ChoixDuThemeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ChoixDuThemeActivity" />
         <activity
             android:name=".CreerParcours"
-            android:label="@string/title_activity_creer_parcours"></activity>
-        <activity android:name=".CreerParcours_AjoutTag"></activity>
+            android:label="@string/title_activity_creer_parcours" />
+        <activity android:name=".CreerParcours_AjoutTag" />
+        <activity
+            android:name=".CircuitDetailsActivity"
+            android:label="@string/title_activity_circuit_details"
+            android:theme="@style/AppTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

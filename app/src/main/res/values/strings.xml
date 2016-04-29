@@ -27,6 +27,7 @@
     <string name="cr_er_parcours">Créer parcours</string>
     <string name="title_activity_creer_parcours">Map</string>
     <string name="action_ajouter">Ajouter un point d\'intérêt</string>
+    <string name="title_activity_circuit_details">CircuitDetailsActivity</string>
     <string name="confirmer_parcours">Valider le parcours</string>
     <string name="smartooz_inscription">SmartOoz - Inscription</string>
     <string name="choisissez_un_nom_pour_votre_parcours">Choisissez un nom pour votre parcours</string>

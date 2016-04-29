@@ -102,7 +102,9 @@ public class InscriptionActivity extends AppCompatActivity implements PostTask.A
 
     protected void atttemptInscription() {
         boolean infoOk = checkInfo();
-        PostTask inscription_thread = new PostTask("http://10.0.2.2:5000/register");
+
+        PostTask inscription_thread = new PostTask(Config.getRequest(Config.REGISTER));
+
         inscription_thread.delegate = this;
         if (infoOk) {
 
