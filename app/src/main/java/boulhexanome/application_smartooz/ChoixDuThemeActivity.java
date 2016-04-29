@@ -1,8 +1,10 @@
 package boulhexanome.application_smartooz;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
@@ -19,11 +21,18 @@ import java.util.List;
 public class ChoixDuThemeActivity extends AppCompatActivity {
 
     private List<String> motsClefs;
+    private ActionBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choix_du_theme);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = getSupportActionBar();
+        toolbar.setTitle("Visiter Lyon");
+        toolbar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setDisplayShowHomeEnabled(true);
 
 
         Button rechParcours = (Button) findViewById(R.id.rechercheParcours_button);
