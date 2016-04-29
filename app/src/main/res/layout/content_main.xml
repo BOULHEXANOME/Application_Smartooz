@@ -17,6 +17,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Visiter Lyon"/>
+        android:text="@string/visiter_lyon"/>
+
+    <Button
+        android:id="@+id/bouton_creer_parcours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bouton_visiter"
+        android:layout_centerHorizontal="true"
+        android:text="@string/cr_er_parcours" />
 
 </RelativeLayout>
