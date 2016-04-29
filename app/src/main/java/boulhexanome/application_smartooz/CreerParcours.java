@@ -92,11 +92,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 return true;
             }
 
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 mode.setTitle("Ajouter une étape");
-                ajouterPI.setImageDrawable(getDrawable(R.drawable.ic_done_white_24dp));
+                ajouterPI.setImageResource(R.drawable.ic_done_white_24dp);
                 return false;
             }
 
@@ -105,10 +104,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 return false;
             }
 
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                ajouterPI.setImageDrawable(getDrawable(R.drawable.ic_add_location_white_24dp));
+                ajouterPI.setImageResource(R.drawable.ic_add_location_white_24dp);
                 modeAjout = false;
             }
         };
