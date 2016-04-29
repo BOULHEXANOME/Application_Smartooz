@@ -22,6 +22,7 @@
 
     <!-- Strings related to sign up -->
     <string name="error_different_pass">Mots de passe différents</string>
+    <string name="search_hint">Recherche</string>
     <string name="visiter_lyon">Visiter Lyon</string>
     <string name="cr_er_parcours">Créer parcours</string>
     <string name="title_activity_creer_parcours">Map</string>

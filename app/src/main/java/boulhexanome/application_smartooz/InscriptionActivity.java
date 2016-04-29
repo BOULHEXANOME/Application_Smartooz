@@ -30,7 +30,7 @@ public class InscriptionActivity extends AppCompatActivity implements PostTask.A
         public void onClick(View view) {
             atttemptInscription();
         }
-    });
+        });
     }
 
     protected boolean checkInfo(){

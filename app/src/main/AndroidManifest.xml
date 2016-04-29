@@ -5,7 +5,7 @@
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -23,10 +23,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data android:name="android.support.UI_OPTIONS"
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -34,7 +41,7 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -43,20 +50,12 @@
         <activity
             android:name=".Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".test_login" />
         <activity android:name=".InscriptionActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity android:name=".VisiterLyonActivity"></activity>
-        <activity android:name=".ListCircuit">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
+        <activity android:name=".ListCircuit"></activity>
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -68,8 +67,8 @@
         <activity android:name=".ChoixDuThemeActivity" />
         <activity
             android:name=".CreerParcours"
-            android:label="@string/title_activity_creer_parcours">
-        </activity>
+            android:label="@string/title_activity_creer_parcours"></activity>
+        <activity android:name=".CreerParcours_AjoutTag"></activity>
     </application>
 
 </manifest>
