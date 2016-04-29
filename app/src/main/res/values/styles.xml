@@ -10,7 +10,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_done_white_24dp</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="android:actionModeBackground">@color/colorPrimaryLight</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

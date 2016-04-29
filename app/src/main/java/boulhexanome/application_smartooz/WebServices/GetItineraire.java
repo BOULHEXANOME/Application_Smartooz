@@ -31,9 +31,8 @@ import static boulhexanome.application_smartooz.Tools.parseJson;
 /**
  * Created by Aiebobo on 26/04/2016.
  */
-public class GetItineraire extends AsyncTask<Circuit, Void, Void> {
+public class GetItineraire extends AsyncTask<URL, Void, Void> {
 
-    private String URL_long = "https://maps.googleapis.com/maps/api/directions/json?";
     private JsonObject result = null;
     private int status = 0;
     public AsyncResponse delegate=null;
@@ -51,13 +50,11 @@ public class GetItineraire extends AsyncTask<Circuit, Void, Void> {
 
 
     @Override
-    protected Void doInBackground(Circuit... params) {
+    protected Void doInBackground(URL... params) {
         try {
 
-            final Circuit circuit = params[0];
+            final URL url = params[0];
 
-            // Ouverture de la connexion
-            URL url = generateGoogleMapURL(circuit);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setConnectTimeout(10000);

@@ -21,12 +21,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.maps.android.PolyUtil;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.WebServices.GetItineraire;
 
+import static boulhexanome.application_smartooz.Tools.decodeDirections;
 import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
 
 public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
@@ -95,7 +98,8 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
         }
         GetItineraire getItineraire = new GetItineraire();
         getItineraire.delegate = this;
-        getItineraire.execute(circuit);
+        URL url = generateGoogleMapURL(circuit);
+        getItineraire.execute(url);
 
 
     }
@@ -121,17 +125,9 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
 
     @Override
     public void processFinish(JsonObject results) {
-        JsonArray resultsArray = results.getAsJsonArray("routes");
-        JsonObject routes = resultsArray.get(0).getAsJsonObject();
-        String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
-        show = show.replace("\\\\", "\\");
 
-        System.out.println(show);
-
-        List<LatLng> listePoints = PolyUtil.decode(show);
+        List<LatLng> listePoints = decodeDirections(results);
         Polyline polyline = mMap.addPolyline(new PolylineOptions()
                 .addAll(listePoints));
-
-        System.out.println(listePoints.toString());
     }
 }
