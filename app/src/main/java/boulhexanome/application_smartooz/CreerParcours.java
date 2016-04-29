@@ -46,7 +46,6 @@ import java.util.List;
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.WebServices.GetItineraire;
-import boulhexanome.application_smartooz.WebServices.Inscription;
 
 import static boulhexanome.application_smartooz.Tools.decodeDirections;
 import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
