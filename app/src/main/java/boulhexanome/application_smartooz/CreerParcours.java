@@ -2,28 +2,27 @@ package boulhexanome.application_smartooz;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.MergeCursor;
-import android.graphics.drawable.Icon;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,12 +31,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.maps.android.PolyUtil;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,8 +48,9 @@ import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
 
 public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
 
+    private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
+    private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
-    private ActionBar toolbar;
     private ActionMode mActionMode;
 
     Polyline currentLine;
@@ -70,14 +67,15 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creer_parcours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        toolbar = getSupportActionBar();
+        ActionBar toolbar = getSupportActionBar();
         toolbar.setTitle("Créer Parcours");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
         currentLine = null;
         modeAjout = false;
-        markers = new ArrayList<Marker>();;
+        markers = new ArrayList<Marker>();
+        ;
 
         parcours = new Circuit();
 
@@ -127,8 +125,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         visualiser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (markers.size()>=2){
-                    if (currentLine != null){
+                if (markers.size() >= 2) {
+                    if (currentLine != null) {
                         currentLine.remove();
                     }
                     visualize();
@@ -154,17 +152,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
 
         LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
@@ -172,10 +159,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngBounds(GRAND_LYON,10));
 
-        Place pointA = new Place(new LatLng(45.770861, 4.873173),"Point A");
-        Place pointB = new Place(new LatLng(45.763579, 4.890372),"Point B");
-        Place pointC = new Place(new LatLng(45.758049, 4.882280),"Point C");
-        Place pointD = new Place(new LatLng(45.769907, 4.863175),"Point D");
+        Place pointA = new Place(new LatLng(45.770861, 4.873173), "Point A");
+        Place pointB = new Place(new LatLng(45.763579, 4.890372), "Point B");
+        Place pointC = new Place(new LatLng(45.758049, 4.882280), "Point C");
+        Place pointD = new Place(new LatLng(45.769907, 4.863175), "Point D");
 
         places.add(pointA);
         places.add(pointB);
@@ -189,70 +176,91 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         mMap.addMarker(pointC.toMarkerOptions());
         mMap.addMarker(pointD.toMarkerOptions());
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (modeAjout == false){
-                    return false;
-                } else {
-                    if (markers.contains(marker)){
-                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                        markers.remove(marker);
-                        return true;
-                    } else {
-                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                        markers.add(marker);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    ASK_FOR_ACCESS_COARSE_LOCATION);
+        }
+        if (
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ASK_FOR_ACCESS_FINE_LOCATION);
+        }
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            return;
+        }
+        try{
+            mMap.setMyLocationEnabled(true);
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if (!modeAjout){
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                         marker.showInfoWindow();
                         return true;
+                    } else {
+                        if (markers.contains(marker)){
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            markers.remove(marker);
+                            return true;
+                        } else {
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            markers.add(marker);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                            marker.showInfoWindow();
+                            return true;
+                        }
                     }
                 }
-            }
-        });
+            });
 
+            // Setting a custom info window adapter for the google map
+            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
-
-        // Setting a custom info window adapter for the google map
-        googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            // Defines the contents of the InfoWindow
-            @Override
-            public View getInfoContents(final Marker arg0) {
-
-                // Getting view from the layout file info_window_layout
-                View v = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
-                v.setFocusableInTouchMode(true);
-
-                LatLng position = arg0.getPosition();
-                Place placeMarked = null;
-                for (int i = 0; i < places.size(); i++){
-                    if (places.get(i).getPosition().equals(position)){
-                        placeMarked = places.get(i);
-                        i = places.size();
-                    }
+                // Use default InfoWindow frame
+                @Override
+                public View getInfoWindow(Marker arg0) {
+                    return null;
                 }
 
-                TextView title = (TextView) v.findViewById(R.id.title_place);
-                TextView description = (TextView) v.findViewById(R.id.description);
-                TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                // Defines the contents of the InfoWindow
+                @Override
+                public View getInfoContents(final Marker arg0) {
 
-                title.setText(placeMarked.getName());
-                description.setText(placeMarked.getDescription());
-                noteOn5.setText(String.valueOf(placeMarked.getNoteOn5()));
+                    // Getting view from the layout file info_window_layout
+                    View v = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+                    v.setFocusableInTouchMode(true);
 
-                final Place finalPlaceMarked = placeMarked;
+                    LatLng position = arg0.getPosition();
+                    Place placeMarked = null;
+                    for (int i = 0; i < places.size(); i++){
+                        if (places.get(i).getPosition().equals(position)){
+                            placeMarked = places.get(i);
+                            i = places.size();
+                        }
+                    }
 
-                // Returning the view containing InfoWindow contents
-                return v;
+                    TextView title = (TextView) v.findViewById(R.id.title_place);
+                    TextView description = (TextView) v.findViewById(R.id.description);
+                    TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
 
-            }
-        });
+                    title.setText(placeMarked.getName());
+                    description.setText(placeMarked.getDescription());
+                    noteOn5.setText(String.valueOf(placeMarked.getNoteOn5()));
+
+                    final Place finalPlaceMarked = placeMarked;
+
+                    // Returning the view containing InfoWindow contents
+                    return v;
+
+                }
+            });
+        }catch (SecurityException e){
+            System.out.println(e);
+        }
 
     }
 
@@ -270,6 +278,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
         if (id == android.R.id.home){
             finish();
+        }
+
+        if (id == R.id.action_save) {
+            Intent intent = new Intent(CreerParcours.this, CreerParcours_AjoutTag.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -293,5 +306,33 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         getItineraire.delegate = this;
         URL url = generateGoogleMapURL(markers);
         getItineraire.execute(url);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case ASK_FOR_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
+
+                } else {
+
+                    // permission denied, boo!
+                }
+                return;
+            }
+            case ASK_FOR_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                } else {
+                    // permission denied, boo!
+                }
+                return;
+            }
+         }
     }
 }

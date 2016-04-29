@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +12,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import boulhexanome.application_smartooz.Model.Circuit;
+
 /**
  * Created by Hugo on 28/04/2016.
  */
-public class ParcoursAdapter extends ArrayAdapter<ParcoursObject> {
-    public ParcoursAdapter(Context context, List<ParcoursObject> parcours) {
+public class ParcoursAdapter extends ArrayAdapter<Circuit> {
+    public ParcoursAdapter(Context context, List<Circuit> parcours) {
         super(context, 0, parcours);
     }
 
@@ -38,14 +41,27 @@ public class ParcoursAdapter extends ArrayAdapter<ParcoursObject> {
         }
 
         //getItem(position) va récupérer l'item [position] de la List<Tweet> tweets
-        ParcoursObject parcours = getItem(position);
+        Circuit parcours = getItem(position);
 
         //il ne reste plus qu'à remplir notre vue
-        viewHolder.nom.setText(parcours.getTitre());
-        viewHolder.kilometre.setText(parcours.getKm());
-        viewHolder.denivele.setText(parcours.getDenivele());
-        viewHolder.tags.setText(parcours.getTags());
-        viewHolder.image.setImageDrawable(new ColorDrawable(parcours.getColor()));
+        viewHolder.nom.setText(parcours.getName());
+        viewHolder.kilometre.setText(String.valueOf(parcours.getLengthKm()));
+        viewHolder.denivele.setText(String.valueOf(parcours.getLengthKm()));
+        String[] tags = parcours.getKeywords();
+        String tag="";
+        for(int i = 0;i<tags.length;i++){
+            if(i!=0){
+                tag+=" ";
+            }
+            if(i>6){
+                break;
+            }
+            tag += tags[i];
+
+        }
+        viewHolder.tags.setText(tag);
+        //TODO
+        viewHolder.image.setImageDrawable(new ColorDrawable(Color.RED));
 
         return convertView;
     }

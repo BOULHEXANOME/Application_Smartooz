@@ -8,5 +8,11 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_save"
+        android:title="@string/confirmer_parcours"
+        android:icon="@drawable/ic_save_white_24dp"
+        app:showAsAction="always"/>
+
 
 </menu>

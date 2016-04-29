@@ -10,7 +10,7 @@ import android.widget.ScrollView;
 import com.google.android.gms.maps.MapFragment;
 
 public class CircuitDetailsActivity extends AppCompatActivity {
-    
+
     private MapFragment mMapFragment;
     private ImageButton hideButton;
     boolean mapIsHidden;
