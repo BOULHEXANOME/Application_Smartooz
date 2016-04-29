@@ -32,6 +32,11 @@
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -49,6 +54,7 @@
             android:name=".Parcours"
             android:label="@string/title_activity_parcours" />
         <activity android:name=".InscriptionActivity">
+
         </activity>
         <activity
             android:name=".LoginActivity"
@@ -74,14 +80,12 @@
         <activity
             android:name=".CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".CongratulationsCircuitEndActivity"
+            android:label="@string/title_activity_congratulations_circuit_end"
+            android:theme="@style/AppTheme" />
 
-            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-
-        </activity>
     </application>
 
 </manifest>

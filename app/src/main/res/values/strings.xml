@@ -33,5 +33,6 @@
     <string name="choisissez_un_nom_pour_votre_parcours">Choisissez un nom pour votre parcours</string>
     <string name="ajoutez_des_tags_votre_parcours">Ajoutez des tags à votre parcours</string>
     <string name="ok">OK</string>
+    <string name="title_activity_congratulations_circuit_end">Félicitations - parcours terminé</string>
 
 </resources>
