@@ -163,7 +163,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
 
     protected void attemptLogin() {
         boolean infoOk = checkInfo();
+
         PostTask login_thread = new PostTask(Config.getRequest(Config.LOGIN));
+
         login_thread.delegate = this;
         if (infoOk) {
 
