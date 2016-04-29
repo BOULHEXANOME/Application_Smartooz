@@ -1,8 +1,11 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -11,8 +14,7 @@ import java.util.Arrays;
  */
 public class Place {
 
-    private double latitude;
-    private double longitude;;
+    private LatLng position;
     private String address;
     private String phone;
     private String website;
@@ -24,20 +26,12 @@ public class Place {
     private int numberOfVotes;
     private String[] keywords;
 
-    public double getLatitude() {
-        return latitude;
+    public LatLng getPosition() {
+        return position;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setPosition(LatLng position) {
+        this.position = position;
     }
 
     public String getAddress() {
@@ -123,8 +117,7 @@ public class Place {
     @Override
     public String toString() {
         return "Place{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
+                "position=" + position +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 ", website='" + website + '\'' +
@@ -138,15 +131,13 @@ public class Place {
                 '}';
     }
 
-    public Place(double latitude, double longitude, String name) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Place(LatLng position, String name) {
+        this.position = position;
         this.name = name;
     }
 
-    public Place(double latitude, double longitude, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
+        this.position = position;
         this.address = address;
         this.phone = phone;
         this.website = website;
@@ -161,8 +152,16 @@ public class Place {
 
     public MarkerOptions toMarkerOptions(){
         return new MarkerOptions()
-                .position(new LatLng(latitude,longitude))
+                .position(position)
                 .title(name);
+    }
+
+    public JsonObject toJsonObject(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("latitude",position.latitude);
+        jsonObject.addProperty("longitude",position.longitude);
+        jsonObject.addProperty("name",name);
+        return jsonObject;
     }
 
 }

@@ -27,18 +27,24 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, PostTask.AsyncResponse {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -153,13 +159,79 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
     */
 
+    protected void attemptLogin() {
+        boolean infoOk = checkInfo();
+        PostTask login_thread = new PostTask("http://10.0.2.2:5000/login");
+        login_thread.delegate = this;
+        if (infoOk) {
+
+            String pseudo = ((EditText) findViewById(R.id.email)).getText().toString();
+            String mdp = ((EditText) findViewById(R.id.password)).getText().toString();
+
+            JsonObject user = new JsonObject();
+            user.addProperty("password", mdp);
+            user.addProperty("username", pseudo);
+
+            login_thread.execute(user);
+        }
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        System.out.println(results.toString());
+        if (results != null) {
+
+            if (results.get("status").getAsString().equals("OK")) {
+                User.getInstance().setEmail(results.get("email").getAsString());
+                User.getInstance().setUsername(results.get("username").getAsString());
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                //Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+
+
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(LoginActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(LoginActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+
+
+    protected boolean checkInfo(){
+        if(checkPseudo()) {
+            return true;
+        }
+        return false;
+    }
+
+
+    protected boolean checkPseudo(){
+        return true;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void auth() {
         if (mAuthTask != null) {
             return;
         }
@@ -321,6 +393,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mEmail = email;
             mPassword = password;
         }
+
 
         @Override
         protected Boolean doInBackground(Void... params) {

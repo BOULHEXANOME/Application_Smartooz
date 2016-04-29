@@ -13,9 +13,9 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import boulhexanome.application_smartooz.WebServices.Inscription;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class InscriptionActivity extends AppCompatActivity implements Inscription.AsyncResponse{
+public class InscriptionActivity extends AppCompatActivity implements PostTask.AsyncResponse{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +28,7 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
         mEmailSignUpButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(inscriptionManager()){
-                Intent myIntent = new Intent(InscriptionActivity.this, LoginActivity.class);
-                InscriptionActivity.this.startActivity(myIntent);
-            }
+            atttemptInscription();
         }
         });
     }
@@ -103,9 +100,9 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
                 });
     }
 
-    protected boolean inscriptionManager() {
+    protected void atttemptInscription() {
         boolean infoOk = checkInfo();
-        Inscription inscription_thread = new Inscription();
+        PostTask inscription_thread = new PostTask("http://10.0.2.2:5000/register");
         inscription_thread.delegate = this;
         if (infoOk) {
 
@@ -120,19 +117,24 @@ public class InscriptionActivity extends AppCompatActivity implements Inscriptio
 
             inscription_thread.execute(user);
         }
-        return false;
     }
 
     @Override
     public void processFinish(JsonObject results) {
         System.out.println(results.toString());
         if (results != null) {
-            if (results.get("status").toString() == "OK") {
-                User.getInstance().setEmail(results.get("email").toString());
-                User.getInstance().setUsername(results.get("username").toString());
-                Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
-            } else if (results.get("status").toString() == "KO") {
-                Toast.makeText(InscriptionActivity.this, results.get("error").toString(), Toast.LENGTH_SHORT).show();
+
+            if (results.get("status").getAsString().equals("OK")) {
+                User.getInstance().setEmail(results.get("email").getAsString());
+                User.getInstance().setUsername(results.get("username").getAsString());
+
+                Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
+                startActivity(intent);
+                //Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+
+
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(InscriptionActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
             }
