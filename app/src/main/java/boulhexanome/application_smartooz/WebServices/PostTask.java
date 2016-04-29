@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.WebServices;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -15,10 +16,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
+import boulhexanome.application_smartooz.User;
 
 import static boulhexanome.application_smartooz.Tools.parseJson;
 
@@ -64,10 +70,23 @@ public class PostTask extends AsyncTask<JsonObject, Void, Void> {
                 out.close();
             }
 
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                urlConnection.setRequestProperty("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
+
             if (urlConnection.getInputStream() != null) {
                 result = parseJson(urlConnection.getInputStream());
             }
 
+            Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get("Set-Cookie");
+            if(cookiesHeader != null) {
+                for (String cookie : cookiesHeader) {
+                    User.getInstance().getCookieManager().getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
             return null;
 
         } catch (ProtocolException e) {

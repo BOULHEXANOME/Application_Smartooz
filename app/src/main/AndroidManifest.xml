@@ -27,9 +27,6 @@
         <activity
             android:name=".MainActivity"
             android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow" />
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -69,7 +66,8 @@
         <activity android:name=".ChoixDuThemeActivity" />
         <activity
             android:name=".CreerParcours"
-            android:label="@string/title_activity_creer_parcours"></activity>
+            android:label="@string/title_activity_creer_parcours"
+            android:screenOrientation="portrait"></activity>
         <activity android:name=".CreerParcours_AjoutTag"></activity>
     </application>
 

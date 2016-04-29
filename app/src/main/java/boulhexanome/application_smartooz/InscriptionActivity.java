@@ -121,7 +121,6 @@ public class InscriptionActivity extends AppCompatActivity implements PostTask.A
 
     @Override
     public void processFinish(JsonObject results) {
-        System.out.println(results.toString());
         if (results != null) {
 
             if (results.get("status").getAsString().equals("OK")) {

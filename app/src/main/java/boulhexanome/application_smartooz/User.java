@@ -1,5 +1,7 @@
 package boulhexanome.application_smartooz;
 
+import java.net.CookieManager;
+
 import boulhexanome.application_smartooz.Model.Circuit;
 
 /**
@@ -12,6 +14,7 @@ public class User {
     private String username;
     private String email;
     private Circuit circuit_courant;
+    private CookieManager cookieManager;
 
     public static User getInstance(){
         if(mInstance == null)
@@ -32,6 +35,10 @@ public class User {
 
     public Circuit getCircuit_courant() {
         return circuit_courant;
+    }
+
+    public CookieManager getCookieManager() {
+        return cookieManager;
     }
 
     public void setUsername(String username) {
@@ -58,5 +65,6 @@ public class User {
         username = "";
         email = "";
         circuit_courant = null;
+        cookieManager = new CookieManager();
     }
 }

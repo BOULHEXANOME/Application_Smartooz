@@ -27,12 +27,12 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
-import boulhexanome.application_smartooz.WebServices.GetItineraire;
+import boulhexanome.application_smartooz.WebServices.GetTask;
 
 import static boulhexanome.application_smartooz.Tools.decodeDirections;
 import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
 
-public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
+public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetTask.AsyncResponse {
 
     private GoogleMap mMap;
     private ActionBar toolbar;
@@ -96,10 +96,10 @@ public class Parcours extends AppCompatActivity implements OnMapReadyCallback, G
         for (int i = 0; i < circuit.getPlaces().size(); i++){
             mMap.addMarker(circuit.getPlaces().get(i).toMarkerOptions());
         }
-        GetItineraire getItineraire = new GetItineraire();
-        getItineraire.delegate = this;
         URL url = generateGoogleMapURL(circuit);
-        getItineraire.execute(url);
+        GetTask getTask = new GetTask(url.toString());
+        getTask.delegate = this;
+        getTask.execute(url);
 
 
     }

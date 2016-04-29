@@ -178,7 +178,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
 
     @Override
     public void processFinish(JsonObject results) {
-        System.out.println(results.toString());
         if (results != null) {
 
             if (results.get("status").getAsString().equals("OK")) {
