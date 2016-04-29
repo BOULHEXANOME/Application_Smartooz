@@ -23,6 +23,25 @@ public class Circuit {
     private int idUser;
     private String[] keywords;
     private ArrayList<Place> places;
+    private int numberOfVotes;
+    private int deniveleM;
+
+    public int getNumberOfVotes() {
+        return numberOfVotes;
+    }
+
+    public void setNumberOfVotes(int numberOfVotes) {
+        this.numberOfVotes = numberOfVotes;
+    }
+
+    public int getDeniveleM() {
+        return deniveleM;
+    }
+
+    public void setDeniveleM(int deniveleM) {
+        this.deniveleM = deniveleM;
+    }
+
 
     public String getName() {
         return name;
@@ -90,10 +109,12 @@ public class Circuit {
                 ", idUser=" + idUser +
                 ", keywords=" + Arrays.toString(keywords) +
                 ", places=" + places +
+                ", numberOfVotes=" + numberOfVotes +
+                ", deniveleM=" + deniveleM +
                 '}';
     }
 
-    public Circuit(String name, String description, float lengthKm, float noteOn5, int idUser, String[] keywords, ArrayList<Place> places) {
+    public Circuit(String name, String description, float lengthKm, float noteOn5, int deniveleM, int numberOfVotes, int idUser, String[] keywords, ArrayList<Place> places) {
         this.name = name;
         this.description = description;
         this.lengthKm = lengthKm;
@@ -101,6 +122,8 @@ public class Circuit {
         this.idUser = idUser;
         this.keywords = keywords;
         this.places = places;
+        this.numberOfVotes = numberOfVotes;
+        this.deniveleM = deniveleM;
     }
 
     public Circuit(String name, ArrayList<Place> places) {
