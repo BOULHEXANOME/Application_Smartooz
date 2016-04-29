@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+android:animateLayoutChanges="true"
+android:orientation="vertical"
+android:weightSum="100"
+tools:context="boulhexanome.application_smartooz.CircuitDetailsActivity"
+android:background="#fff">
+
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/circuit_details_map"
+    android:name="com.google.android.gms.maps.MapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="40" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/drag_button"
+        android:src="@drawable/ic_slide_arrow_up"
+        android:background="#232323"
+        android:layout_weight="2.5" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/circuit_details_scrollview" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linear_layout_scrollview"></LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -30,11 +30,6 @@
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -51,10 +46,13 @@
         <activity
             android:name=".Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".InscriptionActivity" />
+        <activity android:name=".InscriptionActivity">
+        </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login">
+
+        </activity>
         <activity android:name=".VisiterLyonActivity" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -67,8 +65,19 @@
         <activity android:name=".ChoixDuThemeActivity" />
         <activity
             android:name=".CreerParcours"
-            android:label="@string/title_activity_creer_parcours"></activity>
-        <activity android:name=".CreerParcours_AjoutTag"></activity>
+            android:label="@string/title_activity_creer_parcours" />
+        <activity android:name=".CreerParcours_AjoutTag" />
+        <activity
+            android:name=".CircuitDetailsActivity"
+            android:label="@string/title_activity_circuit_details"
+            android:theme="@style/AppTheme">
+
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

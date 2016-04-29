@@ -27,5 +27,6 @@
     <string name="cr_er_parcours">Créer parcours</string>
     <string name="title_activity_creer_parcours">Map</string>
     <string name="action_ajouter">Ajouter un point d\'intérêt</string>
+    <string name="title_activity_circuit_details">CircuitDetailsActivity</string>
 
 </resources>

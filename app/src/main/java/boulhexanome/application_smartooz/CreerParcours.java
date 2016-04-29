@@ -166,8 +166,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
         mMap.setMyLocationEnabled(true);
 
+        LatLngBounds GRAND_LYON = new LatLngBounds(
+                new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
+
         mMap.moveCamera(CameraUpdateFactory
-                .newLatLngBounds((new LatLngBounds(new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584))), 0));
+                .newLatLngBounds(GRAND_LYON,10));
 
         Place pointA = new Place(new LatLng(45.770861, 4.873173),"Point A");
         Place pointB = new Place(new LatLng(45.763579, 4.890372),"Point B");
