@@ -3,6 +3,7 @@ package boulhexanome.application_smartooz;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.database.MergeCursor;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
@@ -32,18 +33,33 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.maps.android.PolyUtil;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.WebServices.GetItineraire;
+import boulhexanome.application_smartooz.WebServices.Inscription;
 
-public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback {
+import static boulhexanome.application_smartooz.Tools.decodeDirections;
+import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
+
+public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
 
     private GoogleMap mMap;
     private ActionBar toolbar;
     private ActionMode mActionMode;
+
+    Polyline currentLine;
+
+    ArrayList<Marker> markers;
 
     boolean modeAjout;
 
@@ -60,7 +76,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
+        currentLine = null;
         modeAjout = false;
+        markers = new ArrayList<Marker>();;
 
         parcours = new Circuit();
 
@@ -104,6 +122,19 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     v.setSelected(true);
                 } else {
                     mActionMode.finish();
+                }
+            }
+        });
+
+        final FloatingActionButton visualiser = (FloatingActionButton) findViewById(R.id.action_visualiser);
+        visualiser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (markers.size()>=2){
+                    if (currentLine != null){
+                        currentLine.remove();
+                    }
+                    visualize();
                 }
             }
         });
@@ -157,6 +188,27 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         mMap.addMarker(pointB.toMarkerOptions());
         mMap.addMarker(pointC.toMarkerOptions());
         mMap.addMarker(pointD.toMarkerOptions());
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (modeAjout == false){
+                    return false;
+                } else {
+                    if (markers.contains(marker)){
+                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        markers.remove(marker);
+                        return true;
+                    } else {
+                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                        markers.add(marker);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                        marker.showInfoWindow();
+                        return true;
+                    }
+                }
+            }
+        });
 
 
 
@@ -229,4 +281,17 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         return true;
     }
 
+    @Override
+    public void processFinish(JsonObject results) {
+        List<LatLng> listePoints = decodeDirections(results);
+        currentLine = mMap.addPolyline(new PolylineOptions()
+                .addAll(listePoints));
+    }
+
+    public void visualize(){
+        GetItineraire getItineraire = new GetItineraire();
+        getItineraire.delegate = this;
+        URL url = generateGoogleMapURL(markers);
+        getItineraire.execute(url);
+    }
 }
