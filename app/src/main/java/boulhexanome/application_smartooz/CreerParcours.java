@@ -234,6 +234,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
+
+
+
+
     }
 
     @Override
@@ -278,5 +282,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         getItineraire.delegate = this;
         URL url = generateGoogleMapURL(markers);
         getItineraire.execute(url);
+    }
+
+    public void getPlaces(){
+        
     }
 }
