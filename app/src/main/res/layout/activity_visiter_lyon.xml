@@ -52,46 +52,67 @@
             android:layout_gravity="center"
             android:layout_margin="15dp" />
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:id="@+id/motsClefs_listView"
-            android:choiceMode="multipleChoice"
-            android:clickable="true"
-            android:layout_margin="10dp"
-            android:layout_weight="0.4" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Dénivelé maximum : "
-            android:id="@+id/denivele_textView"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="3dp" />
-
-        <SeekBar
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/denivele_seekBar"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="3dp"
-            android:max="1000"
-            android:progress="10" />
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Thèmes proposés :"
+                android:id="@+id/themeProposes_text"
+                android:gravity="left" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="                "
+                android:id="@+id/textView3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Thèmes sélectionnés :"
+                android:id="@+id/themesSelect_text"
+                android:gravity="right" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/motsClefs_listView"
+                android:choiceMode="multipleChoice"
+                android:clickable="true"
+                android:layout_margin="10dp"
+                android:layout_weight="0.4" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/motsChoisis_listView"
+                android:choiceMode="multipleChoice"
+                android:clickable="true"
+                android:layout_margin="10dp"
+                android:layout_weight="0.4" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="0 m"
-            android:id="@+id/denivVal_textView"
-            android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Longueur maximum : "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Longueur maximum du parcours : "
             android:id="@+id/longueur_textView"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
@@ -121,7 +142,8 @@
             android:layout_height="wrap_content"
             android:text="Page Suivante"
             android:id="@+id/pageSuivante_button"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 </LinearLayout>
