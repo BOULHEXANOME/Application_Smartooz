@@ -31,6 +31,7 @@
             <meta-data
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,8 +57,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".VisiterLyonActivity"></activity>
-        <activity android:name=".ListCircuit"></activity>
+        <activity android:name=".VisiterLyonActivity" />
+        <activity android:name=".ListCircuit" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -69,8 +70,12 @@
         <activity android:name=".ChoixDuThemeActivity" />
         <activity
             android:name=".CreerParcours"
-            android:label="@string/title_activity_creer_parcours"></activity>
-        <activity android:name=".CreerParcours_AjoutTag"></activity>
+            android:label="@string/title_activity_creer_parcours" />
+        <activity android:name=".CreerParcours_AjoutTag" />
+        <activity
+            android:name=".CongratulationsCircuitEndActivity"
+            android:label="@string/title_activity_congratulations_circuit_end"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
