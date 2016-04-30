@@ -47,7 +47,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.nom.setText(parcours.getName());
-        viewHolder.kilometre.setText(String.valueOf(parcours.getLengthKm()));
+        viewHolder.kilometre.setText(String.valueOf(parcours.getLengthKm())+"km");
         viewHolder.denivele.setText(String.valueOf(parcours.getLengthKm()));
         ArrayList<String> tags = parcours.getKeywords();
         String tag="";
