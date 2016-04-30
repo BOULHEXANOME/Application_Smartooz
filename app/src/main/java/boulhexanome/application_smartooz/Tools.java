@@ -5,7 +5,6 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,7 +31,8 @@ public class Tools {
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
         StringBuilder stringBuilder = new StringBuilder();
         String inputLine;
-        Gson gson = new Gson();
+
+
         try {
             while ((inputLine = in.readLine()) != null) {
                 stringBuilder.append(inputLine);
@@ -42,6 +42,7 @@ public class Tools {
             JsonElement jsnelement = (JsonElement) parser.parse(line);
             JsonObject jsnobject = jsnelement.getAsJsonObject();
             in.close();
+            is.close();
             return jsnobject;
         } catch (IOException e) {
             Log.e("IOException", "identifyUser : IOException");

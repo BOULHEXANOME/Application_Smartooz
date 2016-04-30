@@ -1,18 +1,16 @@
 package boulhexanome.application_smartooz.WebServices;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,19 +21,23 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.User;
 
-import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
 import static boulhexanome.application_smartooz.Tools.parseJson;
 
 /**
- * Created by Aiebobo on 26/04/2016.
+ * Created by Nicolas on 28/04/2016.
  */
-public class GetItineraire extends AsyncTask<URL, Void, Void> {
+public class GetTask extends AsyncTask {
 
+    private String postURL;
     private JsonObject result = null;
     private int status = 0;
     public AsyncResponse delegate=null;
+
+    public GetTask(String URL) {
+        this.postURL = URL;
+    }
 
 
     public interface AsyncResponse {
@@ -43,22 +45,25 @@ public class GetItineraire extends AsyncTask<URL, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(Object o) {
         delegate.processFinish(result);
     }
 
-
-
     @Override
-    protected Void doInBackground(URL... params) {
+    protected Void doInBackground(Object objects[]) {
         try {
-
-            final URL url = params[0];
-
+            // Ouverture de la connexion
+            URL url = new URL(postURL);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setConnectTimeout(10000);
             urlConnection.setReadTimeout(10000);
+
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                urlConnection.setRequestProperty("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
 
             if (urlConnection.getInputStream() != null) {
                 result = parseJson(urlConnection.getInputStream());

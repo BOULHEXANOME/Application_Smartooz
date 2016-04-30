@@ -123,20 +123,20 @@ public class InscriptionActivity extends AppCompatActivity implements PostTask.A
 
     @Override
     public void processFinish(JsonObject results) {
-        System.out.println(results.toString());
-        if (results.get("status").getAsString().equals("OK")) {
-            User.getInstance().setEmail(results.get("email").getAsString());
-            User.getInstance().setUsername(results.get("username").getAsString());
+        if (results != null) {
+            System.out.println(results.toString());
+            if (results.get("status").getAsString().equals("OK")) {
+                User.getInstance().setEmail(results.get("email").getAsString());
+                User.getInstance().setUsername(results.get("username").getAsString());
+                Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
+                startActivity(intent);
+                //Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
-            startActivity(intent);
-            //Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
-
-
-        } else if (results.get("status").getAsString().equals("KO")) {
-            Toast.makeText(InscriptionActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(InscriptionActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(InscriptionActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

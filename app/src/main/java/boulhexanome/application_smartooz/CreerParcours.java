@@ -1,17 +1,11 @@
 package boulhexanome.application_smartooz;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -22,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,8 +24,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.net.URL;
@@ -41,12 +36,10 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
-import boulhexanome.application_smartooz.WebServices.GetItineraire;
+import boulhexanome.application_smartooz.WebServices.GetTask;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
-import static boulhexanome.application_smartooz.Tools.decodeDirections;
-import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
-
-public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, GetItineraire.AsyncResponse {
+public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, PostTask.AsyncResponse, GetTask.AsyncResponse {
 
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
@@ -159,6 +152,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngBounds(GRAND_LYON,10));
 
+        getPlaces();
+
         Place pointA = new Place(new LatLng(45.770861, 4.873173), "Point A");
         Place pointB = new Place(new LatLng(45.763579, 4.890372), "Point B");
         Place pointC = new Place(new LatLng(45.758049, 4.882280), "Point C");
@@ -255,7 +250,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
                     // Returning the view containing InfoWindow contents
                     return v;
-
                 }
             });
         }catch (SecurityException e){
@@ -281,8 +275,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_save) {
-            Intent intent = new Intent(CreerParcours.this, CreerParcours_AjoutTag.class);
-            startActivity(intent);
+
+            User.getInstance().setCircuit_courant(new Circuit("",places));
+            Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -296,16 +292,54 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void processFinish(JsonObject results) {
-        List<LatLng> listePoints = decodeDirections(results);
-        currentLine = mMap.addPolyline(new PolylineOptions()
-                .addAll(listePoints));
+        if (results != null) {
+            if (results.getAsJsonArray("routes") != null) {
+                //Case googlemaps direction
+                List<LatLng> listePoints = Tools.decodeDirections(results);
+                currentLine = mMap.addPolyline(new PolylineOptions()
+                        .addAll(listePoints));
+            } else if (results.get("status") != null) {
+                //Case Backend
+                JsonArray resultsArray = results.getAsJsonArray("places");
+                for (int i = 0; i < resultsArray.size(); i++){
+                    JsonObject pi = resultsArray.get(i).getAsJsonObject();
+                    System.out.println(pi);
+                    JsonArray keywords = pi.getAsJsonArray("keywords");
+                    String[] pi_keywords = new String[keywords.size()];
+                    for (int j = 0; j < keywords.size();j++) {
+                        pi_keywords[j]=keywords.get(j).getAsJsonObject().get("name").getAsString();
+                    }
+
+                    places.add(new Place(
+                            new LatLng(pi.get("lat").getAsDouble(), pi.get("long").getAsDouble()),
+                            pi.get("address").getAsString(),
+                            pi.get("phone").toString(),
+                            pi.get("website").toString(),
+                            pi.get("openning_hours").getAsString(),
+                            pi.get("name").getAsString(),
+                            pi.get("description").getAsString(),
+                            pi.get("id_user").getAsInt(),
+                            pi.get("note_5").getAsFloat(),
+                            pi.get("nb_vote").getAsInt(),
+                            pi_keywords
+                    ));
+                    mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
+                }
+            }
+        }
     }
 
     public void visualize(){
-        GetItineraire getItineraire = new GetItineraire();
-        getItineraire.delegate = this;
-        URL url = generateGoogleMapURL(markers);
-        getItineraire.execute(url);
+        URL url = Tools.generateGoogleMapURL(markers);
+        PostTask postTask = new PostTask(url.toString());
+        postTask.delegate = this;
+        postTask.execute();
+    }
+
+    public void getPlaces(){
+        GetTask getTask = new GetTask("http://142.4.215.20:1723/get-places");
+        getTask.delegate = this;
+        getTask.execute();
     }
 
     @Override
@@ -334,5 +368,14 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 return;
             }
          }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 2) {
+            setResult(2);
+            finish();
+        }
     }
 }

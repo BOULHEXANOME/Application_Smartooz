@@ -1,25 +1,22 @@
 package boulhexanome.application_smartooz;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChoixDuThemeActivity extends AppCompatActivity {
@@ -63,6 +60,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
         listMotsChoisis.setAdapter(adaptChoisi);
 
         listMotsProposes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String texte = (String) listMotsProposes.getItemAtPosition(position);
@@ -155,5 +153,42 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
 
             }
         });
+
+        Button bouton_creer = (Button) findViewById(R.id.bouton_creer_parcours);
+        if (bouton_creer != null) {
+            bouton_creer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    User.getInstance().getCircuit_courant().setKeywords((ArrayList<String>) motsSelectionnes);
+                    User.getInstance().getCircuit_courant().setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                    User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
+
+                    //@TODO addCircuit au back
+
+                    setResult(2);
+                    finish();
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == android.R.id.home){
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -38,5 +38,6 @@
     <string name="filter_km">Kilomètre</string>
     <string name="filter_popularity">Popularité</string>
     <string name="title_activity_congratulations_circuit_end">Félicitations - parcours terminé</string>
+    <string name="cr_er_le_parcours">Créer le parcours</string>
 
 </resources>

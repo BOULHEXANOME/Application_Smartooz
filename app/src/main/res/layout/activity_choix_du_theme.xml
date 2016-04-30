@@ -179,8 +179,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rechercher des parcours"
-                android:id="@+id/rechercheParcours_button"
+                android:text="@string/cr_er_le_parcours"
+                android:id="@+id/bouton_creer_parcours"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="20dp"
                 android:layout_weight="0.2"
