@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_filter_notes"
+        android:title="@string/filter_notes"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_filter_denivele"
+        android:title="@string/filter_denivele"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_filter_km"
+        android:title="@string/filter_km"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_filter_popularity"
+        android:title="@string/filter_popularity"
+        android:showAsAction="never" />
+
+</menu>
