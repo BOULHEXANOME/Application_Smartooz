@@ -166,7 +166,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
 
                     //@TODO addCircuit au back
 
-                    setResult(1);
+                    setResult(2);
                     finish();
                 }
             });

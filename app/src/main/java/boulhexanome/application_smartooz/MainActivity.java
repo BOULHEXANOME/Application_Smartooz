@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        if (resultCode == 2) {
             Toast toast = Toast.makeText(MainActivity.this,"Votre parcours a bien été créé !", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
