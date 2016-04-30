@@ -155,20 +155,22 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
         });
 
         Button bouton_creer = (Button) findViewById(R.id.bouton_creer_parcours);
-        bouton_creer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (bouton_creer != null) {
+            bouton_creer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                User.getInstance().getCircuit_courant().setKeywords((ArrayList<String>) motsSelectionnes);
-                User.getInstance().getCircuit_courant().setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
-                User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
+                    User.getInstance().getCircuit_courant().setKeywords((ArrayList<String>) motsSelectionnes);
+                    User.getInstance().getCircuit_courant().setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                    User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
 
-                //@TODO addCircuit au back
+                    //@TODO addCircuit au back
 
-                Intent intent = new Intent(ChoixDuThemeActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
+                    setResult(1);
+                    finish();
+                }
+            });
+        }
     }
 
     @Override

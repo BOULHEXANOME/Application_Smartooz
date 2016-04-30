@@ -29,7 +29,9 @@ public class ListCircuit extends AppCompatActivity {
         listParcours = (ListView) findViewById(R.id.listViewParcours);
 
         List<Circuit> parcours = new ArrayList<Circuit>();
-        String[] tags = {"try","better"};
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("try");
+        tags.add("better");
         Circuit circuit = new Circuit("Randonnée dans les champs","grave stylé cette randonnée",(float)3.2,(float)5.0,3,tags,null);
         parcours.add(circuit);
         parcours.add(circuit);

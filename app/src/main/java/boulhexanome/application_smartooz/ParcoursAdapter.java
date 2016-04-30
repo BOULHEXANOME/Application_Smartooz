@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
@@ -47,16 +49,16 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         viewHolder.nom.setText(parcours.getName());
         viewHolder.kilometre.setText(String.valueOf(parcours.getLengthKm()));
         viewHolder.denivele.setText(String.valueOf(parcours.getLengthKm()));
-        String[] tags = parcours.getKeywords();
+        ArrayList<String> tags = parcours.getKeywords();
         String tag="";
-        for(int i = 0;i<tags.length;i++){
+        for(int i = 0;i<tags.size();i++){
             if(i!=0){
                 tag+=" ";
             }
             if(i>6){
                 break;
             }
-            tag += tags[i];
+            tag += tags.get(i);
 
         }
         viewHolder.tags.setText(tag);

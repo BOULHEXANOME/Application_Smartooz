@@ -278,7 +278,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
             User.getInstance().setCircuit_courant(new Circuit("",places));
             Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -368,5 +368,14 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 return;
             }
          }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            setResult(1);
+            finish();
+        }
     }
 }
