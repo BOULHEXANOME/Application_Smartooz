@@ -1,41 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-android:animateLayoutChanges="true"
-android:orientation="vertical"
-android:weightSum="100"
-tools:context="boulhexanome.application_smartooz.CircuitDetailsActivity"
-android:background="#fff">
-
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/circuit_details_map"
-    android:name="com.google.android.gms.maps.MapFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="40" />
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:weightSum="100"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="boulhexanome.application_smartooz.CircuitDetailsActivity">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/circuit_details_map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="100" />
 
     <ImageButton
+        android:id="@+id/drag_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/drag_button"
-        android:src="@drawable/ic_slide_arrow_up"
+        android:layout_weight="2.5"
         android:background="#232323"
-        android:layout_weight="2.5" />
+        android:src="@drawable/ic_slide_arrow_up" />
 
     <ScrollView
+        android:id="@+id/circuit_details_scrollview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/circuit_details_scrollview" >
+        android:layout_height="fill_parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/linear_layout_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/linear_layout_scrollview"></LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/circuit_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Circuit Title"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/circuit_keywords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mots-clefs :"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/time_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="false"
+                android:text="Durée approximative (mins) :"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/length_km"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Longueur (km) :"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/circuit_height_difference_m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dénivelé (m) :"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/circuit_preview_photos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photos :"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>
