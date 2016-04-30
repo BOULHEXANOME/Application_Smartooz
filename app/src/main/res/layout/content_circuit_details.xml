@@ -41,7 +41,7 @@
             android:textColor="#ffffff" />
 
         <TextView
-            android:id="@+id/circuit_keywords"
+            android:id="@+id/circuit_global_informations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Durée, Kms, Mots-clefs"
