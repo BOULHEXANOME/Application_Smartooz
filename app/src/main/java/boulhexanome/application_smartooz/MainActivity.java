@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
         bouton_visite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Parcours.class);
+                Intent intent = new Intent(MainActivity.this, VisiterLyonActivity.class);
                 startActivity(intent);
             }
         });

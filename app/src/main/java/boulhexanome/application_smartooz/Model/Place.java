@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -24,7 +25,7 @@ public class Place {
     private int idUser;
     private float noteOn5;
     private int numberOfVotes;
-    private String[] keywords;
+    private ArrayList<String> keywords;
 
     public LatLng getPosition() {
         return position;
@@ -106,12 +107,16 @@ public class Place {
         this.numberOfVotes = numberOfVotes;
     }
 
-    public String[] getKeywords() {
+    public ArrayList<String> getKeywords() {
         return keywords;
     }
 
-    public void setKeywords(String[] keywords) {
+    public void setKeywords(ArrayList<String> keywords) {
         this.keywords = keywords;
+    }
+
+    public void addKeyword(String keyword){
+        keywords.add(keyword);
     }
 
     @Override
@@ -127,16 +132,17 @@ public class Place {
                 ", idUser=" + idUser +
                 ", noteOn5=" + noteOn5 +
                 ", numberOfVotes=" + numberOfVotes +
-                ", keywords=" + Arrays.toString(keywords) +
+                ", keywords=" + keywords +
                 '}';
     }
 
     public Place(LatLng position, String name) {
         this.position = position;
         this.name = name;
+        keywords = new ArrayList<>();
     }
 
-    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, String[] keywords) {
+    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, ArrayList<String> keywords) {
         this.position = position;
         this.address = address;
         this.phone = phone;
