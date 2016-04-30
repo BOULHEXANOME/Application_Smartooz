@@ -317,7 +317,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 //Case googlemaps direction
                 List<LatLng> listePoints = Tools.decodeDirections(results);
                 currentLine = mMap.addPolyline(new PolylineOptions()
-                        .addAll(listePoints));
+                        .addAll(listePoints != null ? listePoints : null));
             } else if (results.get("status") != null) {
                 //Case Backend
                 JsonArray resultsArray = results.getAsJsonArray("places");

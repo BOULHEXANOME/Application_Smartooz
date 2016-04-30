@@ -135,7 +135,12 @@ public class Tools {
         JsonObject routes = resultsArray.get(0).getAsJsonObject();
         String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
         show = show.replace("\\\\", "\\");
-        List<LatLng> listePoints = PolyUtil.decode(show);
-        return listePoints;
+        try {
+            List<LatLng> listePoints = PolyUtil.decode(show);
+            return listePoints;
+        } catch(Exception e) {
+            Log.e("googleMapError", "Error while decoding polyline");
+            return null;
+        }
     }
 }
