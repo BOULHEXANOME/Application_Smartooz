@@ -275,6 +275,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_save) {
+
+            User.getInstance().setCircuit_courant(new Circuit("",places));
             Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
             startActivity(intent);
         }
@@ -336,7 +338,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     public void getPlaces(){
         GetTask getTask = new GetTask("http://142.4.215.20:1723/get-places");
-        getTask.delegate = this;
         getTask.delegate = this;
         getTask.execute();
     }

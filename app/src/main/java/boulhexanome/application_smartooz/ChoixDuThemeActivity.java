@@ -1,26 +1,22 @@
 package boulhexanome.application_smartooz;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChoixDuThemeActivity extends AppCompatActivity {
@@ -155,6 +151,22 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 // TODO Auto-generated method stub
 
+            }
+        });
+
+        Button bouton_creer = (Button) findViewById(R.id.bouton_creer_parcours);
+        bouton_creer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                User.getInstance().getCircuit_courant().setKeywords((ArrayList<String>) motsSelectionnes);
+                User.getInstance().getCircuit_courant().setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
+
+                //@TODO addCircuit au back
+
+                Intent intent = new Intent(ChoixDuThemeActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }
