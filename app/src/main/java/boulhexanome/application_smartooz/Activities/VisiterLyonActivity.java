@@ -52,17 +52,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        View header = navigationView.getHeaderView(0);
-
-        TextView usernameText = (TextView) header.findViewById(R.id.username_textview_header);
-        usernameText.setText(User.getInstance().getUsername());
-        TextView emailText = (TextView) header.findViewById(R.id.email_textview_header);
-        emailText.setText(User.getInstance().getEmail());
-
-
         final EditText edittext = (EditText)findViewById(R.id.rech_editText);
         assert edittext != null;
 
@@ -203,16 +192,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             }
         });
 
-        // on se log -> si ça marche pas on lance l'interface de login
-
-        PostTask login_thread = new PostTask(Config.getRequest(Config.LOGIN));
-        login_thread.delegate = this;
-        String pseudo = User.getInstance().getUsername();
-        String mdp = User.getInstance().getPassword();
-        JsonObject user = new JsonObject();
-        user.addProperty("password", mdp);
-        user.addProperty("username", pseudo);
-        login_thread.execute(user);
+//        checkResumeData();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -221,25 +201,18 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-
-            Intent intent = new Intent(VisiterLyonActivity.this, VisiterLyonActivity.class);
-            startActivity(intent);
-
-            // Handle the camera action
-        } else if (id == R.id.nav_tours) {
-
+        if (id == R.id.nav_tours) {
             Intent intent = new Intent(VisiterLyonActivity.this, Parcours.class);
             startActivity(intent);
-
-
-
         } else if (id == R.id.nav_friends) {
-
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.create_parcours) {
+            Intent intent = new Intent(VisiterLyonActivity.this, CreerParcours.class);
+            startActivity(intent);
         } else if (id == R.id.nav_profile) {
-
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_preferences) {
-
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -254,6 +227,39 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
             startActivity(intent);
         }
-
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkResumeData();
+    }
+
+    private void checkResumeData() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+
+        // désactiver item home (on est dessus)
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        // on se log -> si ça marche pas on lance l'interface de login
+        PostTask login_thread = new PostTask(Config.getRequest(Config.LOGIN));
+        login_thread.delegate = this;
+        String pseudo = User.getInstance().getUsername();
+        String mdp = User.getInstance().getPassword();
+        JsonObject user = new JsonObject();
+        user.addProperty("password", mdp);
+        user.addProperty("username", pseudo);
+        login_thread.execute(user);
+
+        TextView usernameText = (TextView) header.findViewById(R.id.username_textview_header);
+        usernameText.setText(User.getInstance().getUsername());
+        TextView emailText = (TextView) header.findViewById(R.id.email_textview_header);
+        emailText.setText(User.getInstance().getEmail());
+    }
+
+
 }

@@ -299,7 +299,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_save) {
-
             User.getInstance().setCircuit_courant(new Circuit("",places));
             Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
             startActivityForResult(intent, 1);
@@ -328,27 +327,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 System.out.println(resultsArray);
                 if (resultsArray != null) {
                     for (int i = 0; i < resultsArray.size(); i++) {
-                        JsonObject pi = resultsArray.get(i).getAsJsonObject();
-                        System.out.println(pi);
-                        JsonArray keywords = pi.getAsJsonArray("keywords");
-                        ArrayList<String> pi_keywords = new ArrayList<>();
-                        for (int j = 0; j < keywords.size(); j++) {
-                            pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
-                        }
-
-                        places.add(new Place(
-                                new LatLng(pi.get("lat").getAsDouble(), pi.get("long").getAsDouble()),
-                                pi.get("address").getAsString(),
-                                pi.get("phone").toString(),
-                                pi.get("website").toString(),
-                                pi.get("openning_hours").getAsString(),
-                                pi.get("name").getAsString(),
-                                pi.get("description").getAsString(),
-                                pi.get("id_user").getAsInt(),
-                                pi.get("note_5").getAsFloat(),
-                                pi.get("nb_vote").getAsInt(),
-                                pi_keywords
-                        ));
+                        places.add(new Place(resultsArray.get(i).getAsJsonObject()));
                         mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
                     }
                 }
