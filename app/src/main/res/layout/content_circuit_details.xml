@@ -73,6 +73,21 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/circuit_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="false"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
                 android:id="@+id/time_minutes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,6 +115,11 @@
                 android:layout_height="wrap_content"
                 android:text="Photos :"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/places_list" />
 
         </LinearLayout>
     </ScrollView>

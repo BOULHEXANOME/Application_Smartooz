@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp"
     >
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         tools:background="#AAA"
         />
 
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
         android:layout_toRightOf="@+id/image"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignTop="@+id/image"
         android:layout_marginLeft="10dp"
         android:textStyle="bold"
@@ -28,20 +29,20 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/image"
         android:layout_toEndOf="@+id/image"
         android:layout_alignBottom="@+id/image"
         android:id="@+id/linearLayout"
         android:layout_below="@+id/titre">
-        android:layout_alignTop="@+id/avatar">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:id="@+id/linearLayout2">
+            android:id="@+id/linearLayout2"
+            android:layout_marginRight="10dp">
 
 
 
@@ -67,14 +68,29 @@
 
         </LinearLayout>
 
-        <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"
-        android:text="Tags"
-        android:id="@+id/textViewTags"
-        android:layout_alignLeft="@+id/linearLayout2" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp">
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/noteParcours"
+                android:numStars="5"
+                android:rating="3.5"
+                android:isIndicator="false"
+                style="@style/foodRatingBar"  />
+
+            <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Tags"
+            android:id="@+id/textViewTags"
+            android:layout_alignLeft="@+id/linearLayout2" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
