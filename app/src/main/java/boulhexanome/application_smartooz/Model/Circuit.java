@@ -1,7 +1,10 @@
 package boulhexanome.application_smartooz.Model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -141,6 +144,26 @@ public class Circuit {
         this.name = name;
         this.places = places;
     }
+
+
+    public Circuit(JsonObject jsonObject) {
+        JsonArray keywords = jsonObject.getAsJsonArray("keywords");
+        ArrayList<String> pi_keywords = new ArrayList<>();
+        for (int j = 0; j < keywords.size(); j++) {
+            pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
+        }
+        this.deniveleM = jsonObject.get("height_difference_m").getAsInt();
+        this.lengthKm = jsonObject.get("length_km").getAsFloat();
+        this.name = jsonObject.get("name").getAsString();
+        this.description = jsonObject.get("description").getAsString();
+        this.idUser = jsonObject.get("id_user").getAsInt();
+        this.noteOn5 = jsonObject.get("note_5").getAsFloat();
+        this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();
+        this.keywords = pi_keywords;
+        this.id = jsonObject.get("id").getAsInt();
+    }
+
+
 
     public Circuit() {
         this.places = new ArrayList<Place>();
