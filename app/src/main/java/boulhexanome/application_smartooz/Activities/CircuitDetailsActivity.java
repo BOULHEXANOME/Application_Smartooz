@@ -11,6 +11,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -30,13 +32,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements GetTask
     boolean mapIsHidden;
 
     // Les elements qu'on doit mettre a jour
-    private TextView circuitTitle, circuitInformationsTextview, timeMinutesTextview, lengthKmTextview, heightDifferenceTextview;
+    private TextView circuitTitle, circuitInformationsTextview, circuitDescription, timeMinutesTextview, lengthKmTextview, heightDifferenceTextview;
     private RatingBar circuitRatingBar;
 
     // Infos issues du serveur
     private Circuit theCircuit;
-    private ArrayList<Place> listOfPlaces;
-
+    private ArrayList<Place> listOfPlaces = new ArrayList<Place>();
 
 
     @Override
@@ -63,66 +64,95 @@ public class CircuitDetailsActivity extends AppCompatActivity implements GetTask
 
         scrollButtonLayout = (LinearLayout) findViewById(R.id.drag_button_layout);
         scrollButtonLayout.setOnClickListener(new View.OnClickListener() {
-        public void onClick(View arg0) {
+            public void onClick(View arg0) {
 
-            if(mapIsHidden)
-            {
-                mMapFragment.getView().setVisibility(View.GONE);
-                mScrollView.setVisibility(View.VISIBLE);
-                mapIsHidden = false;
+                if (mapIsHidden) {
+                    mMapFragment.getView().setVisibility(View.GONE);
+                    mScrollView.setVisibility(View.VISIBLE);
+                    mapIsHidden = false;
+                } else {
+                    mMapFragment.getView().setVisibility(View.VISIBLE);
+                    mScrollView.setVisibility(View.GONE);
+                    mapIsHidden = true;
+                }
+
             }
-            else
-            {
-                mMapFragment.getView().setVisibility(View.VISIBLE);
-                mScrollView.setVisibility(View.GONE);
-                mapIsHidden = true;
-            }
-
-        }
-    }); // Fin decla listener
+        }); // Fin decla listener
 
 
-        // Definition des objets que l'on va mettre a jour
+        // Definition des objets graphiques que l'on va mettre a jour
         circuitTitle = (TextView) findViewById(R.id.circuit_title);
         circuitInformationsTextview = (TextView) findViewById(R.id.circuit_global_informations);
         circuitRatingBar = (RatingBar) findViewById(R.id.circuit_details_rating);
+        circuitDescription = (TextView) findViewById(R.id.circuit_description);
         timeMinutesTextview = (TextView) findViewById(R.id.time_minutes);
         lengthKmTextview = (TextView) findViewById(R.id.length_km);
         heightDifferenceTextview = (TextView) findViewById(R.id.circuit_height_difference_m);
 
+        // Recuperation de l'objet circuit transmis depuis la liste des circuits
+        theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
+        if (theCircuit != null) {
+            // MAJ des elements de la vue pour afficher les infos dans l'objet circuit
+            circuitTitle.setText(theCircuit.getName());
+
+            // Recup les mots clefs
+            String keywords = "";
+            for (int i = 0; i < theCircuit.getKeywords().size(); i++) {
+                keywords += theCircuit.getKeywords().get(i) + " ";
+            }
+
+            //circuitInformationsTextview.setText(Durée, theCircuit.getLengthKm(), keywords);
+            circuitRatingBar.setRating(theCircuit.getNoteOn5());
+            circuitDescription.setText(theCircuit.getDescription());
+            //timeMinutesTextview.setText("Durée conseillée : " + duree + " mins");
+            lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
+            heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
+
+            // Appels au Back pour recuperer les Places associees
+            // Pour chaque id de place contenue dans circuit, on envoie une requete au back pour recuperer ce circuit
+            //for (int i = 0; i < theCircuit.getPlaces.lenght; i++) {
 
 
-        // Appels au Back pour remplir les objets Circuit et les Places associees
+            //}
 
+        }
 
-
-        // MAJ des elements de la vue pour afficher les infos recuperees
-        //circuitTitle.setText(LeTitre);
-        //circuitInformationsTextview.setText(Durée, Kms, Mot-clefs);
-        //circuitRatingBar.setRating(leRating);
-        //timeMinutesTextview.setText(" Durée conseillée : " + duree + " mins");
-        //lengthKmTextview.setText("Distance : " + distance_km + " km");
-        //heightDifferenceTextview.setText("Dénivelé : " + denivele + " m");
 
     } // Fin onCreate
 
 
     //Recupere le JSON un fois la requete au serveur effectuee
     @Override
-    public void processFinish(JsonObject results) {
+    synchronized public void processFinish(JsonObject results) {
 
-        // Si le json qui arrive est un circuit
-        // Le convertir en objet Circuit et lancer autant de get task qu'il y a de places associees
+        // Les Json qui arrivent sont des places, les ajouter à la liste des places et maj la vue, cad ajouter un objet dans la liste
+        if (results != null) {
 
-        // Si le json qui arrive est une place
-        // Le convertir en objet Place et l'ajouter à la liste des places
+            JsonObject thePlaceJson = results.getAsJsonObject("place");
+            System.out.println(thePlaceJson);
+            if (thePlaceJson != null) {
 
+                Place newPlace = new Place(thePlaceJson);
+                listOfPlaces.add(newPlace);
+                // MAJ de la vue avec le nouveau Place
+                addPlaceInformationsToList(newPlace);
 
+            }
 
-        // Mettre a jour la vue ICI ?
+        }
 
     }
 
+    // Papin c'est pour toi !!
+    // Fais en sorte qu'on ajoute bien les places a la liste et que ça soit joli x)
+    public void addPlaceInformationsToList(Place theNewPlace) {
+
+        // Ajout d'un element a la liste des places et maj de ses infos sur la vue graphique
+
+        //theNewPlace
+
+
+    }
 
 
 }
