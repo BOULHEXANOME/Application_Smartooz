@@ -19,7 +19,7 @@ public class CurrentCircuits {
 
 
     private Circuit selectedCircuit;
-    private ArrayList<Circuit> listOfCircuits = new ArrayList<Circuit>();
+    private ArrayList<Circuit> listOfCircuits = new ArrayList<>();
 
     public Circuit getSelectedCircuit() {
         return selectedCircuit;

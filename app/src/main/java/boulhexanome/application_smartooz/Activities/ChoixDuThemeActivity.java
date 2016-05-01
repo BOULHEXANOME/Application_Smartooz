@@ -74,11 +74,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         motsSelectionnes = new ArrayList<>();
         motsClefs = new ArrayList<>();
 
-        motsClefs.add("TEST");
-        motsClefs.add("SG");
-        motsClefs.add("SLJBVIU");
-        motsClefs.add("KOISFKD");
-
         final ListView listMotsProposes = (ListView) findViewById(R.id.motsClefsTh_listView);
         final ListView listMotsChoisis = (ListView) findViewById(R.id.motsChoisisTh_listView);
         final ListAdapter adapt = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, motsClefs);
