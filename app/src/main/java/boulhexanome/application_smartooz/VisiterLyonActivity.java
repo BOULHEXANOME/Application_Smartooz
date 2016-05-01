@@ -131,6 +131,11 @@ public class VisiterLyonActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchString = edittext.getText().toString();
                 List<String> newMotsClefs = new ArrayList<String>();
+
+                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
+                    newMotsClefs.add(searchString);
+                }
+
                 for(String mot:motsClefs) {
                     if(mot.startsWith(searchString)) {
                         newMotsClefs.add(mot);
