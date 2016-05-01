@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.LinearLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,9 +17,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
+//import com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar;
 import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,31 @@ public class VisiterLyonActivity extends AppCompatActivity {
         toolbar.setTitle("Visiter Lyon");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
+
+        // Range seekbar
+        final RangeSeekBar<Integer> rangeSeekBar = new RangeSeekBar<Integer>(this);
+        rangeSeekBar.setRangeValues(0, 100);
+        rangeSeekBar.setSelectedMinValue(20);
+        rangeSeekBar.setSelectedMaxValue(50);
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layoutrangebar);
+        assert layout != null;
+        layout.addView(rangeSeekBar);
+
+        // Texte de la range seekbar
+        final TextView textSeekBar = (TextView) findViewById(R.id.textSeekBar);
+        double min = Math.floor((double) rangeSeekBar.getSelectedMinValue()/10*100)/100;
+        double max = Math.floor((double) rangeSeekBar.getSelectedMaxValue()/10*100)/100;
+        textSeekBar.setText("De "+ min +" à "+ max +" km.");
+
+        rangeSeekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                double minVal = Math.floor((double) rangeSeekBar.getSelectedMinValue()/10*100)/100;
+                double maxVal = Math.floor((double) rangeSeekBar.getSelectedMaxValue()/10*100)/100;
+                textSeekBar.setText("De "+ minVal +" à "+ maxVal +" km.");
+            }
+        });
 
         final EditText edittext = (EditText)findViewById(R.id.rech_editText);
         assert edittext != null;
@@ -132,10 +158,6 @@ public class VisiterLyonActivity extends AppCompatActivity {
                 String searchString = edittext.getText().toString();
                 List<String> newMotsClefs = new ArrayList<String>();
 
-                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
-                    newMotsClefs.add(searchString);
-                }
-
                 for(String mot:motsClefs) {
                     if(mot.startsWith(searchString)) {
                         newMotsClefs.add(mot);
@@ -156,25 +178,6 @@ public class VisiterLyonActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 // TODO Auto-generated method stub
-
-            }
-        });
-
-        SeekBar longueurSeekBar = (SeekBar) findViewById(R.id.longueur_seekBar);
-        final TextView longueurValue = (TextView) findViewById(R.id.longueurVal_textView);
-        longueurSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                longueurValue.setText(String.valueOf(progress) + " m");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
