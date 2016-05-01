@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +23,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -30,13 +33,14 @@ import java.util.List;
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostTask.AsyncResponse {
 
-    private List<String> motsSelectionnes;
+    private List<Tuple<String, Integer>> motsSelectionnes;
     private ActionBar toolbar;
-    private List<String> motsClefs;
+    private List<Tuple<String, Integer>> motsClefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +59,13 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         final EditText edittext = (EditText)findViewById(R.id.rech_editText);
         assert edittext != null;
 
-        motsSelectionnes = new ArrayList<String>();
-        motsClefs = new ArrayList<String>();
-
-        motsClefs.add("banane");
-        motsClefs.add("babouin");
-        motsClefs.add("pomme");
-        motsClefs.add("clementine");
-        motsClefs.add("orange");
-        motsClefs.add("pomelo");
-        motsClefs.add("fraise");
+        motsSelectionnes = new ArrayList<>();
+        motsClefs = new ArrayList<>();
 
         final ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
         final ListView listMotsChoisis = (ListView) findViewById(R.id.motsChoisis_listView);
-        final ListAdapter adapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
-        final ListAdapter adaptChoisi = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
+        final ListAdapter adapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+        final ListAdapter adaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
 
         listMotsProposes.setAdapter(adapt);
         listMotsChoisis.setAdapter(adaptChoisi);
@@ -77,29 +73,29 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         listMotsProposes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String texte = (String) listMotsProposes.getItemAtPosition(position);
+                Tuple<String, Integer> keyword = (Tuple<String, Integer>) listMotsProposes.getItemAtPosition(position);
 
-                motsSelectionnes.add(texte);
-                motsClefs.remove(texte);
+                motsSelectionnes.add(keyword);
+                motsClefs.remove(keyword);
 
                 if(edittext.getText().toString().length() > 0) {
                     String searchString = edittext.getText().toString();
-                    List<String> newMotsClefs = new ArrayList<String>();
-                    for(String mot:motsClefs) {
-                        if(mot.startsWith(searchString)) {
+                    List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
+                    for(Tuple<String, Integer> mot:motsClefs) {
+                        if(mot.x.startsWith(searchString)) {
                             newMotsClefs.add(mot);
                         }
                     }
 
-                    ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                    ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
                     listMotsProposes.setAdapter(newAdapt);
 
                 } else {
-                    ListAdapter newAdaptProposes = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                    ListAdapter newAdaptProposes = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
                     listMotsProposes.setAdapter(newAdaptProposes);
                 }
 
-                ListAdapter newAdaptChoisi = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
+                ListAdapter newAdaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
 
                 System.out.println(motsSelectionnes);
@@ -109,28 +105,28 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         listMotsChoisis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String texte = (String) listMotsChoisis.getItemAtPosition(position);
+                Tuple<String, Integer> keyword = (Tuple<String, Integer>) listMotsChoisis.getItemAtPosition(position);
 
-                motsSelectionnes.remove(texte);
-                motsClefs.add(texte);
+                motsSelectionnes.remove(keyword);
+                motsClefs.add(keyword);
 
                 if(edittext.getText().toString().length() > 0) {
                     String searchString = edittext.getText().toString();
-                    List<String> newMotsClefs = new ArrayList<String>();
-                    for (String mot : motsClefs) {
-                        if (mot.startsWith(searchString)) {
+                    List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
+                    for (Tuple<String, Integer> mot : motsClefs) {
+                        if (mot.x.startsWith(searchString)) {
                             newMotsClefs.add(mot);
                         }
                     }
 
-                    ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                    ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
                     listMotsProposes.setAdapter(newAdapt);
                 } else {
-                    ListAdapter newAdaptProposes = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                    ListAdapter newAdaptProposes = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
                     listMotsProposes.setAdapter(newAdaptProposes);
                 }
 
-                ListAdapter newAdaptChoisis = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
+                ListAdapter newAdaptChoisis = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
 
 
@@ -143,19 +139,19 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchString = edittext.getText().toString();
-                List<String> newMotsClefs = new ArrayList<String>();
+                List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
 
                 if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
-                    newMotsClefs.add(searchString);
+                    newMotsClefs.add(new Tuple(searchString, -1));
                 }
 
-                for(String mot:motsClefs) {
-                    if(mot.startsWith(searchString)) {
+                for(Tuple<String, Integer> mot:motsClefs) {
+                    if(mot.x.startsWith(searchString)) {
                         newMotsClefs.add(mot);
                     }
                 }
 
-                ListAdapter newAdapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
                 listMotsProposes.setAdapter(newAdapt);
             }
 
@@ -224,7 +220,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             // logout
             PostTask logout_thread = new PostTask(Config.getRequest(Config.LOGOUT));
             JsonObject emptyJson = new JsonObject();
-            logout_thread.delegate = this;
+            logout_thread.delegate = new HandleLogout(this);
             logout_thread.execute(emptyJson);
             finish();
         }
@@ -240,6 +236,10 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
             startActivity(intent);
+        }else{
+            GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_KEYWORDS_OF_CIRCUIT));
+            getKeywordsThread.delegate = new HandleGetKeywordsResponse(this);
+            getKeywordsThread.execute();
         }
     }
 
@@ -275,5 +275,65 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         emailText.setText(User.getInstance().getEmail());
     }
 
+    public void keywordsReceived(JsonObject results){
+        if (results != null && results.get("status").getAsString().equals("OK")) {
+            JsonArray keywords = (JsonArray)results.get("keywords");
+            for(JsonElement k: keywords){
+                String kName = ((JsonObject)k).get("name").getAsString();
+                int id = ((JsonObject)k).get("id").getAsInt();
+                motsClefs.add(new Tuple<>(kName, id));
+                ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
+                ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                listMotsProposes.setAdapter(newAdapt);
+            }
+        }
+    }
 
+    public void logoutReceived(JsonObject results){
+        if (results == null || !results.get("status").getAsString().equals("OK")) {
+            System.err.println("ERROR LOGOUT : " + results);
+        }else{
+            finish();
+        }
+    }
+}
+
+class HandleGetKeywordsResponse implements GetTask.AsyncResponse{
+
+    private VisiterLyonActivity visiterLyonActivity;
+
+    public HandleGetKeywordsResponse(VisiterLyonActivity visiterLyonActivity) {
+        this.visiterLyonActivity = visiterLyonActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.visiterLyonActivity.keywordsReceived(results);
+    }
+}
+
+class HandleLogout implements PostTask.AsyncResponse{
+
+    private VisiterLyonActivity visiterLyonActivity;
+
+    public HandleLogout(VisiterLyonActivity visiterLyonActivity) {
+        this.visiterLyonActivity = visiterLyonActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.visiterLyonActivity.logoutReceived(results);
+    }
+}
+
+class Tuple<X, Y> {
+    public final X x;
+    public final Y y;
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
+    public String toString(){
+        return x.toString();
+    }
 }
