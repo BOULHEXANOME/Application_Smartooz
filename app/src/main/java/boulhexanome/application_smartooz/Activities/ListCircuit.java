@@ -1,11 +1,14 @@
 package boulhexanome.application_smartooz.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
+import boulhexanome.application_smartooz.Model.CurrentCircuits;
 import boulhexanome.application_smartooz.R;
 
 public class ListCircuit extends AppCompatActivity {
@@ -33,9 +37,11 @@ public class ListCircuit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_circuit);
-        listParcours = (ListView) findViewById(R.id.listViewParcours);
-        parcours = new ArrayList<Circuit>();
 
+        listParcours = (ListView) findViewById(R.id.listViewParcours);
+        parcours = CurrentCircuits.getInstance().getListOfCircuits();
+
+        /*parcours = new ArrayList<Circuit>();
         ArrayList<String> tags = new ArrayList<>();
         tags.add("try");
         tags.add("better");
@@ -54,7 +60,7 @@ public class ListCircuit extends AppCompatActivity {
         parcours.add(circuit);
         parcours.add(circuit2);
         parcours.add(circuit3);
-        parcours.add(circuit4);
+        parcours.add(circuit4);*/
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
@@ -69,6 +75,16 @@ public class ListCircuit extends AppCompatActivity {
 
         adapter = new ParcoursAdapter(ListCircuit.this, parcours);
         listParcours.setAdapter(adapter);
+        listParcours.setClickable(true);
+        listParcours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                Circuit c = (Circuit)listParcours.getItemAtPosition(position);
+                CurrentCircuits.getInstance().setSelectedCircuit(c);
+                Intent myIntent = new Intent(ListCircuit.this, CircuitDetailsActivity.class);
+                ListCircuit.this.startActivity(myIntent);
+            }
+        });
     }
 
     @Override

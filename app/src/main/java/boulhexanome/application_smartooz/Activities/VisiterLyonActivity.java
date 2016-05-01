@@ -1,13 +1,10 @@
 package boulhexanome.application_smartooz.Activities;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -30,6 +28,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +43,6 @@ import boulhexanome.application_smartooz.WebServices.PostTask;
 public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostTask.AsyncResponse {
 
     private List<Tuple<String, Integer>> motsSelectionnes;
-    private ActionBar toolbar;
     private List<Tuple<String, Integer>> motsClefs;
 
     protected void hideKeyboard(int layout) {
@@ -70,11 +69,19 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        
         hideKeyboard(R.id.visiter_layout1);
         hideKeyboard(R.id.visiter_layout2);
         hideKeyboard(R.id.visiter_layout3);
         hideKeyboard(R.id.visiter_layout4);
+
+        Button pageSuivante = (Button) findViewById(R.id.pageSuivante_button);
+        pageSuivante.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                callNextPage();
+            }
+        });
 
         // Range seekbar
         final RangeSeekBar<Integer> rangeSeekBar = new RangeSeekBar<Integer>(this);
@@ -120,14 +127,15 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Tuple<String, Integer> keyword = (Tuple<String, Integer>) listMotsProposes.getItemAtPosition(position);
 
-                motsSelectionnes.add(keyword);
+                if(!motsSelectionnes.contains(keyword))
+                    motsSelectionnes.add(keyword);
                 motsClefs.remove(keyword);
 
                 if(edittext.getText().toString().length() > 0) {
-                    String searchString = edittext.getText().toString();
+                    String searchString = edittext.getText().toString().toUpperCase();
                     List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
                     for(Tuple<String, Integer> mot:motsClefs) {
-                        if(mot.x.startsWith(searchString)) {
+                        if(mot.x.contains(searchString) && !newMotsClefs.contains(mot)) {
                             newMotsClefs.add(mot);
                         }
                     }
@@ -142,8 +150,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
-
-                System.out.println(motsSelectionnes);
             }
         });
 
@@ -161,13 +167,14 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                 Tuple<String, Integer> keyword = (Tuple<String, Integer>) listMotsChoisis.getItemAtPosition(position);
 
                 motsSelectionnes.remove(keyword);
-                motsClefs.add(keyword);
+                if(!motsClefs.contains(keyword))
+                    motsClefs.add(keyword);
 
                 if(edittext.getText().toString().length() > 0) {
-                    String searchString = edittext.getText().toString();
+                    String searchString = edittext.getText().toString().toUpperCase();
                     List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
                     for (Tuple<String, Integer> mot : motsClefs) {
-                        if (mot.x.startsWith(searchString)) {
+                        if (mot.x.contains(searchString) && !newMotsClefs.contains(mot)) {
                             newMotsClefs.add(mot);
                         }
                     }
@@ -181,10 +188,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisis = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
-
-
-
-                System.out.println(motsSelectionnes);
             }
         });
 
@@ -199,12 +202,12 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String searchString = edittext.getText().toString();
+                String searchString = edittext.getText().toString().toUpperCase();
                 List<Tuple<String, Integer>> newMotsClefs = new ArrayList<>();
 
                 for(Tuple<String, Integer> mot:motsClefs) {
-                    if(mot.x.startsWith(searchString)) {
-                        newMotsClefs.add(new Tuple(searchString, -1));
+                    if(mot.x.contains(searchString) && !newMotsClefs.contains(mot)) {
+                        newMotsClefs.add(mot);
                     }
                 }
 
@@ -225,6 +228,20 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
+    }
+
+    private void callNextPage() {
+        String params = "?";
+        for(Tuple<String, Integer> mot:motsSelectionnes) {
+            try {
+                params += "keywords=" + URLEncoder.encode(mot.x, "UTF-8") + "&";
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        GetTask getCircuitsByKeywordsThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_KEYWORD + params));
+        getCircuitsByKeywordsThread.delegate = new HandleGetCircuitsByKeywordsResponse(this);
+        getCircuitsByKeywordsThread.execute();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -254,7 +271,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             navigationView.setNavigationItemSelectedListener(this);
             navigationView.getMenu().getItem(0).setChecked(true);
             // logout
-            GetTask logout_thread = new GetTask(Config.getRequest(Config.LOGOUT));
+            PostTask logout_thread = new PostTask(Config.getRequest(Config.LOGOUT));
             JsonObject emptyJson = new JsonObject();
             logout_thread.delegate = new HandleLogout(this);
             logout_thread.execute(emptyJson);
@@ -313,11 +330,14 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
     public void keywordsReceived(JsonObject results){
         if (results != null && results.get("status").getAsString().equals("OK")) {
+            System.out.println(results);
             JsonArray keywords = (JsonArray)results.get("keywords");
             for(JsonElement k: keywords){
                 String kName = ((JsonObject)k).get("name").getAsString();
                 int id = ((JsonObject)k).get("id").getAsInt();
-                motsClefs.add(new Tuple<>(kName, id));
+                Tuple<String, Integer> keywordToAdd = new Tuple<>(kName, id);
+                if(!motsClefs.contains(keywordToAdd))
+                    motsClefs.add(keywordToAdd);
                 ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
                 ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
                 listMotsProposes.setAdapter(newAdapt);
@@ -328,9 +348,12 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
     public void logoutReceived(JsonObject results){
         if (results == null || !results.get("status").getAsString().equals("OK")) {
             System.err.println("ERROR LOGOUT : " + results);
-        }else{
-            finish();
         }
+        finish();
+    }
+
+    public void circuitsReceived(JsonObject results){
+        System.out.println(results);
     }
 }
 
@@ -348,7 +371,21 @@ class HandleGetKeywordsResponse implements GetTask.AsyncResponse{
     }
 }
 
-class HandleLogout implements GetTask.AsyncResponse{
+class HandleGetCircuitsByKeywordsResponse implements GetTask.AsyncResponse{
+
+    private VisiterLyonActivity visiterLyonActivity;
+
+    public HandleGetCircuitsByKeywordsResponse(VisiterLyonActivity visiterLyonActivity) {
+        this.visiterLyonActivity = visiterLyonActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.visiterLyonActivity.circuitsReceived(results);
+    }
+}
+
+class HandleLogout implements PostTask.AsyncResponse{
 
     private VisiterLyonActivity visiterLyonActivity;
 
@@ -371,5 +408,13 @@ class Tuple<X, Y> {
     }
     public String toString(){
         return x.toString();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        final Tuple other = (Tuple) obj;
+        return x.toString().equals(other.x.toString()) && y == other.y;
     }
 }
