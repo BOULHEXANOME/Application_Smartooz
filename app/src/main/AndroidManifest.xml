@@ -26,10 +26,12 @@
 
         <activity
             android:name=".Activities.LoginActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_login">
         </activity>
 
-        <activity android:name=".Activities.VisiterLyonActivity">
+        <activity android:name=".Activities.VisiterLyonActivity"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,7 +48,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".Activities.ChoixDuThemeActivity" />
+        <activity android:name=".Activities.ChoixDuThemeActivity"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".Activities.CreerParcours"

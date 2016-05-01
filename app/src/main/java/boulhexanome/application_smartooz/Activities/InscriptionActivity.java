@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -20,10 +22,25 @@ import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class InscriptionActivity extends AppCompatActivity implements PostTask.AsyncResponse{
 
+    protected void hideKeyboard(int layout) {
+        findViewById(layout).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return true;
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
+
+        hideKeyboard(R.id.inscription_layout1);
+        hideKeyboard(R.id.inscription_layout2);
+        hideKeyboard(R.id.inscription_layout3);
 
         Button mEmailSignUpButton = (Button) findViewById(R.id.inscription_button);
 
