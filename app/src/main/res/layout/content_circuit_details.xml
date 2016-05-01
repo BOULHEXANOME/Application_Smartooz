@@ -15,8 +15,9 @@
         android:id="@+id/circuit_details_map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="100" />
+        android:layout_height="match_parent"
+        android:layout_weight="100"
+        tools:context=".Activities.CircuitDetailsActivity"/>
 
     <LinearLayout
         android:clickable="true"
