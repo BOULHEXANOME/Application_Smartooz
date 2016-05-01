@@ -29,7 +29,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="50dp"
-        tools:context="boulhexanome.application_smartooz.CreerParcours_AjoutTag">
+        tools:context=".Activities.CreerParcours_AjoutTag">
 
         <TextView
             android:layout_width="wrap_content"

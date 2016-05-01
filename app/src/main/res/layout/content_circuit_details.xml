@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:weightSum="100"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="boulhexanome.application_smartooz.CircuitDetailsActivity">
+    tools:context=".Activities.CircuitDetailsActivity">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/circuit_details_map"

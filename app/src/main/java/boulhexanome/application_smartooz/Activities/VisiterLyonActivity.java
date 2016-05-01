@@ -1,12 +1,17 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
-import android.graphics.Color;
+import android.content.Intent;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,13 +20,19 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisiterLyonActivity extends AppCompatActivity {
+import boulhexanome.application_smartooz.Model.User;
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.PostTask;
+
+public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostTask.AsyncResponse {
 
     private List<String> motsSelectionnes;
     private ActionBar toolbar;
@@ -32,11 +43,14 @@ public class VisiterLyonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visiter_lyon);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        toolbar = getSupportActionBar();
-        toolbar.setTitle("Visiter Lyon");
-        toolbar.setDisplayHomeAsUpEnabled(true);
-        toolbar.setDisplayShowHomeEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         final EditText edittext = (EditText)findViewById(R.id.rech_editText);
         assert edittext != null;
@@ -57,7 +71,6 @@ public class VisiterLyonActivity extends AppCompatActivity {
         final ListAdapter adapt = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
         final ListAdapter adaptChoisi = new ArrayAdapter<String>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
 
-        assert listMotsProposes != null;
         listMotsProposes.setAdapter(adapt);
         listMotsChoisis.setAdapter(adaptChoisi);
 
@@ -178,5 +191,75 @@ public class VisiterLyonActivity extends AppCompatActivity {
 
             }
         });
+
+//        checkResumeData();
     }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_tours) {
+            Intent intent = new Intent(VisiterLyonActivity.this, Parcours.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_friends) {
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.create_parcours) {
+            Intent intent = new Intent(VisiterLyonActivity.this, CreerParcours.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_profile) {
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_preferences) {
+            Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        if (results == null || !results.get("status").getAsString().equals("OK")) {
+            Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkResumeData();
+    }
+
+    private void checkResumeData() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+
+        // désactiver item home (on est dessus)
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        // on se log -> si ça marche pas on lance l'interface de login
+        PostTask login_thread = new PostTask(Config.getRequest(Config.LOGIN));
+        login_thread.delegate = this;
+        String pseudo = User.getInstance().getUsername();
+        String mdp = User.getInstance().getPassword();
+        JsonObject user = new JsonObject();
+        user.addProperty("password", mdp);
+        user.addProperty("username", pseudo);
+        login_thread.execute(user);
+
+        TextView usernameText = (TextView) header.findViewById(R.id.username_textview_header);
+        usernameText.setText(User.getInstance().getUsername());
+        TextView emailText = (TextView) header.findViewById(R.id.email_textview_header);
+        emailText.setText(User.getInstance().getEmail());
+    }
+
+
 }

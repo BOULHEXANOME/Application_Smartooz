@@ -2,65 +2,41 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="boulhexanome.application_smartooz">
 
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!--
-<uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow" />
-        </activity>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Parcours"
+            android:name=".Activities.Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".InscriptionActivity">
 
-        </activity>
+        <activity android:name=".Activities.InscriptionActivity" />
+
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login">
+        </activity>
+
+        <activity android:name=".Activities.VisiterLyonActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".VisiterLyonActivity"></activity>
-        <activity android:name=".ListCircuit"></activity>
+
+        <activity android:name=".Activities.ListCircuit"/>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -70,18 +46,22 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ChoixDuThemeActivity" />
+        <activity android:name=".Activities.ChoixDuThemeActivity" />
+
         <activity
-            android:name=".CreerParcours"
+            android:name=".Activities.CreerParcours"
             android:label="@string/title_activity_creer_parcours"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".CreerParcours_AjoutTag" />
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".Activities.CreerParcours_AjoutTag" />
+
         <activity
-            android:name=".CircuitDetailsActivity"
+            android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
             android:theme="@style/AppTheme" />
+
         <activity
-            android:name=".CongratulationsCircuitEndActivity"
+            android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
             android:theme="@style/AppTheme" />
     </application>

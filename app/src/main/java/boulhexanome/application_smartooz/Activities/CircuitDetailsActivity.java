@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 
 public class CircuitDetailsActivity extends AppCompatActivity implements GetTask.AsyncResponse {

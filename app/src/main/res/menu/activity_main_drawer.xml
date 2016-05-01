@@ -5,8 +5,13 @@
 
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Accueil" />
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Visiter Lyon" />
+
+        <item
+            android:id="@+id/create_parcours"
+            android:icon="@drawable/ic_add_black_24dp"
+            android:title="Proposer un parcours" />
 
         <item
             android:id="@+id/nav_tours"
