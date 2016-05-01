@@ -216,6 +216,20 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_preferences) {
             Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        } else if(id == R.id.nav_login){
+            Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+            startActivity(intent);
+        } else if(id == R.id.nav_logout){
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            navigationView.getMenu().getItem(0).setChecked(true);
+            // logout
+            PostTask logout_thread = new PostTask(Config.getRequest(Config.LOGOUT));
+            JsonObject emptyJson = new JsonObject();
+            logout_thread.delegate = this;
+            logout_thread.execute(emptyJson);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
