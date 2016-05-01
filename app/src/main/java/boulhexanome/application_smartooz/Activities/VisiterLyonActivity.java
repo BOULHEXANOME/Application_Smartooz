@@ -1,13 +1,15 @@
 package boulhexanome.application_smartooz.Activities;
 
+
+
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,9 +18,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.RangeSeekBar;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
@@ -51,6 +54,31 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        // Range seekbar
+        final RangeSeekBar<Integer> rangeSeekBar = new RangeSeekBar<Integer>(this);
+        rangeSeekBar.setRangeValues(0, 100);
+        rangeSeekBar.setSelectedMinValue(20);
+        rangeSeekBar.setSelectedMaxValue(50);
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layoutrangebar);
+        assert layout != null;
+        layout.addView(rangeSeekBar);
+
+        // Texte de la range seekbar
+        final TextView textSeekBar = (TextView) findViewById(R.id.textSeekBar);
+        double min = Math.floor((double) rangeSeekBar.getSelectedMinValue()/10*100)/100;
+        double max = Math.floor((double) rangeSeekBar.getSelectedMaxValue()/10*100)/100;
+        textSeekBar.setText("De "+ min +" à "+ max +" km.");
+
+        rangeSeekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                double minVal = Math.floor((double) rangeSeekBar.getSelectedMinValue()/10*100)/100;
+                double maxVal = Math.floor((double) rangeSeekBar.getSelectedMaxValue()/10*100)/100;
+                textSeekBar.setText("De "+ minVal +" à "+ maxVal +" km.");
+            }
+        });
 
         final EditText edittext = (EditText)findViewById(R.id.rech_editText);
         assert edittext != null;
@@ -145,10 +173,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                 String searchString = edittext.getText().toString();
                 List<String> newMotsClefs = new ArrayList<String>();
 
-                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
-                    newMotsClefs.add(searchString);
-                }
-
                 for(String mot:motsClefs) {
                     if(mot.startsWith(searchString)) {
                         newMotsClefs.add(mot);
@@ -172,27 +196,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
-
-        SeekBar longueurSeekBar = (SeekBar) findViewById(R.id.longueur_seekBar);
-        final TextView longueurValue = (TextView) findViewById(R.id.longueurVal_textView);
-        longueurSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                longueurValue.setText(String.valueOf(progress) + " m");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-//        checkResumeData();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -213,6 +216,20 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_preferences) {
             Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
+        } else if(id == R.id.nav_login){
+            Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+            startActivity(intent);
+        } else if(id == R.id.nav_logout){
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            navigationView.getMenu().getItem(0).setChecked(true);
+            // logout
+            PostTask logout_thread = new PostTask(Config.getRequest(Config.LOGOUT));
+            JsonObject emptyJson = new JsonObject();
+            logout_thread.delegate = this;
+            logout_thread.execute(emptyJson);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -260,6 +277,4 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         TextView emailText = (TextView) header.findViewById(R.id.email_textview_header);
         emailText.setText(User.getInstance().getEmail());
     }
-
-
 }
