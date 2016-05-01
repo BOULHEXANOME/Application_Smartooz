@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,12 +45,13 @@ import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, PostTask.AsyncResponse {
+public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
     private ActionMode mActionMode;
+    private ClusterManager mClusterManager;
 
     Polyline currentLine;
 
@@ -230,30 +233,35 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         }
                     }
 
-                    TextView title = (TextView) v.findViewById(R.id.title_place);
-                    TextView description = (TextView) v.findViewById(R.id.description);
-                    TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
-                    TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
+                    if (placeMarked != null) {
 
-                    title.setText(placeMarked.getName());
-                    description.setText(placeMarked.getDescription());
-                    noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
+                        TextView title = (TextView) v.findViewById(R.id.title_place);
+                        TextView description = (TextView) v.findViewById(R.id.description);
+                        TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                        TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
+
+                        title.setText(placeMarked.getName());
+                        description.setText(placeMarked.getDescription());
+                        noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
 
 
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Tags : ");
-                    for (int i = 0; i < placeMarked.getKeywords().size(); i++) {
-                        stringBuilder.append(placeMarked.getKeywords().get(i) + " ");
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Tags : ");
+                        for (int i = 0; i < placeMarked.getKeywords().size(); i++) {
+                            stringBuilder.append(placeMarked.getKeywords().get(i) + " ");
+                        }
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                        tags.setText(stringBuilder.toString());
+
+                        final Place finalPlaceMarked = placeMarked;
                     }
-                    stringBuilder.deleteCharAt(stringBuilder.length()-1);
-                    tags.setText(stringBuilder.toString());
-
-                    final Place finalPlaceMarked = placeMarked;
 
                     // Returning the view containing InfoWindow contents
                     return v;
                 }
             });
+
+            setUpClusterer();
         }catch (SecurityException e){
             System.out.println(e);
         }
@@ -303,10 +311,34 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         return true;
     }
 
-    @Override
-    public void processFinish(JsonObject results) {
-        if (results.get("status") != null) {
+    private void setUpClusterer() {
 
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MyCluster>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems();
+    }
+
+    private void addItems() {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = 51.5145160;
+        double lng = -0.1270060;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            MyCluster offsetItem = new MyCluster(lat, lng);
+            mClusterManager.addItem(offsetItem);
         }
     }
 
@@ -325,7 +357,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     places.add(new Place(resultsArray.get(i).getAsJsonObject()));
-                    mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
+                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
                 }
             }
         }
@@ -394,5 +426,18 @@ class HandleGetPlaces implements GetTask.AsyncResponse{
     @Override
     public void processFinish(JsonObject results) {
         this.creerParcours.getPlacesReceived(results);
+    }
+}
+
+class MyCluster implements ClusterItem {
+    private final LatLng mPosition;
+
+    public MyCluster(double lat, double lng) {
+        mPosition = new LatLng(lat, lng);
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return mPosition;
     }
 }
