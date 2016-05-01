@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.AsyncResponse{
@@ -69,16 +71,8 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         final EditText edittext = (EditText)findViewById(R.id.motsClefsRech_editText);
         assert edittext != null;
 
-        motsSelectionnes = new ArrayList<String>();
-        motsClefs = new ArrayList<String>();
-
-        motsClefs.add("banane");
-        motsClefs.add("babouin");
-        motsClefs.add("pomme");
-        motsClefs.add("clementine");
-        motsClefs.add("orange");
-        motsClefs.add("pomelo");
-        motsClefs.add("fraise");
+        motsSelectionnes = new ArrayList<>();
+        motsClefs = new ArrayList<>();
 
         final ListView listMotsProposes = (ListView) findViewById(R.id.motsClefsTh_listView);
         final ListView listMotsChoisis = (ListView) findViewById(R.id.motsChoisisTh_listView);
@@ -95,14 +89,15 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String texte = (String) listMotsProposes.getItemAtPosition(position);
 
-                motsSelectionnes.add(texte);
+                if(!motsSelectionnes.contains(texte))
+                    motsSelectionnes.add(texte);
                 motsClefs.remove(texte);
 
                 if(edittext.getText().toString().length() > 0) {
-                    String searchString = edittext.getText().toString();
+                    String searchString = edittext.getText().toString().toUpperCase();
                     List<String> newMotsClefs = new ArrayList<String>();
                     for(String mot:motsClefs) {
-                        if(mot.startsWith(searchString)) {
+                        if(mot.contains(searchString) && !newMotsClefs.contains(mot)) {
                             newMotsClefs.add(mot);
                         }
                     }
@@ -118,7 +113,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 ListAdapter newAdaptChoisi = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
 
-                System.out.println(motsSelectionnes);
             }
         });
 
@@ -136,18 +130,19 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 String texte = (String) listMotsChoisis.getItemAtPosition(position);
 
                 motsSelectionnes.remove(texte);
-                motsClefs.add(texte);
+                if(!motsClefs.contains(texte))
+                    motsClefs.add(texte);
 
                 if(edittext.getText().toString().length() > 0) {
-                    String searchString = edittext.getText().toString();
-                    List<String> newMotsClefs = new ArrayList<String>();
+                    String searchString = edittext.getText().toString().toUpperCase();
+                    List<String> newMotsClefs = new ArrayList<>();
                     for (String mot : motsClefs) {
-                        if (mot.startsWith(searchString)) {
+                        if (mot.contains(searchString) && !newMotsClefs.contains(mot)) {
                             newMotsClefs.add(mot);
                         }
                     }
 
-                    ListAdapter newAdapt = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                    ListAdapter newAdapt = new ArrayAdapter<>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
                     listMotsProposes.setAdapter(newAdapt);
                 } else {
                     ListAdapter newAdaptProposes = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, motsClefs);
@@ -156,10 +151,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
                 ListAdapter newAdaptChoisis = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
-
-
-
-                System.out.println(motsSelectionnes);
             }
         });
 
@@ -174,20 +165,20 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String searchString = edittext.getText().toString();
-                List<String> newMotsClefs = new ArrayList<String>();
+                String searchString = edittext.getText().toString().toUpperCase();
+                List<String> newMotsClefs = new ArrayList<>();
 
-                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
+                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString) && !newMotsClefs.contains(searchString)) {
                     newMotsClefs.add(searchString);
                 }
 
                 for(String mot:motsClefs) {
-                    if(mot.startsWith(searchString)) {
+                    if(mot.contains(searchString) && !newMotsClefs.contains(mot)) {
                         newMotsClefs.add(mot);
                     }
                 }
 
-                ListAdapter newAdapt = new ArrayAdapter<String>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
+                ListAdapter newAdapt = new ArrayAdapter<>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, newMotsClefs);
                 listMotsProposes.setAdapter(newAdapt);
             }
 
@@ -214,13 +205,18 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                     circuit = User.getInstance().getCircuit_en_creation();
 
                     circuit.setKeywords((ArrayList<String>) motsSelectionnes);
-                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
-                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
+                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString().toUpperCase());
+                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString().toUpperCase());
 
                     addCircuit();
                 }
             });
         }
+
+
+        GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_KEYWORDS_OF_CIRCUIT));
+        getKeywordsThread.delegate = new HandleGetKeywordsResponseAddCircuit(this);
+        getKeywordsThread.execute();
     }
 
     @Override
@@ -265,14 +261,12 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         }
         jsonObject.add("places", places_array);
 
-        System.out.println(jsonObject);
         postTask.execute(jsonObject);
     }
 
     @Override
     public void processFinish(JsonObject results) {
         if (results != null) {
-            System.out.println(results.toString());
             if (results.get("status").getAsString().equals("OK")) {
                 Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();
                 setResult(2);
@@ -284,6 +278,34 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 Toast.makeText(ChoixDuThemeActivity.this, "BUG", Toast.LENGTH_SHORT).show();
             }
         }
+    }
 
+    public void keywordsReceived(JsonObject results){
+        if (results != null && results.get("status").getAsString().equals("OK")) {
+            JsonArray keywords = (JsonArray)results.get("keywords");
+            for(JsonElement k: keywords){
+                String kName = ((JsonObject)k).get("name").getAsString();
+                if(!motsClefs.contains(kName))
+                    motsClefs.add(kName);
+                ListView listMotsProposes = (ListView) findViewById(R.id.motsClefsTh_listView);
+                ListAdapter newAdapt = new ArrayAdapter<>(ChoixDuThemeActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                listMotsProposes.setAdapter(newAdapt);
+            }
+        }
+    }
+}
+
+
+class HandleGetKeywordsResponseAddCircuit implements GetTask.AsyncResponse{
+
+    private ChoixDuThemeActivity choixDuThemeActivity;
+
+    public HandleGetKeywordsResponseAddCircuit(ChoixDuThemeActivity choixDuThemeActivity) {
+        this.choixDuThemeActivity = choixDuThemeActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.choixDuThemeActivity.keywordsReceived(results);
     }
 }
