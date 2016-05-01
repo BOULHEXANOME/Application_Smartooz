@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -183,32 +184,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
         try{
             mMap.setMyLocationEnabled(true);
-
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    if (!modeAjout){
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                        marker.showInfoWindow();
-                        return true;
-                    } else {
-                        if (markers.contains(marker)){
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            markers.remove(marker);
-                            return true;
-                        } else {
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            markers.add(marker);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            marker.showInfoWindow();
-                            return true;
-                        }
-                    }
-                }
-            });
-
             // Setting a custom info window adapter for the google map
-            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
                 // Use default InfoWindow frame
                 @Override
@@ -261,7 +238,34 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 }
             });
 
-            setUpClusterer();
+            mClusterManager = new ClusterManager(this, mMap);
+            // Point the map's listeners at the listeners implemented by the cluster
+            // manager.
+            mMap.setOnCameraChangeListener(mClusterManager);
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if (!modeAjout){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                        marker.showInfoWindow();
+                        return true;
+                    } else {
+                        if (markers.contains(marker)){
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            markers.remove(marker);
+                            return true;
+                        } else {
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            markers.add(marker);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                            marker.showInfoWindow();
+                            return true;
+                        }
+                    }
+                }
+            });
+
+
         }catch (SecurityException e){
             System.out.println(e);
         }
@@ -311,36 +315,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         return true;
     }
 
-    private void setUpClusterer() {
-
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MyCluster>(this, mMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        mMap.setOnCameraChangeListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-
-        // Add cluster items (markers) to the cluster manager.
-        addItems();
-    }
-
-    private void addItems() {
-
-        // Set some lat/lng coordinates to start with.
-        double lat = 51.5145160;
-        double lng = -0.1270060;
-
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            MyCluster offsetItem = new MyCluster(lat, lng);
-            mClusterManager.addItem(offsetItem);
-        }
-    }
 
     public void visualizeReceived(JsonObject results){
         if (results != null) {
