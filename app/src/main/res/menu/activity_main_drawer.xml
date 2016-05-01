@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
@@ -24,7 +23,7 @@
 
     </group>
 
-    <item android:title="Paramètres">
+    <item android:title="Account">
         <menu>
             <item
                 android:id="@+id/nav_profile"
@@ -34,6 +33,15 @@
                 android:id="@+id/nav_preferences"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Préférences" />
+            <item
+                android:id="@+id/nav_login"
+                android:icon="@drawable/ic_input_black_24dp"
+                android:title="Login" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_lock_outline_black_24dp"
+                android:title="Logout" />
+
         </menu>
     </item>
 
