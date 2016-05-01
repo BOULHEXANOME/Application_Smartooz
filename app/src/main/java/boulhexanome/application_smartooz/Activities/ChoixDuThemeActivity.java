@@ -242,6 +242,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             if (results.get("status").getAsString().equals("OK")) {
                 Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();
                 setResult(2);
+                User.getInstance().setCircuit_en_creation(new Circuit());
                 finish();
             } else if (results.get("status").getAsString().equals("KO")) {
                 Toast.makeText(ChoixDuThemeActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
