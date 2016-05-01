@@ -279,7 +279,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -312,18 +311,27 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
     }
 
     public void keywordsReceived(JsonObject results){
-        if (results != null && results.get("status").getAsString().equals("OK")) {
-            System.out.println(results);
-            JsonArray keywords = (JsonArray)results.get("keywords");
-            for(JsonElement k: keywords){
-                String kName = ((JsonObject)k).get("name").getAsString();
-                int id = ((JsonObject)k).get("id").getAsInt();
-                Tuple<String, Integer> keywordToAdd = new Tuple<>(kName, id);
-                if(!motsClefs.contains(keywordToAdd))
-                    motsClefs.add(keywordToAdd);
-                ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
-                ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
-                listMotsProposes.setAdapter(newAdapt);
+        if(results !=null){
+            if (results.get("status").getAsString().equals("OK")) {
+                JsonArray keywords = (JsonArray)results.get("keywords");
+                for(JsonElement k: keywords){
+                    String kName = ((JsonObject)k).get("name").getAsString();
+                    int id = ((JsonObject)k).get("id").getAsInt();
+                    Tuple<String, Integer> keywordToAdd = new Tuple<>(kName, id);
+                    if(!motsClefs.contains(keywordToAdd))
+                        motsClefs.add(keywordToAdd);
+                    ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
+                    ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+                    listMotsProposes.setAdapter(newAdapt);
+                }
+            }else{
+                if(results.get("error").getAsString().contains("Please login")){
+                    Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(VisiterLyonActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -336,7 +344,29 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
     }
 
     public void circuitsReceived(JsonObject results){
-        System.out.println(results);
+        if(results !=null){
+            if (results.get("status").getAsString().equals("OK")) {
+//                JsonArray keywords = (JsonArray)results.get("keywords");
+//                for(JsonElement k: keywords){
+//                    String kName = ((JsonObject)k).get("name").getAsString();
+//                    int id = ((JsonObject)k).get("id").getAsInt();
+//                    Tuple<String, Integer> keywordToAdd = new Tuple<>(kName, id);
+//                    if(!motsClefs.contains(keywordToAdd))
+//                        motsClefs.add(keywordToAdd);
+//                    ListView listMotsProposes = (ListView) findViewById(R.id.motsClefs_listView);
+//                    ListAdapter newAdapt = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsClefs);
+//                    listMotsProposes.setAdapter(newAdapt);
+//                }
+            }else{
+                if(results.get("error").getAsString().contains("Please login")){
+                    Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(VisiterLyonActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }
 

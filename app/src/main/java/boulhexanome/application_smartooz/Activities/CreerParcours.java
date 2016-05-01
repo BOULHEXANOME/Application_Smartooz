@@ -72,7 +72,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         currentLine = null;
         modeAjout = false;
         markers = new ArrayList<Marker>();
-        ;
 
         parcours = new Circuit();
 
