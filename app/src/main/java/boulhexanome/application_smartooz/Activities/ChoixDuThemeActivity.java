@@ -7,7 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -35,6 +37,17 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
     private List<String> motsSelectionnes;
     private Circuit circuit;
 
+    protected void hideKeyboard(int layout) {
+        findViewById(layout).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return true;
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +60,11 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         toolbar.setTitle("Choix des informations");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
+
+        hideKeyboard(R.id.choix_layout1);
+        hideKeyboard(R.id.choix_layout2);
+        hideKeyboard(R.id.choix_layout3);
+        hideKeyboard(R.id.choix_layout4);
 
         final EditText edittext = (EditText)findViewById(R.id.motsClefsRech_editText);
         assert edittext != null;
@@ -104,6 +122,14 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             }
         });
 
+        listMotsProposes.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
         listMotsChoisis.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -134,6 +160,14 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
 
                 System.out.println(motsSelectionnes);
+            }
+        });
+
+        listMotsChoisis.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
             }
         });
 
