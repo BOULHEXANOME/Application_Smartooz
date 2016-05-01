@@ -16,10 +16,17 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChoixDuThemeActivity extends AppCompatActivity {
+import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.WebServices.GetTask;
+import boulhexanome.application_smartooz.WebServices.PostTask;
+
+public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.AsyncResponse{
 
     private List<String> motsClefs;
     private ActionBar toolbar;
@@ -170,6 +177,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
                     User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
 
                     //@TODO addCircuit au back
+                    addCircuit(User.getInstance().getCircuit_courant());
 
                     setResult(2);
                     finish();
@@ -195,5 +203,38 @@ public class ChoixDuThemeActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addCircuit(Circuit circuit) {
+        PostTask postTask = new PostTask(Config.getRequest(Config.ADD_CIRCUIT));
+        postTask.delegate = this;
+
+        String name = circuit.getName();
+        String description = circuit.getDescription();
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("name", name);
+        jsonObject.addProperty("description", description);
+
+        JsonArray keywords_array = new JsonArray();
+        for (int i = 0; i < circuit.getKeywords().size(); i++) {
+            keywords_array.add(circuit.getKeywords().get(i));
+        }
+        jsonObject.add("keywords", keywords_array);
+
+        JsonArray places_array = new JsonArray();
+        for (int i = 0; i < circuit.getPlaces().size(); i++) {
+            //places_array.add(circuit.getPlaces().get(i).get);
+        }
+
+        System.out.println(jsonObject);
+        postTask.execute(jsonObject);
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+
+        System.out.println(results);
+
     }
 }

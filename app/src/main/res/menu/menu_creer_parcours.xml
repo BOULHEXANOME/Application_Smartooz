@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_rechercher"
+        android:title="Rechercher"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_save"

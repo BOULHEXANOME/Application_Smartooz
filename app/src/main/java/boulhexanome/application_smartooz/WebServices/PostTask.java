@@ -63,17 +63,17 @@ public class PostTask extends AsyncTask<JsonObject, Void, Void> {
             urlConnection.setReadTimeout(10000);
             urlConnection.setRequestProperty("Content-Type", "application/json");
 
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                urlConnection.setRequestProperty("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
+
             if (params.length > 0) {
                 final JsonObject realjObject = params[0];
                 OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
                 out.write(realjObject.toString());
                 out.close();
-            }
-
-            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
-            {
-                urlConnection.setRequestProperty("Cookie",
-                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
             }
 
             if (urlConnection.getInputStream() != null) {
