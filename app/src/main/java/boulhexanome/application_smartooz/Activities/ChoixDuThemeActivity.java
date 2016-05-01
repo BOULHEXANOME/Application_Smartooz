@@ -1,6 +1,5 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +17,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Model.User;
 
 public class ChoixDuThemeActivity extends AppCompatActivity {
 

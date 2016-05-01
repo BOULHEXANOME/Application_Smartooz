@@ -1,13 +1,9 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -28,7 +24,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +32,11 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.PostTask;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.

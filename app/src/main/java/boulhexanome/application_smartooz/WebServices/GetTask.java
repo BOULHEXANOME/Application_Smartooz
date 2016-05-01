@@ -4,26 +4,18 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 
-import org.json.JSONObject;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import boulhexanome.application_smartooz.User;
+import boulhexanome.application_smartooz.Model.User;
 
-import static boulhexanome.application_smartooz.Tools.parseJson;
+import static boulhexanome.application_smartooz.Utils.Tools.parseJson;
 
 /**
  * Created by Nicolas on 28/04/2016.

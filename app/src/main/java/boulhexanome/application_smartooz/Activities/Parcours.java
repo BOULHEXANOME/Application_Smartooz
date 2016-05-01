@@ -1,36 +1,32 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.maps.android.PolyUtil;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 
-import static boulhexanome.application_smartooz.Tools.decodeDirections;
-import static boulhexanome.application_smartooz.Tools.generateGoogleMapURL;
+import static boulhexanome.application_smartooz.Utils.Tools.decodeDirections;
+import static boulhexanome.application_smartooz.Utils.Tools.generateGoogleMapURL;
 
 public class Parcours extends AppCompatActivity implements OnMapReadyCallback, GetTask.AsyncResponse {
 

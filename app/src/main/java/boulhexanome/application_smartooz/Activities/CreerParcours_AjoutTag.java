@@ -1,10 +1,12 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import boulhexanome.application_smartooz.R;
 
 public class CreerParcours_AjoutTag extends AppCompatActivity {
 

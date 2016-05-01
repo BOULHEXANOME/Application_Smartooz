@@ -26,7 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:uiOptions="splitActionBarWhenNarrow">
             <meta-data
                 android:name="android.support.UI_OPTIONS"
@@ -50,17 +50,17 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Parcours"
+            android:name=".Activities.Parcours"
             android:label="@string/title_activity_parcours" />
-        <activity android:name=".InscriptionActivity">
+        <activity android:name=".Activities.InscriptionActivity">
 
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login">
         </activity>
-        <activity android:name=".VisiterLyonActivity"></activity>
-        <activity android:name=".ListCircuit"></activity>
+        <activity android:name=".Activities.VisiterLyonActivity"></activity>
+        <activity android:name=".Activities.ListCircuit"></activity>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -70,18 +70,18 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ChoixDuThemeActivity" />
+        <activity android:name=".Activities.ChoixDuThemeActivity" />
         <activity
-            android:name=".CreerParcours"
+            android:name=".Activities.CreerParcours"
             android:label="@string/title_activity_creer_parcours"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".CreerParcours_AjoutTag" />
+        <activity android:name=".Activities.CreerParcours_AjoutTag" />
         <activity
-            android:name=".CircuitDetailsActivity"
+            android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CongratulationsCircuitEndActivity"
+            android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
             android:theme="@style/AppTheme" />
     </application>

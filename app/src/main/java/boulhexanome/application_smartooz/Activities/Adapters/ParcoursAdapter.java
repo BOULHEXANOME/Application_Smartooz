@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.R;
 
 /**
  * Created by Hugo on 28/04/2016.

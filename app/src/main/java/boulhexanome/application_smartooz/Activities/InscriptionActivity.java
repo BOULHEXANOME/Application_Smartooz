@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class InscriptionActivity extends AppCompatActivity implements PostTask.AsyncResponse{

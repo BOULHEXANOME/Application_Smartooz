@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -36,6 +36,9 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Tools;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 

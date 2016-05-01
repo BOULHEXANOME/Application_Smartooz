@@ -1,8 +1,6 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Model;
 
 import java.net.CookieManager;
-
-import boulhexanome.application_smartooz.Model.Circuit;
 
 /**
  * Created by Aiebobo on 26/04/2016.
