@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -32,11 +33,14 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
     private List<String> motsClefs;
     private ActionBar toolbar;
     private List<String> motsSelectionnes;
+    private Circuit circuit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choix_du_theme);
+
+        circuit = (Circuit) getIntent().getSerializableExtra("Circuit");
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
@@ -173,15 +177,13 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 @Override
                 public void onClick(View v) {
 
-                    User.getInstance().getCircuit_courant().setKeywords((ArrayList<String>) motsSelectionnes);
-                    User.getInstance().getCircuit_courant().setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
-                    User.getInstance().getCircuit_courant().setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
+                    circuit = User.getInstance().getCircuit_en_creation();
 
-                    //@TODO addCircuit au back
-                    addCircuit(User.getInstance().getCircuit_courant());
+                    circuit.setKeywords((ArrayList<String>) motsSelectionnes);
+                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
 
-                    setResult(2);
-                    finish();
+                    addCircuit();
                 }
             });
         }
@@ -206,7 +208,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         return super.onOptionsItemSelected(item);
     }
 
-    public void addCircuit(Circuit circuit) {
+    public void addCircuit() {
         PostTask postTask = new PostTask(Config.getRequest(Config.ADD_CIRCUIT));
         postTask.delegate = this;
 
@@ -225,8 +227,9 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
         JsonArray places_array = new JsonArray();
         for (int i = 0; i < circuit.getPlaces().size(); i++) {
-            //places_array.add(circuit.getPlaces().get(i).get);
+            places_array.add(circuit.getPlaces().get(i).getPosition().toString());
         }
+        jsonObject.add("places", places_array);
 
         System.out.println(jsonObject);
         postTask.execute(jsonObject);
@@ -234,8 +237,18 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
     @Override
     public void processFinish(JsonObject results) {
-
-        System.out.println(results);
+        if (results != null) {
+            System.out.println(results.toString());
+            if (results.get("status").getAsString().equals("OK")) {
+                Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();
+                setResult(2);
+                finish();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(ChoixDuThemeActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ChoixDuThemeActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 }

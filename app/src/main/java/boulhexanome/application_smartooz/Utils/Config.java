@@ -27,7 +27,7 @@ public class Config {
     public static final String DELETE_PLACE = "/delete-place";
 
     /************CIRCUIT************/
-    public static final String ADD_CIRCUIT = "/add-place";
+    public static final String ADD_CIRCUIT = "/add-circuit";
     public static final String GET_CIRCUIT_ID = "/get-circuit-id";
     public static final String UPTDATE_CIRCUIT = "/update_circuit";
     public static final String VOTE_CIRCUIT = "/vote-circuit";

@@ -3,6 +3,7 @@ package boulhexanome.application_smartooz.Model;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,16 +16,16 @@ import boulhexanome.application_smartooz.Model.Place;
  */
 public class Circuit {
 
-
     private String name;
     private String description;
     private float lengthKm;
     private float noteOn5;
     private int idUser;
-    private ArrayList<String> keywords;
-    private ArrayList<Place> places;
+    transient private ArrayList<String> keywords;
+    transient private ArrayList<Place> places;
     private int numberOfVotes;
     private int deniveleM;
+    private int id;
 
     public int getNumberOfVotes() {
         return numberOfVotes;
@@ -99,6 +100,14 @@ public class Circuit {
         this.places = places;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Circuit{" +
@@ -111,10 +120,11 @@ public class Circuit {
                 ", places=" + places +
                 ", numberOfVotes=" + numberOfVotes +
                 ", deniveleM=" + deniveleM +
+                ", id=" + id +
                 '}';
     }
 
-    public Circuit(String name, String description, float lengthKm, float noteOn5, int deniveleM, int idUser, int numberOfVotes, ArrayList<String>  keywords, ArrayList<Place> places) {
+    public Circuit(String name, String description, float lengthKm, float noteOn5, int deniveleM, int idUser, int numberOfVotes, ArrayList<String>  keywords, ArrayList<Place> places, int id) {
         this.name = name;
         this.description = description;
         this.lengthKm = lengthKm;
@@ -124,6 +134,7 @@ public class Circuit {
         this.places = places;
         this.numberOfVotes = numberOfVotes;
         this.deniveleM = deniveleM;
+        this.id = id;
     }
 
     public Circuit(String name, ArrayList<Place> places) {

@@ -158,29 +158,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
         getPlaces();
 
-        Place pointA = new Place(new LatLng(45.770861, 4.873173), "Point A");
-        Place pointB = new Place(new LatLng(45.763579, 4.890372), "Point B");
-        Place pointC = new Place(new LatLng(45.758049, 4.882280), "Point C");
-        Place pointD = new Place(new LatLng(45.769907, 4.863175), "Point D");
-
-        pointA.addKeyword("Musée");
-        pointA.addKeyword("Château");
-        pointB.addKeyword("Restaurant");
-        pointC.addKeyword("Restaurant");
-        pointD.addKeyword("Château");
-
-        places.add(pointA);
-        places.add(pointB);
-        places.add(pointC);
-        places.add(pointD);
-
-        pointA.setDescription("Point d'intérêt méga stylé !");
-
-        mMap.addMarker(pointA.toMarkerOptions());
-        mMap.addMarker(pointB.toMarkerOptions());
-        mMap.addMarker(pointC.toMarkerOptions());
-        mMap.addMarker(pointD.toMarkerOptions());
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -299,7 +276,15 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_save) {
-            User.getInstance().setCircuit_courant(new Circuit("",places));
+
+            for (int i = 0; i < markers.size(); i++){
+                for (int j = 0; j < places.size(); j++){
+                    if (places.get(j).getPosition().equals(markers.get(i).getPosition())){
+                        User.getInstance().getCircuit_en_creation().addPlace(places.get(i));
+                        j = places.size();
+                    }
+                }
+            }
             Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
             startActivityForResult(intent, 1);
         }

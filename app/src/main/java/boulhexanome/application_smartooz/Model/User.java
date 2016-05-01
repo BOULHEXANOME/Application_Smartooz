@@ -12,7 +12,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Circuit circuit_courant;
+    private Circuit circuit_en_creation;
     private CookieManager cookieManager;
 
     public static User getInstance(){
@@ -32,8 +32,8 @@ public class User {
         return username;
     }
 
-    public Circuit getCircuit_courant() {
-        return circuit_courant;
+    public Circuit getCircuit_en_creation() {
+        return circuit_en_creation;
     }
 
     public CookieManager getCookieManager() {
@@ -48,8 +48,8 @@ public class User {
         this.email = email;
     }
 
-    public void setCircuit_courant(Circuit circuit_courant) {
-        this.circuit_courant = circuit_courant;
+    public void setCircuit_en_creation(Circuit circuit_en_creation) {
+        this.circuit_en_creation = circuit_en_creation;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class User {
     public User() {
         username = "";
         email = "";
-        circuit_courant = null;
+        circuit_en_creation = new Circuit();
         cookieManager = new CookieManager();
     }
 
