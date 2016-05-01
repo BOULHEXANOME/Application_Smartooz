@@ -83,15 +83,15 @@ public class PostTask extends AsyncTask<JsonObject, Void, Void> {
             return null;
 
         } catch (ProtocolException e) {
-            Log.e("ProtocolException", "Inscription.java : protocol exception");
+            Log.e("ProtocolException", "PostTask.java : protocol exception");
             e.printStackTrace();
             return null;
         } catch (MalformedURLException e) {
-            Log.e("MalformedURLException", "Inscription.java : MalformedURLException");
+            Log.e("MalformedURLException", "PostTask.java : MalformedURLException");
             e.printStackTrace();
             return null;
         } catch (IOException e) {
-            Log.e("IOException", "Inscription.java : IOException");
+            Log.e("IOException", "PostTask.java : IOException");
             e.printStackTrace();
             return null;
         }
