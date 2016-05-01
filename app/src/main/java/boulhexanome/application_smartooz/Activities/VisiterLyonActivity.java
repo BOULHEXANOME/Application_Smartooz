@@ -192,6 +192,9 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
+
+        // on se log -> si ça marche pas on lance l'interface de login
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

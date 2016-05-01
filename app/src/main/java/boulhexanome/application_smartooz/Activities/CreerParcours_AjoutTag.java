@@ -19,7 +19,7 @@ public class CreerParcours_AjoutTag extends AppCompatActivity {
         boutonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreerParcours_AjoutTag.this, MainActivity.class);
+                Intent intent = new Intent(CreerParcours_AjoutTag.this, VisiterLyonActivity.class);
                 startActivity(intent);
             }
         });
