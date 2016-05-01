@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class InscriptionActivity extends AppCompatActivity implements PostTask.AsyncResponse{
@@ -128,9 +131,8 @@ public class InscriptionActivity extends AppCompatActivity implements PostTask.A
             if (results.get("status").getAsString().equals("OK")) {
                 User.getInstance().setEmail(results.get("email").getAsString());
                 User.getInstance().setUsername(results.get("username").getAsString());
-                Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
-                startActivity(intent);
-                //Toast.makeText(InscriptionActivity.this, User.getInstance().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(InscriptionActivity.this, "Inscription réussie, veuillez vous connecter", Toast.LENGTH_SHORT).show();
+                finish();
 
             } else if (results.get("status").getAsString().equals("KO")) {
                 Toast.makeText(InscriptionActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();

@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Activities;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
+import boulhexanome.application_smartooz.R;
 
 public class ListCircuit extends AppCompatActivity {
     private ListView listParcours;

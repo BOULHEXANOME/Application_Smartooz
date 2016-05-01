@@ -1,4 +1,4 @@
-package boulhexanome.application_smartooz;
+package boulhexanome.application_smartooz.Utils;
 
 /**
  * Created by Papin on 29/04/2016.
