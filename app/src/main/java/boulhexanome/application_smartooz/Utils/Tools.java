@@ -17,8 +17,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,17 +34,17 @@ import boulhexanome.application_smartooz.WebServices.PostTask;
  */
 public class Tools {
 
-    public static JsonObject parseJson(InputStream is) {
-        BufferedReader in = new BufferedReader(new InputStreamReader(is));
+    public static JsonObject parseJson(InputStream is) throws UnsupportedEncodingException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(is,"UTF-8"));
         StringBuilder stringBuilder = new StringBuilder();
         String inputLine;
-
 
         try {
             while ((inputLine = in.readLine()) != null) {
                 stringBuilder.append(inputLine);
             }
             String line = stringBuilder.toString();
+            System.out.println(line);
             JsonParser parser = new JsonParser();
             JsonElement jsnelement = (JsonElement) parser.parse(line);
             JsonObject jsnobject = jsnelement.getAsJsonObject();
