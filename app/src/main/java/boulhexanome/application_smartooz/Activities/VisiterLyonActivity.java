@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -45,6 +46,17 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
     private ActionBar toolbar;
     private List<Tuple<String, Integer>> motsClefs;
 
+    protected void hideKeyboard(int layout) {
+        findViewById(layout).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return true;
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +70,11 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        hideKeyboard(R.id.visiter_layout1);
+        hideKeyboard(R.id.visiter_layout2);
+        hideKeyboard(R.id.visiter_layout3);
+        hideKeyboard(R.id.visiter_layout4);
 
         // Range seekbar
         final RangeSeekBar<Integer> rangeSeekBar = new RangeSeekBar<Integer>(this);
