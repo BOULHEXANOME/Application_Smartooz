@@ -3,6 +3,7 @@ package boulhexanome.application_smartooz.Model;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
@@ -26,6 +27,7 @@ public class Place {
     private float noteOn5;
     private int numberOfVotes;
     private ArrayList<String> keywords;
+    private int id;
 
     public LatLng getPosition() {
         return position;
@@ -115,6 +117,14 @@ public class Place {
         this.keywords = keywords;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void addKeyword(String keyword){
         keywords.add(keyword);
     }
@@ -133,6 +143,7 @@ public class Place {
                 ", noteOn5=" + noteOn5 +
                 ", numberOfVotes=" + numberOfVotes +
                 ", keywords=" + keywords +
+                "' id=" + id +
                 '}';
     }
 
@@ -142,7 +153,7 @@ public class Place {
         keywords = new ArrayList<>();
     }
 
-    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, ArrayList<String> keywords) {
+    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, ArrayList<String> keywords, int id) {
         this.position = position;
         this.address = address;
         this.phone = phone;
@@ -154,6 +165,27 @@ public class Place {
         this.noteOn5 = noteOn5;
         this.numberOfVotes = numberOfVotes;
         this.keywords = keywords;
+        this.id = id;
+    }
+
+    public Place(JsonObject jsonObject) {
+        JsonArray keywords = jsonObject.getAsJsonArray("keywords");
+        ArrayList<String> pi_keywords = new ArrayList<>();
+        for (int j = 0; j < keywords.size(); j++) {
+            pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
+        }
+        this.position = new LatLng(jsonObject.get("lat").getAsDouble(), jsonObject.get("long").getAsDouble());
+        this.address = jsonObject.get("address").getAsString();
+        this.phone = jsonObject.get("phone").toString();
+        this.website = jsonObject.get("website").toString();
+        this.openingHours = jsonObject.get("openning_hours").getAsString();
+        this.name = jsonObject.get("name").getAsString();
+        this.description = jsonObject.get("description").getAsString();
+        this.idUser = jsonObject.get("id_user").getAsInt();
+        this.noteOn5 = jsonObject.get("note_5").getAsFloat();
+        this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();
+        this.keywords = pi_keywords;
+        this.id = jsonObject.get("id").getAsInt();
     }
 
     public MarkerOptions toMarkerOptions(){
