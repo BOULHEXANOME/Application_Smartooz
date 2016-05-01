@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.lang.reflect.Array;
@@ -40,6 +41,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
             viewHolder.denivele = (TextView) convertView.findViewById(R.id.textDenivele);
             viewHolder.tags = (TextView) convertView.findViewById(R.id.textViewTags);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.image);
+            viewHolder.note = (RatingBar) convertView.findViewById(R.id.noteParcours);
             convertView.setTag(viewHolder);
         }
 
@@ -48,8 +50,8 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.nom.setText(parcours.getName());
-        viewHolder.kilometre.setText(String.valueOf(parcours.getLengthKm())+"km");
-        viewHolder.denivele.setText(String.valueOf(parcours.getLengthKm()));
+        viewHolder.kilometre.setText("Longueur : "+String.valueOf(parcours.getLengthKm())+" km");
+        viewHolder.denivele.setText("Dénivelé : "+String.valueOf(parcours.getLengthKm())+" km");
         ArrayList<String> tags = parcours.getKeywords();
         String tag="";
         for(int i = 0;i<tags.size();i++){
@@ -63,6 +65,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
 
         }
         viewHolder.tags.setText(tag);
+        viewHolder.note.setRating(parcours.getNoteOn5());
         //TODO
         viewHolder.image.setImageDrawable(new ColorDrawable(Color.RED));
 
@@ -74,5 +77,6 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         public TextView denivele;
         public TextView tags;
         public ImageView image;
+        public RatingBar note;
     }
 }
