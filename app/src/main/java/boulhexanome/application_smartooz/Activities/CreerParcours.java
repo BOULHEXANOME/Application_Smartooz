@@ -43,7 +43,7 @@ import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, PostTask.AsyncResponse, GetTask.AsyncResponse {
+public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback, PostTask.AsyncResponse {
 
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
@@ -126,7 +126,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     if (currentLine != null) {
                         currentLine.remove();
                     }
-                    visualize();
+                    URL url = Tools.generateGoogleMapURL(markers);
+                    PostTask postTask = new PostTask(url.toString());
+                    postTask.delegate = new HandleVisualization(CreerParcours.this);
+                    postTask.execute();
                 }
             }
         });
@@ -156,7 +159,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         mMap.moveCamera(CameraUpdateFactory
                 .newLatLngBounds(GRAND_LYON,10));
 
-        getPlaces();
+        GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
+        getTask.delegate = new HandleGetPlaces(this);
+        getTask.execute();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -300,37 +305,30 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void processFinish(JsonObject results) {
-        if (results != null) {
-            if (results.getAsJsonArray("routes") != null) {
-                //Case googlemaps direction
-                List<LatLng> listePoints = Tools.decodeDirections(results);
-                currentLine = mMap.addPolyline(new PolylineOptions()
-                        .addAll(listePoints != null ? listePoints : null));
-            } else if (results.get("status") != null) {
-                //Case Backend
-                JsonArray resultsArray = results.getAsJsonArray("places");
-                System.out.println(resultsArray);
-                if (resultsArray != null) {
-                    for (int i = 0; i < resultsArray.size(); i++) {
-                        places.add(new Place(resultsArray.get(i).getAsJsonObject()));
-                        mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
-                    }
-                }
-            }
+        if (results.get("status") != null) {
+
         }
     }
 
-    public void visualize(){
-        URL url = Tools.generateGoogleMapURL(markers);
-        PostTask postTask = new PostTask(url.toString());
-        postTask.delegate = this;
-        postTask.execute();
+    public void visualizeReceived(JsonObject results){
+        if (results != null) {
+            List<LatLng> listePoints = Tools.decodeDirections(results);
+            currentLine = mMap.addPolyline(new PolylineOptions()
+                    .addAll(listePoints != null ? listePoints : null));
+        }
     }
 
-    public void getPlaces(){
-        GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
-        getTask.delegate = this;
-        getTask.execute();
+    public void getPlacesReceived(JsonObject results){
+        if (results != null) {
+            JsonArray resultsArray = results.getAsJsonArray("places");
+            System.out.println(resultsArray);
+            if (resultsArray != null) {
+                for (int i = 0; i < resultsArray.size(); i++) {
+                    places.add(new Place(resultsArray.get(i).getAsJsonObject()));
+                    mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
+                }
+            }
+        }
     }
 
     @Override
@@ -368,5 +366,33 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             setResult(2);
             finish();
         }
+    }
+}
+
+class HandleVisualization implements PostTask.AsyncResponse{
+
+    private CreerParcours creerParcours;
+
+    public HandleVisualization(CreerParcours creerParcours) {
+        this.creerParcours = creerParcours;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.creerParcours.visualizeReceived(results);
+    }
+}
+
+class HandleGetPlaces implements GetTask.AsyncResponse{
+
+    private CreerParcours creerParcours;
+
+    public HandleGetPlaces(CreerParcours creerParcours) {
+        this.creerParcours = creerParcours;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.creerParcours.getPlacesReceived(results);
     }
 }

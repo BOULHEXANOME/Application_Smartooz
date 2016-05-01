@@ -237,7 +237,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             navigationView.setNavigationItemSelectedListener(this);
             navigationView.getMenu().getItem(0).setChecked(true);
             // logout
-            PostTask logout_thread = new PostTask(Config.getRequest(Config.LOGOUT));
+            GetTask logout_thread = new GetTask(Config.getRequest(Config.LOGOUT));
             JsonObject emptyJson = new JsonObject();
             logout_thread.delegate = new HandleLogout(this);
             logout_thread.execute(emptyJson);
@@ -331,7 +331,7 @@ class HandleGetKeywordsResponse implements GetTask.AsyncResponse{
     }
 }
 
-class HandleLogout implements PostTask.AsyncResponse{
+class HandleLogout implements GetTask.AsyncResponse{
 
     private VisiterLyonActivity visiterLyonActivity;
 
