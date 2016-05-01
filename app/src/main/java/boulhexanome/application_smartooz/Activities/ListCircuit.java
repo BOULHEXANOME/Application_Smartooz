@@ -47,10 +47,10 @@ public class ListCircuit extends AppCompatActivity {
         tags.add("tag");
         tags.add("tag");
         tags.add("tag");
-        Circuit circuit = new Circuit("Randonnée dans les champs","grave stylé cette randonnée",(float)3.2,(float)5.0,3,300,300,tags,null);
-        Circuit circuit2 = new Circuit("Parcours tête d'Or","grave stylé cette randonnée",(float)3.2,(float)1.0,3,300,300,tags,null);
-        Circuit circuit4 = new Circuit("Visite vieux lyon","grave stylé cette randonnée",(float)3.2,(float)4.0,3,300,300,tags,null);
-        Circuit circuit3 = new Circuit("Fourvière","grave stylé cette randonnée",(float)3.2,(float)3.0,3,300,300,tags,null);
+        Circuit circuit = new Circuit("Randonnée dans les champs","grave stylé cette randonnée",(float)3.2,(float)5.0,3,300,300,tags,null,0);
+        Circuit circuit2 = new Circuit("Parcours tête d'Or","grave stylé cette randonnée",(float)3.2,(float)1.0,3,300,300,tags,null,1);
+        Circuit circuit4 = new Circuit("Visite vieux lyon","grave stylé cette randonnée",(float)3.2,(float)4.0,3,300,300,tags,null,2);
+        Circuit circuit3 = new Circuit("Fourvière","grave stylé cette randonnée",(float)3.2,(float)3.0,3,300,300,tags,null,3);
         parcours.add(circuit);
         parcours.add(circuit2);
         parcours.add(circuit3);
