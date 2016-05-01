@@ -32,6 +32,7 @@ import com.google.gson.JsonObject;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.Algorithm;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -243,25 +244,34 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             // manager.
             mMap.setOnCameraChangeListener(mClusterManager);
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    if (!modeAjout){
+                if (!modeAjout){
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                    marker.showInfoWindow();
+                    return true;
+                } else {
+                    if (markers.contains(marker)){
+                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        markers.remove(marker);
+                        return true;
+                    } else {
+                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                        markers.add(marker);
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                         marker.showInfoWindow();
                         return true;
-                    } else {
-                        if (markers.contains(marker)){
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            markers.remove(marker);
-                            return true;
-                        } else {
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            markers.add(marker);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            marker.showInfoWindow();
-                            return true;
-                        }
                     }
+                }
+                }
+            });
+
+            mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener() {
+                @Override
+                public boolean onClusterClick(Cluster cluster) {
+                    return true;
                 }
             });
 
