@@ -80,6 +80,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.circuit_details_map);
         mMapFragment.getMapAsync(this);
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -205,15 +206,8 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         mMap = googleMap;
 
 
-        LatLngBounds GRAND_LYON = new LatLngBounds(
+        final LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
-
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngBounds(GRAND_LYON,10));
-
-        GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
-        getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
-        getTask.execute();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -302,10 +296,51 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     return v;
                 }
             });
+
+            GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
+            getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
+            getTask.execute();
+
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(GRAND_LYON, 10));
+                }
+            });
+
         }catch (SecurityException e){
             System.out.println(e);
         }
 
+    }
+
+    //Gestion des permissions : à implémenter pour le bug Mapsize !
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case ASK_FOR_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
+
+                } else {
+
+                    // permission denied, boo!
+                }
+                return;
+            }
+            case ASK_FOR_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                } else {
+                    // permission denied, boo!
+                }
+                return;
+            }
+        }
     }
 
 
@@ -338,3 +373,5 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             this.circuitDetailsActivity.getPlacesReceived(results);
         }
     }
+
+
