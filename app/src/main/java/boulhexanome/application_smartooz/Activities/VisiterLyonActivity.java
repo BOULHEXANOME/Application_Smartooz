@@ -392,4 +392,12 @@ class Tuple<X, Y> {
     public String toString(){
         return x.toString();
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        final Tuple other = (Tuple) obj;
+        return x.toString().equals(other.x.toString()) && y == other.y;
+    }
 }
