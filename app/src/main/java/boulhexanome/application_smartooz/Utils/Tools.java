@@ -1,6 +1,8 @@
 package boulhexanome.application_smartooz.Utils;
 
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -20,7 +22,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import boulhexanome.application_smartooz.Activities.VisiterLyonActivity;
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.User;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
 /**
  * Created by Aiebobo on 28/04/2016.
@@ -135,7 +140,13 @@ public class Tools {
         JsonObject routes = resultsArray.get(0).getAsJsonObject();
         String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
         show = show.replace("\\\\", "\\");
-        List<LatLng> listePoints = PolyUtil.decode(show);
-        return listePoints;
+        try {
+            List<LatLng> listePoints = PolyUtil.decode(show);
+            return listePoints;
+        } catch(Exception e) {
+            Log.e("googleMapError", "Error while decoding polyline");
+            return null;
+        }
     }
+
 }

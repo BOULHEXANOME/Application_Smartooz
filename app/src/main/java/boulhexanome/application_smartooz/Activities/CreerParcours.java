@@ -37,6 +37,7 @@ import java.util.List;
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
@@ -162,6 +163,12 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         Place pointC = new Place(new LatLng(45.758049, 4.882280), "Point C");
         Place pointD = new Place(new LatLng(45.769907, 4.863175), "Point D");
 
+        pointA.addKeyword("Musée");
+        pointA.addKeyword("Château");
+        pointB.addKeyword("Restaurant");
+        pointC.addKeyword("Restaurant");
+        pointD.addKeyword("Château");
+
         places.add(pointA);
         places.add(pointB);
         places.add(pointC);
@@ -244,10 +251,20 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     TextView title = (TextView) v.findViewById(R.id.title_place);
                     TextView description = (TextView) v.findViewById(R.id.description);
                     TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                    TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
 
                     title.setText(placeMarked.getName());
                     description.setText(placeMarked.getDescription());
-                    noteOn5.setText(String.valueOf(placeMarked.getNoteOn5()));
+                    noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
+
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Tags : ");
+                    for (int i = 0; i < placeMarked.getKeywords().size(); i++) {
+                        stringBuilder.append(placeMarked.getKeywords().get(i) + " ");
+                    }
+                    stringBuilder.deleteCharAt(stringBuilder.length()-1);
+                    tags.setText(stringBuilder.toString());
 
                     final Place finalPlaceMarked = placeMarked;
 
@@ -277,6 +294,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             finish();
         }
 
+        if (id == R.id.action_rechercher) {
+
+        }
+
         if (id == R.id.action_save) {
 
             User.getInstance().setCircuit_courant(new Circuit("",places));
@@ -300,33 +321,36 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 //Case googlemaps direction
                 List<LatLng> listePoints = Tools.decodeDirections(results);
                 currentLine = mMap.addPolyline(new PolylineOptions()
-                        .addAll(listePoints));
+                        .addAll(listePoints != null ? listePoints : null));
             } else if (results.get("status") != null) {
                 //Case Backend
                 JsonArray resultsArray = results.getAsJsonArray("places");
-                for (int i = 0; i < resultsArray.size(); i++){
-                    JsonObject pi = resultsArray.get(i).getAsJsonObject();
-                    System.out.println(pi);
-                    JsonArray keywords = pi.getAsJsonArray("keywords");
-                    String[] pi_keywords = new String[keywords.size()];
-                    for (int j = 0; j < keywords.size();j++) {
-                        pi_keywords[j]=keywords.get(j).getAsJsonObject().get("name").getAsString();
-                    }
+                System.out.println(resultsArray);
+                if (resultsArray != null) {
+                    for (int i = 0; i < resultsArray.size(); i++) {
+                        JsonObject pi = resultsArray.get(i).getAsJsonObject();
+                        System.out.println(pi);
+                        JsonArray keywords = pi.getAsJsonArray("keywords");
+                        ArrayList<String> pi_keywords = new ArrayList<>();
+                        for (int j = 0; j < keywords.size(); j++) {
+                            pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
+                        }
 
-                    places.add(new Place(
-                            new LatLng(pi.get("lat").getAsDouble(), pi.get("long").getAsDouble()),
-                            pi.get("address").getAsString(),
-                            pi.get("phone").toString(),
-                            pi.get("website").toString(),
-                            pi.get("openning_hours").getAsString(),
-                            pi.get("name").getAsString(),
-                            pi.get("description").getAsString(),
-                            pi.get("id_user").getAsInt(),
-                            pi.get("note_5").getAsFloat(),
-                            pi.get("nb_vote").getAsInt(),
-                            pi_keywords
-                    ));
-                    mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
+                        places.add(new Place(
+                                new LatLng(pi.get("lat").getAsDouble(), pi.get("long").getAsDouble()),
+                                pi.get("address").getAsString(),
+                                pi.get("phone").toString(),
+                                pi.get("website").toString(),
+                                pi.get("openning_hours").getAsString(),
+                                pi.get("name").getAsString(),
+                                pi.get("description").getAsString(),
+                                pi.get("id_user").getAsInt(),
+                                pi.get("note_5").getAsFloat(),
+                                pi.get("nb_vote").getAsInt(),
+                                pi_keywords
+                        ));
+                        mMap.addMarker(new MarkerOptions().position(places.get(i).getPosition()));
+                    }
                 }
             }
         }
@@ -340,7 +364,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     }
 
     public void getPlaces(){
-        GetTask getTask = new GetTask("http://142.4.215.20:1723/get-places");
+        GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
         getTask.delegate = this;
         getTask.execute();
     }

@@ -20,14 +20,19 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostTask.AsyncResponse {
 
     private List<String> motsSelectionnes;
     private ActionBar toolbar;
@@ -150,6 +155,11 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchString = edittext.getText().toString();
                 List<String> newMotsClefs = new ArrayList<String>();
+
+                if(searchString.length() > 0 && !motsClefs.contains(searchString) && !motsSelectionnes.contains(searchString)) {
+                    newMotsClefs.add(searchString);
+                }
+
                 for(String mot:motsClefs) {
                     if(mot.startsWith(searchString)) {
                         newMotsClefs.add(mot);
@@ -195,6 +205,14 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
         // on se log -> si ça marche pas on lance l'interface de login
 
+        PostTask login_thread = new PostTask(Config.getRequest(Config.LOGIN));
+        login_thread.delegate = this;
+        String pseudo = User.getInstance().getUsername();
+        String mdp = User.getInstance().getPassword();
+        JsonObject user = new JsonObject();
+        user.addProperty("password", mdp);
+        user.addProperty("username", pseudo);
+        login_thread.execute(user);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -227,5 +245,15 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        if (results == null || !results.get("status").getAsString().equals("OK")) {
+            Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+
     }
 }

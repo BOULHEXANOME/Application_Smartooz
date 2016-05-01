@@ -10,6 +10,7 @@ public class User {
     private static User mInstance = null;
 
     private String username;
+    private String password;
     private String email;
     private Circuit circuit_courant;
     private CookieManager cookieManager;
@@ -64,5 +65,13 @@ public class User {
         email = "";
         circuit_courant = null;
         cookieManager = new CookieManager();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
