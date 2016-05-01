@@ -299,7 +299,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_save) {
-
             User.getInstance().setCircuit_courant(new Circuit("",places));
             Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
             startActivityForResult(intent, 1);
