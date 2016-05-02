@@ -28,9 +28,9 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuits;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.Model.User;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.WebServices.GetTask;
@@ -117,7 +117,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                     Circuit c = (Circuit)listParcoursCrees.getItemAtPosition(position);
-                    CurrentCircuits.getInstance().setSelectedCircuit(c);
+                    CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                     Intent myIntent = new Intent(MesParcoursActivity.this, CircuitDetailsActivity.class);
                     MesParcoursActivity.this.startActivity(myIntent);
                 }
@@ -172,7 +172,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 Circuit c = (Circuit)listParcours.getItemAtPosition(position);
-                CurrentCircuits.getInstance().setSelectedCircuit(c);
+                CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                 Intent myIntent = new Intent(MesParcoursActivity.this, CircuitDetailsActivity.class);
                 MesParcoursActivity.this.startActivity(myIntent);
             }

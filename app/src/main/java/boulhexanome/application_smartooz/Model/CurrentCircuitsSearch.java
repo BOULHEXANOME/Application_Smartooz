@@ -5,14 +5,14 @@ import java.util.ArrayList;
 /**
  * Created by nicol_000 on 01/05/2016.
  */
-public class CurrentCircuits {
+public class CurrentCircuitsSearch {
 
-    private static CurrentCircuits mInstance = null;
+    private static CurrentCircuitsSearch mInstance = null;
 
-    public static CurrentCircuits getInstance(){
+    public static CurrentCircuitsSearch getInstance(){
         if(mInstance == null)
         {
-            mInstance = new CurrentCircuits();
+            mInstance = new CurrentCircuitsSearch();
         }
         return mInstance;
     }

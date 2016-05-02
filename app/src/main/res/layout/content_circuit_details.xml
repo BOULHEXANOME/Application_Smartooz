@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <View
                 android:layout_width="match_parent"
@@ -94,28 +94,53 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false"
                 android:text="Mots-clefs :"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
 
             <TextView
                 android:id="@+id/length_km"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Longueur (km) :"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
 
             <TextView
                 android:id="@+id/circuit_height_difference_m"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dénivelé (m) :"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lancer ce parcours"
+                android:id="@+id/lancerCeParcours"
+                android:layout_gravity="center"
+                android:layout_margin="15dp" />
 
             <TextView
                 android:id="@+id/circuit_preview_photos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Photos :"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:text="Photos"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Points d&apos;intérêt du parcours"
+                android:id="@+id/places_list_text"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
 
             <ListView
                 android:layout_width="wrap_content"

@@ -14,6 +14,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service android:enabled="true" android:name=".Utils.LocationService" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -64,6 +67,9 @@
             android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
             android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.PlaceNearbyActivity">
+
+        </activity>
         <activity android:name=".Activities.MesParcoursActivity"></activity>
     </application>
 

@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.PostTask;
@@ -40,6 +42,16 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
             });
         }
 
+        int placeId = CurrentCircuitTravel.getInstance().getCircuitEnCours().getId();
+
+        PostTask inscription_thread = new PostTask(Config.getRequest(Config.CIRCUIT_DONE));
+        inscription_thread.delegate = new HandleCircuitDone(this);
+
+        JsonObject vote = new JsonObject();
+        vote.addProperty("id", placeId);
+
+        inscription_thread.execute(vote);
+
     }
 
     @Override
@@ -56,14 +68,13 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
     }
 
     protected void handleVote(float rating, boolean fromUser){
-        // TODO change !!! Get real id
-        int userId = 1;
+        int placeId = CurrentCircuitTravel.getInstance().getCircuitEnCours().getId();
 
         PostTask inscription_thread = new PostTask(Config.getRequest(Config.VOTE_CIRCUIT));
         inscription_thread.delegate = this;
 
         JsonObject vote = new JsonObject();
-        vote.addProperty("id", userId);
+        vote.addProperty("id", placeId);
         vote.addProperty("note", rating);
 
         inscription_thread.execute(vote);
@@ -71,13 +82,34 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
 
     @Override
     public void processFinish(JsonObject results) {
-        System.out.println(results.toString());
         if (results.get("status").getAsString().equals("OK")) {
             Toast.makeText(CongratulationsCircuitEndActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
         } else if (results.get("status").getAsString().equals("KO")) {
             Toast.makeText(CongratulationsCircuitEndActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(CongratulationsCircuitEndActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CongratulationsCircuitEndActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void circuitDoneReceived(JsonObject results) {
+        if (results.get("status").getAsString().equals("KO")) {
+            Toast.makeText(CongratulationsCircuitEndActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(CongratulationsCircuitEndActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+class HandleCircuitDone implements PostTask.AsyncResponse{
+    private CongratulationsCircuitEndActivity congratulationsCircuitEndActivity;
+
+    public HandleCircuitDone(CongratulationsCircuitEndActivity congratulationsCircuitEndActivity) {
+        this.congratulationsCircuitEndActivity = congratulationsCircuitEndActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.congratulationsCircuitEndActivity.circuitDoneReceived(results);
     }
 }
