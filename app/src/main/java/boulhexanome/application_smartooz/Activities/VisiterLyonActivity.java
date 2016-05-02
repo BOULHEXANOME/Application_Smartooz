@@ -1,8 +1,11 @@
 package boulhexanome.application_smartooz.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuits;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.RangeSeekBar;
@@ -44,6 +47,8 @@ import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class VisiterLyonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostTask.AsyncResponse {
 
+    private static final int ASK_FOR_ACCESS_FINE_LOCATION = 1;
+    private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 2;
     private List<Tuple<String, Integer>> motsSelectionnes;
     private List<Tuple<String, Integer>> motsClefs;
     private RangeSeekBar<Integer> rangeSeekBar;
@@ -231,6 +236,48 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
+        checkPermissionLocation();
+    }
+
+    private void checkPermissionLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    ASK_FOR_ACCESS_COARSE_LOCATION);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ASK_FOR_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case ASK_FOR_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
+
+                } else {
+
+                    // permission denied, boo!
+                }
+                return;
+            }
+            case ASK_FOR_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                } else {
+                    // permission denied, boo!
+                }
+                return;
+            }
+        }
     }
 
     private void callNextPage() {
@@ -380,7 +427,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
                     Toast.makeText(VisiterLyonActivity.this, "Désolé, aucun parcours ne correspond à vos critères.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                CurrentCircuits.getInstance().setListOfCircuits(circuitsToPass);
+                CurrentCircuitsSearch.getInstance().setListOfCircuits(circuitsToPass);
                 Intent intent = new Intent(VisiterLyonActivity.this, ListCircuit.class);
                 startActivity(intent);
             }else{

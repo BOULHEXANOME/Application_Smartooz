@@ -114,7 +114,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     }
                 }
                 Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
-                startActivityForResult(intent, 1);
             }
         });
 

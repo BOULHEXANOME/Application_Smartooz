@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -34,10 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuits;
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.Utils.LocationService;
 import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
@@ -119,8 +122,8 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         placesList = (ListView)findViewById(R.id.places_list);
 
         // Recuperation de l'objet circuit transmis depuis la liste des circuits
-        theCircuit = CurrentCircuits.getInstance().getSelectedCircuit();
-
+        theCircuit = CurrentCircuitsSearch.getInstance().getSelectedCircuit();
+        //theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
         if (theCircuit != null) {
             // MAJ des elements de la vue pour afficher les infos dans l'objet circuit
             circuitTitle.setText(theCircuit.getName());
@@ -138,6 +141,21 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
+            // Appels au Back pour recuperer les Places associees
+            // Pour chaque id de place contenue dans circuit, on envoie une requete au back pour recuperer ce circuit
+            //for (int i = 0; i < theCircuit.getPlaces.lenght; i++) {
+
+
+            //}
+
+            Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
+            lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+                    startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                }
+            });
         }
 
 
@@ -203,8 +221,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     ASK_FOR_ACCESS_COARSE_LOCATION);
         }
-        if (
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     ASK_FOR_ACCESS_FINE_LOCATION);
