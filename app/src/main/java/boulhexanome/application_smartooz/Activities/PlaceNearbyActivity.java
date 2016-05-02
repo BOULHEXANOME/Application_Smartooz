@@ -20,6 +20,7 @@ import boulhexanome.application_smartooz.WebServices.GetTask;
 
 public class PlaceNearbyActivity extends AppCompatActivity {
     private TextView textViewDescription;
+    private TextView textViewSubtitle;
     private TextView textViewTitle;
     String API_KEY = "AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U";
     @Override
@@ -28,6 +29,7 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_nearby);
         textViewDescription = (TextView)findViewById(R.id.textViewDescriptionPlace);
         textViewTitle = (TextView)findViewById(R.id.textViewTitlePlace);
+        textViewSubtitle = (TextView)findViewById(R.id.textViewSubtitlePlace);
         textViewDescription.setVerticalScrollBarEnabled(true);
         Circuit c = CurrentCircuitTravel.getInstance().getCircuitEnCours();
         String nom = c.getName();
@@ -88,8 +90,8 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         JsonElement description = descriptionLongue.get("articleBody");
         textViewTitle.setText("");
         textViewTitle.append(name.getAsString());
-        textViewTitle.append("\r\n");
-        textViewTitle.append(descriptionCourte.getAsString());
+        textViewSubtitle.setText("");
+        textViewSubtitle.append(descriptionCourte.getAsString());
         textViewDescription.setText("");
         textViewDescription.append(description.getAsString());
         if(results !=null){
