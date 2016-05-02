@@ -53,6 +53,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
     private ActionMode mActionModeAjout;
+    private ActionMode mActionModeRecherche;
+    ActionMode.Callback mActionModeCallbackRechercher;
     private ClusterManager mClusterManager;
 
     Polyline currentLine;
@@ -61,6 +63,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     boolean boucle;
     boolean modeAjout;
+    boolean modeRechercher;
 
     Circuit parcours;
     ArrayList<Place> places = new ArrayList<Place>();
@@ -85,6 +88,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         final FloatingActionButton ajouterPI = (FloatingActionButton) findViewById(R.id.action_ajouterPI);
         //Callback : mode Ajout
         final ActionMode.Callback mActionModeCallbackAjout = new CallbackAjout();
+        mActionModeCallbackRechercher = new CallbackRecherche();
         ajouterPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,11 +245,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
-            //mClusterManager.setRenderer(new MyClusterRenderer(this, mMap, mClusterManager, this));
-            
-
-            // Point the map's listeners at the listeners implemented by the cluster
-            // manager.
             mMap.setOnCameraChangeListener(mClusterManager);
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
@@ -301,7 +300,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
 
         if (id == R.id.action_rechercher) {
-
+            if (modeRechercher == false) {
+                mActionModeRecherche = CreerParcours.this.startSupportActionMode(mActionModeCallbackRechercher);
+                modeRechercher = true;
+            } else {
+                modeRechercher = false;
+                mActionModeRecherche.finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -425,6 +430,28 @@ class CallbackAjout implements ActionMode.Callback {
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         mode.setTitle("Ajouter une étape");
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+    }
+}
+
+class CallbackRecherche implements ActionMode.Callback {
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.menu_rechercher, menu);
+        return true;
+    }
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         return false;
     }
 
