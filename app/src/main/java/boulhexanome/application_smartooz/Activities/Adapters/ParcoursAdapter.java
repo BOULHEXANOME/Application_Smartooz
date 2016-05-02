@@ -51,7 +51,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         //il ne reste plus qu'à remplir notre vue
         viewHolder.nom.setText(parcours.getName());
         viewHolder.kilometre.setText("Longueur : "+String.valueOf(parcours.getLengthKm())+" km");
-        viewHolder.denivele.setText("Dénivelé : "+String.valueOf(parcours.getLengthKm())+" km");
+        viewHolder.denivele.setText("Dénivelé : "+String.valueOf(parcours.getDeniveleM())+" m");
         ArrayList<String> tags = parcours.getKeywords();
         String tag="";
         for(int i = 0;i<tags.size();i++){
@@ -66,6 +66,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         }
         viewHolder.tags.setText(tag);
         viewHolder.note.setRating(parcours.getNoteOn5());
+        viewHolder.note.setFocusable(false);
         //TODO
         viewHolder.image.setImageDrawable(new ColorDrawable(Color.RED));
 

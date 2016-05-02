@@ -24,8 +24,9 @@ public class Circuit {
     private float lengthKm;
     private float noteOn5;
     private int idUser;
-    transient private ArrayList<String> keywords;
-    transient private ArrayList<Place> places;
+    private ArrayList<String> keywords;
+    private ArrayList<Place> places;
+    private ArrayList<Integer> placesId;
     private int numberOfVotes;
     private int deniveleM;
     private int id;
@@ -107,6 +108,14 @@ public class Circuit {
         return id;
     }
 
+    public ArrayList<Integer> getPlacesId() {
+        return placesId;
+    }
+
+    public void setPlacesId(ArrayList<Integer> placesId) {
+        this.placesId = placesId;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -147,11 +156,22 @@ public class Circuit {
 
 
     public Circuit(JsonObject jsonObject) {
+
+        System.out.println("Pour Barbiche : " + jsonObject);
+
         JsonArray keywords = jsonObject.getAsJsonArray("keywords");
         ArrayList<String> pi_keywords = new ArrayList<>();
         for (int j = 0; j < keywords.size(); j++) {
             pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
         }
+
+        JsonArray placeId = jsonObject.getAsJsonArray("places");
+        ArrayList<Integer> pi_places = new ArrayList<>();
+        for (int j = 0; j < placeId.size(); j++) {
+            pi_places.add(placeId.get(j).getAsJsonObject().get("id_place").getAsInt());
+        }
+
+
         this.deniveleM = jsonObject.get("height_difference_m").getAsInt();
         this.lengthKm = jsonObject.get("length_km").getAsFloat();
         this.name = jsonObject.get("name").getAsString();
@@ -160,6 +180,7 @@ public class Circuit {
         this.noteOn5 = jsonObject.get("note_5").getAsFloat();
         this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();
         this.keywords = pi_keywords;
+        this.placesId = pi_places;
         this.id = jsonObject.get("id").getAsInt();
     }
 
