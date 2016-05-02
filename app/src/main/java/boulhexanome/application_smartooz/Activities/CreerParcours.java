@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,15 +25,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.Algorithm;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,10 +38,11 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.Utils.MyClusterRenderer;
 import boulhexanome.application_smartooz.Utils.Tools;
-import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
@@ -52,13 +51,14 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
-    private ActionMode mActionMode;
+    private ActionMode mActionModeAjout;
     private ClusterManager mClusterManager;
 
     Polyline currentLine;
 
     ArrayList<Marker> markers;
 
+    boolean boucle;
     boolean modeAjout;
 
     Circuit parcours;
@@ -76,64 +76,63 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
         currentLine = null;
         modeAjout = false;
+        boucle = false;
         markers = new ArrayList<Marker>();
 
         parcours = new Circuit();
 
         final FloatingActionButton ajouterPI = (FloatingActionButton) findViewById(R.id.action_ajouterPI);
-        final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_ajouter_etape, menu);
-                modeAjout = true;
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                mode.setTitle("Ajouter une étape");
-                ajouterPI.setImageResource(R.drawable.ic_done_white_24dp);
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                ajouterPI.setImageResource(R.drawable.ic_add_location_white_24dp);
-                modeAjout = false;
-            }
-        };
+        //Callback : mode Ajout
+        final ActionMode.Callback mActionModeCallbackAjout = new CallbackAjout();
         ajouterPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start the CAB using the ActionMode.Callback defined above
                 if (modeAjout == false) {
-                    mActionMode = CreerParcours.this.startSupportActionMode(mActionModeCallback);
+                    mActionModeAjout = CreerParcours.this.startSupportActionMode(mActionModeCallbackAjout);
+                    ajouterPI.setImageResource(R.drawable.ic_done_white_24dp);
+                    modeAjout = true;
                     v.setSelected(true);
                 } else {
-                    mActionMode.finish();
+                    ajouterPI.setImageResource(R.drawable.ic_add_location_white_24dp);
+                    modeAjout = false;
+                    mActionModeAjout.finish();
                 }
             }
         });
 
-        final FloatingActionButton visualiser = (FloatingActionButton) findViewById(R.id.action_visualiser);
-        visualiser.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton save = (FloatingActionButton) findViewById(R.id.action_save);
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (markers.size() >= 2) {
-                    if (currentLine != null) {
-                        currentLine.remove();
+                for (int i = 0; i < markers.size(); i++){
+                    for (int j = 0; j < places.size(); j++){
+                        if (places.get(j).getPosition().equals(markers.get(i).getPosition())){
+                            User.getInstance().getCircuit_en_creation().addPlace(places.get(i));
+                            j = places.size();
+                        }
                     }
-                    URL url = Tools.generateGoogleMapURL(markers);
-                    PostTask postTask = new PostTask(url.toString());
-                    postTask.delegate = new HandleVisualization(CreerParcours.this);
-                    postTask.execute();
+                }
+                Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
+            }
+        });
+
+        final FloatingActionButton boucle = (FloatingActionButton) findViewById(R.id.action_boucle);
+        boucle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreerParcours.this.markers.size() >= 2) {
+                    if (CreerParcours.this.boucle) {
+                        markers.remove(markers.size() - 1);
+                        CreerParcours.this.boucle = false;
+                        Toast.makeText(CreerParcours.this, "Le circuit ne boucle plus", Toast.LENGTH_SHORT).show();
+                        showPolyline();
+                    } else {
+                        markers.add(markers.get(0));
+                        CreerParcours.this.boucle = true;
+                        Toast.makeText(CreerParcours.this, "Le circuit boucle", Toast.LENGTH_SHORT).show();
+                        showPolyline();
+                    }
                 }
             }
         });
@@ -239,6 +238,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
+            //mClusterManager.setRenderer(new MyClusterRenderer(this, mMap, mClusterManager, this));
+            
+
             // Point the map's listeners at the listeners implemented by the cluster
             // manager.
             mMap.setOnCameraChangeListener(mClusterManager);
@@ -247,33 +249,31 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                if (!modeAjout){
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                    marker.showInfoWindow();
-                    return true;
-                } else {
-                    if (markers.contains(marker)){
-                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                        markers.remove(marker);
-                        return true;
-                    } else {
-                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                        markers.add(marker);
+                    if (!modeAjout){
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                         marker.showInfoWindow();
                         return true;
+                    } else {
+                        if (markers.contains(marker)){
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            markers.remove(marker);
+                            //Affichage dynamique du parcours
+                            showPolyline();
+                            return true;
+                        } else {
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            markers.add(marker);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                            marker.showInfoWindow();
+                            //Affichage dynamique du parcours
+                            if (markers.size() >= 2) {
+                                showPolyline();
+                            }
+                            return true;
+                        }
                     }
                 }
-                }
             });
-
-            mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener() {
-                @Override
-                public boolean onClusterClick(Cluster cluster) {
-                    return true;
-                }
-            });
-
 
         }catch (SecurityException e){
             System.out.println(e);
@@ -301,19 +301,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
         }
 
-        if (id == R.id.action_save) {
-
-            for (int i = 0; i < markers.size(); i++){
-                for (int j = 0; j < places.size(); j++){
-                    if (places.get(j).getPosition().equals(markers.get(i).getPosition())){
-                        User.getInstance().getCircuit_en_creation().addPlace(places.get(i));
-                        j = places.size();
-                    }
-                }
-            }
-            Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
-            startActivityForResult(intent, 1);
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -322,6 +309,16 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_creer_parcours, menu);
         return true;
+    }
+
+    public void showPolyline() {
+        if (currentLine != null) {
+            currentLine.remove();
+        }
+        URL url = Tools.generateGoogleMapURL(markers);
+        PostTask postTask = new PostTask(url.toString());
+        postTask.delegate = new HandleVisualization(CreerParcours.this);
+        postTask.execute();
     }
 
 
@@ -382,6 +379,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             finish();
         }
     }
+
+    public ArrayList<Marker> getMarkers() {
+        return markers;
+    }
 }
 
 class HandleVisualization implements PostTask.AsyncResponse{
@@ -412,15 +413,25 @@ class HandleGetPlaces implements GetTask.AsyncResponse{
     }
 }
 
-class MyCluster implements ClusterItem {
-    private final LatLng mPosition;
-
-    public MyCluster(double lat, double lng) {
-        mPosition = new LatLng(lat, lng);
+class CallbackAjout implements ActionMode.Callback {
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.menu_ajouter_etape, menu);
+        return true;
+    }
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        mode.setTitle("Ajouter une étape");
+        return false;
     }
 
     @Override
-    public LatLng getPosition() {
-        return mPosition;
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
     }
 }

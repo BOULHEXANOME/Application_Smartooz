@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -8,7 +9,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -27,13 +30,17 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.Utils.LocationService;
 import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
@@ -43,20 +50,20 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
-    ArrayList<Marker> markers;
+    ArrayList<Marker> markers = new ArrayList<Marker>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
     // Interface
     private ActionBar toolbar;
-
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
     boolean mapIsHidden;
 
     // Les elements qu'on doit mettre a jour
-    private TextView circuitTitle, circuitInformationsTextview, circuitDescription, timeMinutesTextview, lengthKmTextview, heightDifferenceTextview;
+    private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
     private RatingBar circuitRatingBar;
+    private ListView placesList;
 
     // Infos issues du serveur
     private Circuit theCircuit;
@@ -103,18 +110,20 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             }
         }); // Fin decla listener
 
-
         // Definition des objets graphiques que l'on va mettre a jour
         circuitTitle = (TextView) findViewById(R.id.circuit_title);
         circuitInformationsTextview = (TextView) findViewById(R.id.circuit_global_informations);
         circuitRatingBar = (RatingBar) findViewById(R.id.circuit_details_rating);
         circuitDescription = (TextView) findViewById(R.id.circuit_description);
-        timeMinutesTextview = (TextView) findViewById(R.id.time_minutes);
+        keywordsTextview = (TextView) findViewById(R.id.keywords_circuit_details);
         lengthKmTextview = (TextView) findViewById(R.id.length_km);
         heightDifferenceTextview = (TextView) findViewById(R.id.circuit_height_difference_m);
 
+        placesList = (ListView)findViewById(R.id.places_list);
+
         // Recuperation de l'objet circuit transmis depuis la liste des circuits
-        theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
+        theCircuit = CurrentCircuitsSearch.getInstance().getSelectedCircuit();
+        //theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
         if (theCircuit != null) {
             // MAJ des elements de la vue pour afficher les infos dans l'objet circuit
             circuitTitle.setText(theCircuit.getName());
@@ -125,10 +134,10 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 keywords += theCircuit.getKeywords().get(i) + " ";
             }
 
-            //circuitInformationsTextview.setText(Durée, theCircuit.getLengthKm(), keywords);
+            circuitInformationsTextview.setText(theCircuit.getLengthKm() + " km - " + keywords);
             circuitRatingBar.setRating(theCircuit.getNoteOn5());
             circuitDescription.setText(theCircuit.getDescription());
-            //timeMinutesTextview.setText("Durée conseillée : " + duree + " mins");
+            keywordsTextview.setText("Mots-clefs : " + keywords);
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
@@ -139,6 +148,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             //}
 
+            Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
+            lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+                    startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                }
+            });
         }
 
 
@@ -149,7 +166,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     synchronized public void processFinish(JsonObject results) {
 
-        // Les Json qui arrivent sont des places, les ajouter à la liste des places et maj la vue, cad ajouter un objet dans la liste
+        // Les Json qui arrivent sont des places, les ajouter à la liste des places et maj la vue
         if (results != null) {
 
             JsonObject thePlaceJson = results.getAsJsonObject("place");
@@ -167,20 +184,18 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     }
 
-    // Papin c'est pour toi !!
-    // Fais en sorte qu'on ajoute bien les places a la liste et que ça soit joli x)
     public void addPlaceInformationsToList(Place theNewPlace) {
 
         // Ajout d'un element a la liste des places et maj de ses infos sur la vue graphique
 
         //theNewPlace
+        //ListView placesList
 
 
     }
 
 
-
-    public void visualizeReceived(JsonObject results){
+    public void visualizeReceived(JsonObject results) {
         if (results != null) {
             List<LatLng> listePoints = Tools.decodeDirections(results);
             currentLine = mMap.addPolyline(new PolylineOptions()
@@ -188,15 +203,35 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
-    public void getPlacesReceived(JsonObject results){
+    public void getPlacesReceived(JsonObject results) {
         if (results != null) {
-            JsonArray resultsArray = results.getAsJsonArray("places");
-            System.out.println(resultsArray);
-            if (resultsArray != null) {
-                for (int i = 0; i < resultsArray.size(); i++) {
-                    listOfPlaces.add(new Place(resultsArray.get(i).getAsJsonObject()));
-                    mMap.addMarker(new MarkerOptions().position(listOfPlaces.get(i).getPosition()));
-                }
+            JsonObject resultObject = results.getAsJsonObject("place");
+            //System.out.println("Le results array : " + resultObject);
+            if (resultObject != null) {
+
+                Place newPlace = new Place(resultObject);
+                listOfPlaces.add(newPlace);
+
+                // MAJ du circuit
+                theCircuit.setPlaces(listOfPlaces);
+
+                // MAJ graphique de la liste des places
+                addPlaceInformationsToList(newPlace);
+
+                // Calcul de la polyligne via Google Maps
+                Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
+                markers.add(newMarker);
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
+                //newMarker.showInfoWindow();
+
+                //Affichage dynamique du parcours
+                URL url = Tools.generateGoogleMapURL(markers);
+                PostTask postTask = new PostTask(url.toString());
+                postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
+                postTask.execute();
+
+
+
             }
         }
     }
@@ -214,34 +249,25 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     ASK_FOR_ACCESS_COARSE_LOCATION);
         }
-        if (
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     ASK_FOR_ACCESS_FINE_LOCATION);
         }
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        try{
+        try {
             mMap.setMyLocationEnabled(true);
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
 
-                        if (markers.contains(marker)){
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            markers.remove(marker);
-                            return true;
-                        } else {
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            markers.add(marker);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            marker.showInfoWindow();
-                            return true;
-                        }
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                    marker.showInfoWindow();
+                    return true;
 
                 }
             });
@@ -265,8 +291,8 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                     LatLng position = arg0.getPosition();
                     Place placeMarked = null;
-                    for (int i = 0; i < listOfPlaces.size(); i++){
-                        if (listOfPlaces.get(i).getPosition().equals(position)){
+                    for (int i = 0; i < listOfPlaces.size(); i++) {
+                        if (listOfPlaces.get(i).getPosition().equals(position)) {
                             placeMarked = listOfPlaces.get(i);
                             i = listOfPlaces.size();
                         }
@@ -287,7 +313,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     for (int i = 0; i < placeMarked.getKeywords().size(); i++) {
                         stringBuilder.append(placeMarked.getKeywords().get(i) + " ");
                     }
-                    stringBuilder.deleteCharAt(stringBuilder.length()-1);
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                     tags.setText(stringBuilder.toString());
 
                     final Place finalPlaceMarked = placeMarked;
@@ -297,9 +323,16 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 }
             });
 
-            GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
-            getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
-            getTask.execute();
+
+            //Recuperation des id des places pour requetage
+            ArrayList<Integer> placesId = theCircuit.getPlacesId();
+
+            for (Integer id : placesId) {
+                GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES_ID) + "/" + id);
+                getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
+                getTask.execute();
+            }
+
 
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
@@ -308,7 +341,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 }
             });
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             System.out.println(e);
         }
 
@@ -322,11 +355,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             case ASK_FOR_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay!
 
                 } else {
-
                     // permission denied, boo!
                 }
                 return;
@@ -346,32 +377,32 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
 }
 
-    class HandleVisualizationDetailsCircuit implements PostTask.AsyncResponse{
+class HandleVisualizationDetailsCircuit implements PostTask.AsyncResponse {
 
-        private CircuitDetailsActivity circuitDetailsActivity;
+    private CircuitDetailsActivity circuitDetailsActivity;
 
-        public HandleVisualizationDetailsCircuit(CircuitDetailsActivity circuitDetailsActivity) {
-            this.circuitDetailsActivity = circuitDetailsActivity;
-        }
-
-        @Override
-        public void processFinish(JsonObject results) {
-            this.circuitDetailsActivity.visualizeReceived(results);
-        }
+    public HandleVisualizationDetailsCircuit(CircuitDetailsActivity circuitDetailsActivity) {
+        this.circuitDetailsActivity = circuitDetailsActivity;
     }
 
-    class HandleGetPlacesDetailsCircuit implements GetTask.AsyncResponse{
-
-        private CircuitDetailsActivity circuitDetailsActivity;
-
-        public HandleGetPlacesDetailsCircuit(CircuitDetailsActivity circuitDetailsActivity) {
-            this.circuitDetailsActivity = circuitDetailsActivity;
-        }
-
-        @Override
-        public void processFinish(JsonObject results) {
-            this.circuitDetailsActivity.getPlacesReceived(results);
-        }
+    @Override
+    public void processFinish(JsonObject results) {
+        this.circuitDetailsActivity.visualizeReceived(results);
     }
+}
+
+class HandleGetPlacesDetailsCircuit implements GetTask.AsyncResponse {
+
+    private CircuitDetailsActivity circuitDetailsActivity;
+
+    public HandleGetPlacesDetailsCircuit(CircuitDetailsActivity circuitDetailsActivity) {
+        this.circuitDetailsActivity = circuitDetailsActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.circuitDetailsActivity.getPlacesReceived(results);
+    }
+}
 
 

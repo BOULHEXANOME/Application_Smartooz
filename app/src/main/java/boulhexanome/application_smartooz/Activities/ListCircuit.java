@@ -11,13 +11,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
-import boulhexanome.application_smartooz.Model.CurrentCircuits;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.R;
 
 public class ListCircuit extends AppCompatActivity {
@@ -39,7 +38,7 @@ public class ListCircuit extends AppCompatActivity {
         setContentView(R.layout.activity_list_circuit);
 
         listParcours = (ListView) findViewById(R.id.listViewParcours);
-        parcours = CurrentCircuits.getInstance().getListOfCircuits();
+        parcours = CurrentCircuitsSearch.getInstance().getListOfCircuits();
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
@@ -58,8 +57,10 @@ public class ListCircuit extends AppCompatActivity {
         listParcours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                System.out.println("Rentre dans le Onclick !!");
                 Circuit c = (Circuit)listParcours.getItemAtPosition(position);
-                CurrentCircuits.getInstance().setSelectedCircuit(c);
+                CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                 Intent myIntent = new Intent(ListCircuit.this, CircuitDetailsActivity.class);
                 ListCircuit.this.startActivity(myIntent);
             }
