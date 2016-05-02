@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,13 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,9 +29,14 @@ import java.util.List;
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuits;
+import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.GetTask;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class MesParcoursActivity extends AppCompatActivity {
+public class MesParcoursActivity extends AppCompatActivity implements PostTask.AsyncResponse {
     private ListView listParcours;
     private ListView listParcoursCrees;
     private ActionBar toolbar;
@@ -37,6 +49,7 @@ public class MesParcoursActivity extends AppCompatActivity {
     private Menu menu;
     private ParcoursAdapter adapterEffectues;
     private ParcoursAdapter adapterCrees;
+    private List<Integer> idCircuitsEffectues;
 
 
 
@@ -47,7 +60,8 @@ public class MesParcoursActivity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
-        toolbar.setTitle("Mes Parcours");
+        assert toolbar != null;
+        toolbar.setTitle("Mes Parcours Créés et Effectués");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
@@ -58,7 +72,7 @@ public class MesParcoursActivity extends AppCompatActivity {
         //parcoursCrees = CurrentCircuits.getInstance().getListOfCircuits();
         // Pour les tests :
         parcoursCrees = new ArrayList<Circuit>();
-        ArrayList<String> keywordsCrees = new ArrayList<>();
+        /*ArrayList<String> keywordsCrees = new ArrayList<>();
         keywordsCrees.add("tag1");
         keywordsCrees.add("tag2");
         keywordsCrees.add("tag3");
@@ -68,7 +82,7 @@ public class MesParcoursActivity extends AppCompatActivity {
         parcoursCrees.add(circTestCrees);
         parcoursCrees.add(circTestCrees2);
         parcoursCrees.add(circTestCrees3);
-        parcoursCrees.add(circTestCrees);
+        parcoursCrees.add(circTestCrees);*/
 
         if(!parcoursCrees.isEmpty()) {
             TextView parcCrees_text = (TextView) findViewById(R.id.parcCrees_textView);
@@ -114,9 +128,12 @@ public class MesParcoursActivity extends AppCompatActivity {
 
         listParcours = (ListView) findViewById(R.id.mesParc_listView1);
 
-        //parcoursEffectues = CurrentCircuits.getInstance().getListOfCircuits();
-        // Pour les tests :
         parcoursEffectues = new ArrayList<>();
+        GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
+        getKeywordsThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
+        getKeywordsThread.execute();
+        // Pour les tests :
+
         ArrayList<String> keywords = new ArrayList<>();
         keywords.add("tag1");
         keywords.add("tag2");
@@ -189,17 +206,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = 1;
                     item.setTitle("Dénivelé ∧");
                     adapterEffectues.sort(new ComparateurDeniveleAsc());
-                    adapterCrees.sort(new ComparateurDeniveleAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleAsc());
+                    }
                 }else if(filterByDeniveleAsc==1){
                     filterByDeniveleAsc = 0;
                     item.setTitle("Dénivelé ∨");
                     adapterEffectues.sort(new ComparateurDeniveleDesc());
-                    adapterCrees.sort(new ComparateurDeniveleDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleDesc());
+                    }
                 }else{
                     filterByDeniveleAsc = 1;
                     item.setTitle("Dénivelé ∧");
                     adapterEffectues.sort(new ComparateurDeniveleAsc());
-                    adapterCrees.sort(new ComparateurDeniveleAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_km:
@@ -210,17 +233,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Kilomètre ∧");
                     adapterEffectues.sort(new ComparateurKmAsc());
-                    adapterCrees.sort(new ComparateurKmAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmAsc());
+                    }
                 }else if(filterByKmAsc==1){
                     filterByKmAsc = 0;
                     item.setTitle("Kilomètre ∨");
                     adapterEffectues.sort(new ComparateurKmDesc());
-                    adapterCrees.sort(new ComparateurKmDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmDesc());
+                    }
                 }else{
                     filterByKmAsc = 1;
                     item.setTitle("Kilomètre ∧");
                     adapterEffectues.sort(new ComparateurKmAsc());
-                    adapterCrees.sort(new ComparateurKmAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_notes:
@@ -231,17 +260,24 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Notes ∧");
                     adapterEffectues.sort(new ComparateurNoteAsc());
-                    adapterCrees.sort(new ComparateurNoteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteAsc());
+                    }
+
                 }else if(filterByNoteAsc==1){
                     filterByNoteAsc = 0;
                     item.setTitle("Notes ∨");
                     adapterEffectues.sort(new ComparateurNoteDesc());
-                    adapterCrees.sort(new ComparateurNoteDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteDesc());
+                    }
                 }else{
                     filterByNoteAsc = 1;
                     item.setTitle("Notes ∧");
                     adapterEffectues.sort(new ComparateurNoteAsc());
-                    adapterCrees.sort(new ComparateurNoteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_popularity:
@@ -252,17 +288,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Popularité ∧");
                     adapterEffectues.sort(new ComparateurPopulariteAsc());
-                    adapterCrees.sort(new ComparateurPopulariteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteAsc());
+                    }
                 }else if(filterByNbVoteAsc==1){
                     filterByNbVoteAsc = 0;
                     item.setTitle("Popularité ∨");
                     adapterEffectues.sort(new ComparateurPopulariteDesc());
-                    adapterCrees.sort(new ComparateurPopulariteDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteDesc());
+                    }
                 }else{
                     filterByNbVoteAsc = 1;
                     item.setTitle("Popularité ∧");
                     adapterEffectues.sort(new ComparateurPopulariteAsc());
-                    adapterCrees.sort(new ComparateurPopulariteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteAsc());
+                    }
                 }
                 break;
             case android.R.id.home:
@@ -346,5 +388,116 @@ public class MesParcoursActivity extends AppCompatActivity {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        if (results != null) {
+            if (results.get("status").getAsString().equals("OK")) {
+                Toast.makeText(MesParcoursActivity.this, "Liste des parcours", Toast.LENGTH_SHORT).show();
+                setResult(2);
+                User.getInstance().setCircuit_en_creation(new Circuit());
+                finish();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(MesParcoursActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MesParcoursActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void doneCircuitsReceived(JsonObject results) {
+        System.out.println("RESULTATS : "+results);
+        idCircuitsEffectues = new ArrayList<Integer>();
+        if (results != null) {
+            JsonArray resultsArray = results.getAsJsonArray("id");
+            System.out.println("RESULTARRAY : "+resultsArray);
+            if (resultsArray != null) {
+                for (int i = 0; i < resultsArray.size(); i++) {
+                    idCircuitsEffectues.add(resultsArray.get(i).getAsInt());
+                }
+            }
+            if(!idCircuitsEffectues.isEmpty()) {
+                for(int id:idCircuitsEffectues) {
+                    getCircuitById(id);
+                }
+            }
+        }
+    }
+
+    public Circuit getCircuitById(int id) {
+        /*PostTask postTask = new PostTask(Config.getRequest(Config.ADD_CIRCUIT));
+        postTask.delegate = this;
+
+        String name = circuit.getName();
+        String description = circuit.getDescription();
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("name", name);
+        jsonObject.addProperty("description", description);
+
+        JsonArray keywords_array = new JsonArray();
+        for (int i = 0; i < circuit.getKeywords().size(); i++) {
+            keywords_array.add(circuit.getKeywords().get(i));
+        }
+        jsonObject.add("keywords", keywords_array);
+
+        JsonArray places_array = new JsonArray();
+        for (int i = 0; i < circuit.getPlaces().size(); i++) {
+            places_array.add(circuit.getPlaces().get(i).getId());
+        }
+        jsonObject.add("places", places_array);
+
+        postTask.execute(jsonObject);*/
+        return null;
+    }
+
+    public void logoutReceived(JsonObject results){
+        if (results == null || !results.get("status").getAsString().equals("OK")) {
+            System.err.println("ERROR LOGOUT : " + results);
+        }
+        finish();
+    }
+}
+
+class HandleGetAllDoneCircuitsResponse implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetAllDoneCircuitsResponse(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.doneCircuitsReceived(results);
+    }
+}
+
+class HandleGetAllCreatedCircuitsResponse implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetAllCreatedCircuitsResponse(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        //this.mesParcoursActivity.createdCircuitsReceived(results);
+    }
+}
+
+class HandleLogoutParcours implements PostTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleLogoutParcours(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.logoutReceived(results);
     }
 }

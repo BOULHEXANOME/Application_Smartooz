@@ -293,7 +293,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
             startActivity(intent);
-        }else{
+        } else {
             GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_KEYWORDS_OF_CIRCUIT));
             getKeywordsThread.delegate = new HandleGetKeywordsResponse(this);
             getKeywordsThread.execute();
