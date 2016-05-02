@@ -59,5 +59,19 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="0dp"
             android:layout_marginEnd="30dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/action_boucle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="9dp"
+            android:clickable="true"
+            android:src="@drawable/ic_all_inclusive_white_24px"
+            android:layout_marginBottom="170dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="0dp"
+            android:layout_marginEnd="30dp"/>
     </RelativeLayout>
 </LinearLayout>
