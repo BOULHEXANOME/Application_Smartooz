@@ -110,6 +110,13 @@
                 android:text="Dénivelé (m) :"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lancer ce parcours"
+                android:id="@+id/lancerCeParcours"
+                android:layout_gravity="center" />
+
             <TextView
                 android:id="@+id/circuit_preview_photos"
                 android:layout_width="wrap_content"

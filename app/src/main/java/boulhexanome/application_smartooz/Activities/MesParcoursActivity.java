@@ -21,7 +21,7 @@ import java.util.List;
 
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuits;
+import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.R;
 
 public class MesParcoursActivity extends AppCompatActivity {
@@ -103,7 +103,7 @@ public class MesParcoursActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                     Circuit c = (Circuit)listParcoursCrees.getItemAtPosition(position);
-                    CurrentCircuits.getInstance().setSelectedCircuit(c);
+                    CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                     Intent myIntent = new Intent(MesParcoursActivity.this, CircuitDetailsActivity.class);
                     MesParcoursActivity.this.startActivity(myIntent);
                 }
@@ -155,7 +155,7 @@ public class MesParcoursActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 Circuit c = (Circuit)listParcours.getItemAtPosition(position);
-                CurrentCircuits.getInstance().setSelectedCircuit(c);
+                CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                 Intent myIntent = new Intent(MesParcoursActivity.this, CircuitDetailsActivity.class);
                 MesParcoursActivity.this.startActivity(myIntent);
             }
