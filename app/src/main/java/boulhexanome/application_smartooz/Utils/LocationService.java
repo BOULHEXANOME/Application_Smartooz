@@ -1,6 +1,9 @@
 package boulhexanome.application_smartooz.Utils;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +14,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import boulhexanome.application_smartooz.Activities.CongratulationsCircuitEndActivity;
+import boulhexanome.application_smartooz.Activities.LoginActivity;
+import boulhexanome.application_smartooz.Activities.PlaceNearbyActivity;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.R;
 
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
@@ -134,27 +144,49 @@ public class LocationService extends Service {
     {
         public void onLocationChanged(final Location loc)
         {
-            System.out.println("************************************** Location changed");
             if(isBetterLocation(loc, previousBestLocation)) {
-//                intent.putExtra("Latitude", loc.getLatitude());
-//                intent.putExtra("Longitude", loc.getLongitude());
-//                intent.putExtra("Provider", loc.getProvider());
-//                sendBroadcast(intent);
+                System.out.println("************************************** Location changed");
                 Place p = CurrentCircuitTravel.getInstance().getClosePlace(loc.getLatitude(), loc.getLongitude());
                 if(p != null){
-
+                    System.out.println("On y est !");
+                    ArrayList<Place> places = CurrentCircuitTravel.getInstance().getCircuitEnCours().getPlaces();
+                    int NOTIFICATION_ID = (int)(Math.random()*9999);
+                    if(places.indexOf(p) == places.size()-1 && ((double)(CurrentCircuitTravel.getInstance().getOnEstPassePar().size()) / (double)(places.size())) > 0.5 ){
+                        // on a fini le parcours -> on appelle la vue des congratulations
+                        NotificationCompat.Builder builder =
+                                new NotificationCompat.Builder(LocationService.this)
+                                        .setSmallIcon(R.drawable.logo_smartooz)
+                                        .setContentTitle("Félicitations vous avez fini le parcours ! Vous êtes arrivé  au point remarquable : \"" + p.getName() + "\"")
+                                        .setContentText("Découvrez-en plus sur \"" + p.getName() + "\"...");
+                        Intent intent = new Intent(LocationService.this, CongratulationsCircuitEndActivity.class);
+                        PendingIntent contentIntent = PendingIntent.getActivity(LocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        builder.setContentIntent(contentIntent);
+                        NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        nManager.notify(NOTIFICATION_ID, builder.build());
+                    }else{
+                        NotificationCompat.Builder builder =
+                                new NotificationCompat.Builder(LocationService.this)
+                                        .setSmallIcon(R.drawable.logo_smartooz)
+                                        .setContentTitle("Vous êtes arrivé  au point remarquable : \"" + p.getName() + "\"")
+                                        .setContentText("Découvrez-en plus sur \"" + p.getName() + "\"...");
+                        Intent intent = new Intent(LocationService.this, PlaceNearbyActivity.class);
+                        PendingIntent contentIntent = PendingIntent.getActivity(LocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        builder.setContentIntent(contentIntent);
+                        NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        nManager.notify(NOTIFICATION_ID, builder.build());
+                    }
                 }
             }
         }
 
         public void onProviderDisabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+            Toast.makeText( getApplicationContext(), "Le GPS n'est pas activé", Toast.LENGTH_SHORT ).show();
         }
 
         public void onProviderEnabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText( getApplicationContext(), "GPS activé : précision accrue.", Toast.LENGTH_SHORT).show();
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras)

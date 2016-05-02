@@ -13,6 +13,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 
@@ -27,7 +29,8 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         textViewDescription = (TextView)findViewById(R.id.textViewDescriptionPlace);
         textViewTitle = (TextView)findViewById(R.id.textViewTitlePlace);
         textViewDescription.setVerticalScrollBarEnabled(true);
-        String nom = "cathédrale saint jean";
+        Circuit c = CurrentCircuitTravel.getInstance().getCircuitEnCours();
+        String nom = c.getName();
         nom+="+lyon";
         String keywords = "";
         try {
