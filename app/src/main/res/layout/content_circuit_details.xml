@@ -71,7 +71,8 @@
             android:id="@+id/linear_layout_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:clickable="true">
 
             <TextView
                 android:id="@+id/circuit_description"
@@ -117,12 +118,19 @@
                 android:layout_marginBottom="5dp" />
 
             <Button
-                android:layout_width="match_parent"
+                android:layout_width="225dp"
                 android:layout_height="wrap_content"
                 android:text="Lancer ce parcours"
                 android:id="@+id/lancerCeParcours"
-                android:layout_gravity="center"
-                android:layout_margin="15dp" />
+                android:layout_margin="15dp"
+                android:layout_gravity="center_horizontal" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/action_add_photo"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_add_a_photo_white_24dp" />
 
             <TextView
                 android:id="@+id/circuit_preview_photos"

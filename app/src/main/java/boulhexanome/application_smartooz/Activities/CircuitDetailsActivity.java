@@ -3,7 +3,10 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +36,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +162,28 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 public void onClick(View v) {
                     CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
                     startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                }
+            });
+
+            final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
+            add.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int TAKE_PHOTO_CODE = 0;
+                    String file = "hola.jpg";
+                    File newfile = new File(file);
+                    try {
+                        newfile.createNewFile();
+                    }
+                    catch (IOException e)
+                    {
+                    }
+                    Uri outputFileUri = Uri.fromFile(newfile);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
                 }
             });
         }
