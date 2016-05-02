@@ -72,6 +72,12 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         //parcoursCrees = CurrentCircuits.getInstance().getListOfCircuits();
         // Pour les tests :
         parcoursCrees = new ArrayList<Circuit>();
+
+        // on délègue la tâche de la requête à un handler
+        GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUIT_ID));
+        getIdCircuitsCreatedThread.delegate = new HandleGetAllCreatedCircuitsResponse(this);
+        getIdCircuitsCreatedThread.execute();
+
         /*ArrayList<String> keywordsCrees = new ArrayList<>();
         keywordsCrees.add("tag1");
         keywordsCrees.add("tag2");
@@ -129,11 +135,13 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         listParcours = (ListView) findViewById(R.id.mesParc_listView1);
 
         parcoursEffectues = new ArrayList<>();
-        GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
-        getKeywordsThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
-        getKeywordsThread.execute();
+        // on délègue la tâche de la requête à un handler
+        GetTask getIdCircuitsDoneThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
+        getIdCircuitsDoneThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
+        getIdCircuitsDoneThread.execute();
         // Pour les tests :
 
+        /*
         ArrayList<String> keywords = new ArrayList<>();
         keywords.add("tag1");
         keywords.add("tag2");
@@ -144,7 +152,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         parcoursEffectues.add(circTest);
         parcoursEffectues.add(circTest2);
         parcoursEffectues.add(circTest3);
-        parcoursEffectues.add(circTest);
+        parcoursEffectues.add(circTest);*/
 
         TextView parcEffectues_text = (TextView) findViewById(R.id.parcEffectues_textView);
         assert parcEffectues_text != null;
@@ -406,50 +414,37 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         }
     }
 
+    public void createdCircuitsReceived(JsonObject results) {
+        System.out.println("RESULTATS CIRC CREES : "+results);
+        if(results != null) {
+
+        }
+    }
+
+    // ce qui se passe quand on a reçu les id (dans results) depuis le serveur
     public void doneCircuitsReceived(JsonObject results) {
         System.out.println("RESULTATS : "+results);
         idCircuitsEffectues = new ArrayList<Integer>();
         if (results != null) {
-            JsonArray resultsArray = results.getAsJsonArray("id");
+            JsonArray resultsArray = results.getAsJsonArray("circuits");
             System.out.println("RESULTARRAY : "+resultsArray);
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     idCircuitsEffectues.add(resultsArray.get(i).getAsInt());
                 }
             }
+            // Pour les tests on rajoute deux id dans la liste
+            idCircuitsEffectues.add(1);
+            idCircuitsEffectues.add(2);
+
             if(!idCircuitsEffectues.isEmpty()) {
                 for(int id:idCircuitsEffectues) {
-                    getCircuitById(id);
+                    GetTask getTask = new GetTask(Config.getRequest(Config.GET_CIRCUIT_ID+"/"+id));
+                    getTask.delegate = new HandleGetCircuitById(this);
+                    getTask.execute();
                 }
             }
         }
-    }
-
-    public Circuit getCircuitById(int id) {
-        /*PostTask postTask = new PostTask(Config.getRequest(Config.ADD_CIRCUIT));
-        postTask.delegate = this;
-
-        String name = circuit.getName();
-        String description = circuit.getDescription();
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("name", name);
-        jsonObject.addProperty("description", description);
-
-        JsonArray keywords_array = new JsonArray();
-        for (int i = 0; i < circuit.getKeywords().size(); i++) {
-            keywords_array.add(circuit.getKeywords().get(i));
-        }
-        jsonObject.add("keywords", keywords_array);
-
-        JsonArray places_array = new JsonArray();
-        for (int i = 0; i < circuit.getPlaces().size(); i++) {
-            places_array.add(circuit.getPlaces().get(i).getId());
-        }
-        jsonObject.add("places", places_array);
-
-        postTask.execute(jsonObject);*/
-        return null;
     }
 
     public void logoutReceived(JsonObject results){
@@ -457,6 +452,15 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
             System.err.println("ERROR LOGOUT : " + results);
         }
         finish();
+    }
+
+    // ce qui se passe quand on a reçu un circuit grâce à son id (dans results) depuis le serveur
+    public void circuitByIdReceived(JsonObject result) {
+        System.out.println("RESULTAT CIRCUIT : "+result);
+
+        if(result.getAsJsonObject("circuit") != null) {
+            parcoursEffectues.add(new Circuit(result));
+        }
     }
 }
 
@@ -484,7 +488,7 @@ class HandleGetAllCreatedCircuitsResponse implements GetTask.AsyncResponse{
 
     @Override
     public void processFinish(JsonObject results) {
-        //this.mesParcoursActivity.createdCircuitsReceived(results);
+        this.mesParcoursActivity.createdCircuitsReceived(results);
     }
 }
 
@@ -499,5 +503,19 @@ class HandleLogoutParcours implements PostTask.AsyncResponse{
     @Override
     public void processFinish(JsonObject results) {
         this.mesParcoursActivity.logoutReceived(results);
+    }
+}
+
+class HandleGetCircuitById implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetCircuitById(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.circuitByIdReceived(results);
     }
 }
