@@ -119,7 +119,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lancer ce parcours"
+                android:text="@string/lancer_ce_parcours"
                 android:id="@+id/lancerCeParcours"
                 android:layout_gravity="center"
                 android:layout_margin="15dp" />
