@@ -49,6 +49,7 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
+
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.LocationService;
@@ -56,7 +57,7 @@ import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class CircuitDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GetTask.AsyncResponse {
+public class CircuitDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
@@ -223,27 +224,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         return super.onOptionsItemSelected(item);
     }
 
-
-    //Recupere le JSON un fois la requete au serveur effectuee
-    @Override
-    synchronized public void processFinish(JsonObject results) {
-
-        // Les Json qui arrivent sont des places, les ajouter à la liste des places et maj la vue
-        if (results != null) {
-
-            JsonObject thePlaceJson = results.getAsJsonObject("place");
-            System.out.println(thePlaceJson);
-            if (thePlaceJson != null) {
-
-                Place newPlace = new Place(thePlaceJson);
-                listOfPlaces.add(newPlace);
-                // MAJ de la vue avec le nouveau Place
-                refreshPlacesList();
-
-            }
-        }
-    }
-
     public void refreshPlacesList() {
 
         // Ajout d'un element a la liste des places et maj de ses infos sur la vue graphique
@@ -314,7 +294,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     }
 
-
     public void visualizeReceived(JsonObject results) {
         if (results != null) {
             List<LatLng> listePoints = Tools.decodeDirections(results);
@@ -326,7 +305,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void getPlacesReceived(JsonObject results) {
         if (results != null) {
             JsonObject resultObject = results.getAsJsonObject("place");
-            //System.out.println("Le results array : " + resultObject);
+            System.out.println("Le results array : " + resultObject);
             if (resultObject != null) {
 
                 Place newPlace = new Place(resultObject);
@@ -349,9 +328,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 PostTask postTask = new PostTask(url.toString());
                 postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
                 postTask.execute();
-
-
-
             }
         }
     }
@@ -360,7 +336,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));

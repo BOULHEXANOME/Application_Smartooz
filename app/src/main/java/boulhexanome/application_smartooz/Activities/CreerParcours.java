@@ -3,12 +3,15 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -52,6 +56,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
     private ActionMode mActionModeAjout;
+    private ActionMode mActionModeRecherche;
+    ActionMode.Callback mActionModeCallbackRechercher;
     private ClusterManager mClusterManager;
 
     Polyline currentLine;
@@ -60,6 +66,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     boolean boucle;
     boolean modeAjout;
+    boolean modeRechercher;
 
     Circuit parcours;
     ArrayList<Place> places = new ArrayList<Place>();
@@ -70,9 +77,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_creer_parcours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar toolbar = getSupportActionBar();
+        toolbar.setDisplayShowTitleEnabled(false);
         toolbar.setTitle("Créer Parcours");
         toolbar.setDisplayHomeAsUpEnabled(true);
-        toolbar.setDisplayShowHomeEnabled(true);
 
         currentLine = null;
         modeAjout = false;
@@ -82,21 +89,17 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         parcours = new Circuit();
 
         final FloatingActionButton ajouterPI = (FloatingActionButton) findViewById(R.id.action_ajouterPI);
-        //Callback : mode Ajout
-        final ActionMode.Callback mActionModeCallbackAjout = new CallbackAjout();
         ajouterPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start the CAB using the ActionMode.Callback defined above
                 if (modeAjout == false) {
-                    mActionModeAjout = CreerParcours.this.startSupportActionMode(mActionModeCallbackAjout);
-                    ajouterPI.setImageResource(R.drawable.ic_done_white_24dp);
+                    ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentPlus)));
                     modeAjout = true;
-                    v.setSelected(true);
+                    Toast.makeText(CreerParcours.this, "Sélectionnez les étapes du parcours...", Toast.LENGTH_SHORT).show();
                 } else {
-                    ajouterPI.setImageResource(R.drawable.ic_add_location_white_24dp);
+                    ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                     modeAjout = false;
-                    mActionModeAjout.finish();
                 }
             }
         });
@@ -108,12 +111,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 for (int i = 0; i < markers.size(); i++){
                     for (int j = 0; j < places.size(); j++){
                         if (places.get(j).getPosition().equals(markers.get(i).getPosition())){
-                            User.getInstance().getCircuit_en_creation().addPlace(places.get(i));
+                            User.getInstance().getCircuit_en_creation().addPlace(places.get(j));
                             j = places.size();
                         }
                     }
                 }
                 Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -125,11 +129,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     if (CreerParcours.this.boucle) {
                         markers.remove(markers.size() - 1);
                         CreerParcours.this.boucle = false;
+                        boucle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                         Toast.makeText(CreerParcours.this, "Le circuit ne boucle plus", Toast.LENGTH_SHORT).show();
                         showPolyline();
                     } else {
                         markers.add(markers.get(0));
                         CreerParcours.this.boucle = true;
+                        boucle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentPlus)));
                         Toast.makeText(CreerParcours.this, "Le circuit boucle", Toast.LENGTH_SHORT).show();
                         showPolyline();
                     }
@@ -211,11 +217,27 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
                     if (placeMarked != null) {
 
+                        TextView numero = (TextView) v.findViewById(R.id.numero_place);
                         TextView title = (TextView) v.findViewById(R.id.title_place);
                         TextView description = (TextView) v.findViewById(R.id.description);
                         TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
                         TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
 
+                        String numeroListe ="";
+                        for (int i = 0; i < markers.size(); i++) {
+                            if (placeMarked.getPosition().equals(markers.get(i).getPosition())){
+                                numeroListe = numeroListe + String.valueOf(i+1) + "&";
+                            }
+                        }
+
+                        if (numeroListe.endsWith("&")){
+                            numero.setHeight(75);
+                            numeroListe = numeroListe.substring(0,numeroListe.length()-1);
+                            numero.setText("Etape " + numeroListe);
+                        } else {
+                            numero.setHeight(0);
+                            numero.setText("");
+                        }
                         title.setText(placeMarked.getName());
                         description.setText(placeMarked.getDescription());
                         noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
@@ -238,15 +260,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
-            //mClusterManager.setRenderer(new MyClusterRenderer(this, mMap, mClusterManager, this));
-            
-
-            // Point the map's listeners at the listeners implemented by the cluster
-            // manager.
             mMap.setOnCameraChangeListener(mClusterManager);
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
-
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     if (!modeAjout){
@@ -297,10 +312,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             finish();
         }
 
-        if (id == R.id.action_rechercher) {
-
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -308,6 +319,22 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_creer_parcours, menu);
+        /*final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //votre code ici
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        */
         return true;
     }
 
@@ -333,7 +360,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     public void getPlacesReceived(JsonObject results){
         if (results != null) {
             JsonArray resultsArray = results.getAsJsonArray("places");
-            System.out.println(resultsArray);
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     places.add(new Place(resultsArray.get(i).getAsJsonObject()));
@@ -375,7 +401,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 2) {
-            setResult(2);
             finish();
         }
     }
@@ -410,28 +435,5 @@ class HandleGetPlaces implements GetTask.AsyncResponse{
     @Override
     public void processFinish(JsonObject results) {
         this.creerParcours.getPlacesReceived(results);
-    }
-}
-
-class CallbackAjout implements ActionMode.Callback {
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.menu_ajouter_etape, menu);
-        return true;
-    }
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        mode.setTitle("Ajouter une étape");
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
     }
 }
