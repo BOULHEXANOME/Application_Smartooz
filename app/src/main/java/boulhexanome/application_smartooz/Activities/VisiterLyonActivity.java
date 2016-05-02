@@ -255,7 +255,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
         int id = item.getItemId();
 
         if (id == R.id.nav_tours) {
-            Intent intent = new Intent(VisiterLyonActivity.this, Parcours.class);
+            Intent intent = new Intent(VisiterLyonActivity.this, MesParcoursActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_friends) {
             Toast.makeText(VisiterLyonActivity.this, "Pas encore implémenté", Toast.LENGTH_SHORT).show();
