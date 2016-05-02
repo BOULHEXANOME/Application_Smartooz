@@ -33,6 +33,11 @@
         <activity android:name=".Activities.VisiterLyonActivity"
             android:windowSoftInputMode="stateHidden">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
 
         <activity android:name=".Activities.ListCircuit"/>
@@ -53,17 +58,10 @@
             android:label="@string/title_activity_creer_parcours"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".Activities.CreerParcours_AjoutTag" />
-
         <activity
             android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".Activities.CongratulationsCircuitEndActivity"
