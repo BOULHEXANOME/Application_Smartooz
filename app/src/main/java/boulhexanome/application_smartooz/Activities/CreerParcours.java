@@ -25,28 +25,24 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.Algorithm;
-import com.google.maps.android.clustering.view.ClusterRenderer;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.Utils.MyClusterRenderer;
 import boulhexanome.application_smartooz.Utils.Tools;
-import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
@@ -62,6 +58,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     ArrayList<Marker> markers;
 
+    boolean boucle;
     boolean modeAjout;
 
     Circuit parcours;
@@ -79,6 +76,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
         currentLine = null;
         modeAjout = false;
+        boucle = false;
         markers = new ArrayList<Marker>();
 
         parcours = new Circuit();
@@ -117,6 +115,26 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 }
                 Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
                 startActivityForResult(intent, 1);
+            }
+        });
+
+        final FloatingActionButton boucle = (FloatingActionButton) findViewById(R.id.action_boucle);
+        boucle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreerParcours.this.markers.size() >= 2) {
+                    if (CreerParcours.this.boucle) {
+                        markers.remove(markers.size() - 1);
+                        CreerParcours.this.boucle = false;
+                        Toast.makeText(CreerParcours.this, "Le circuit ne boucle plus", Toast.LENGTH_SHORT).show();
+                        showPolyline();
+                    } else {
+                        markers.add(markers.get(0));
+                        CreerParcours.this.boucle = true;
+                        Toast.makeText(CreerParcours.this, "Le circuit boucle", Toast.LENGTH_SHORT).show();
+                        showPolyline();
+                    }
+                }
             }
         });
 
@@ -221,6 +239,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
+            //mClusterManager.setRenderer(new MyClusterRenderer(this, mMap, mClusterManager, this));
             
 
             // Point the map's listeners at the listeners implemented by the cluster
@@ -240,15 +259,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                             markers.remove(marker);
                             //Affichage dynamique du parcours
-                            if (currentLine != null) {
-                                currentLine.remove();
-                            }
-                            if (markers.size() >= 2) {
-                                URL url = Tools.generateGoogleMapURL(markers);
-                                PostTask postTask = new PostTask(url.toString());
-                                postTask.delegate = new HandleVisualization(CreerParcours.this);
-                                postTask.execute();
-                            }
+                            showPolyline();
                             return true;
                         } else {
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
@@ -257,20 +268,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                             marker.showInfoWindow();
                             //Affichage dynamique du parcours
                             if (markers.size() >= 2) {
-                                if (currentLine != null) {
-                                    currentLine.remove();
-                                }
-                                URL url = Tools.generateGoogleMapURL(markers);
-                                PostTask postTask = new PostTask(url.toString());
-                                postTask.delegate = new HandleVisualization(CreerParcours.this);
-                                postTask.execute();
+                                showPolyline();
                             }
                             return true;
                         }
                     }
                 }
             });
-
 
         }catch (SecurityException e){
             System.out.println(e);
@@ -306,6 +310,16 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_creer_parcours, menu);
         return true;
+    }
+
+    public void showPolyline() {
+        if (currentLine != null) {
+            currentLine.remove();
+        }
+        URL url = Tools.generateGoogleMapURL(markers);
+        PostTask postTask = new PostTask(url.toString());
+        postTask.delegate = new HandleVisualization(CreerParcours.this);
+        postTask.execute();
     }
 
 
@@ -366,6 +380,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             finish();
         }
     }
+
+    public ArrayList<Marker> getMarkers() {
+        return markers;
+    }
 }
 
 class HandleVisualization implements PostTask.AsyncResponse{
@@ -393,19 +411,6 @@ class HandleGetPlaces implements GetTask.AsyncResponse{
     @Override
     public void processFinish(JsonObject results) {
         this.creerParcours.getPlacesReceived(results);
-    }
-}
-
-class MyCluster implements ClusterItem {
-    private final LatLng mPosition;
-
-    public MyCluster(double lat, double lng) {
-        mPosition = new LatLng(lat, lng);
-    }
-
-    @Override
-    public LatLng getPosition() {
-        return mPosition;
     }
 }
 
