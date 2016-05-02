@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import boulhexanome.application_smartooz.Activities.CongratulationsCircuitEndActivity;
 import boulhexanome.application_smartooz.Activities.LoginActivity;
+import boulhexanome.application_smartooz.Activities.PlaceNearbyActivity;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
@@ -143,37 +144,36 @@ public class LocationService extends Service {
     {
         public void onLocationChanged(final Location loc)
         {
-            System.out.println("************************************** Location changed");
             if(isBetterLocation(loc, previousBestLocation)) {
-//                intent.putExtra("Latitude", loc.getLatitude());
-//                intent.putExtra("Longitude", loc.getLongitude());
-//                intent.putExtra("Provider", loc.getProvider());
-//                sendBroadcast(intent);
+                System.out.println("************************************** Location changed");
                 Place p = CurrentCircuitTravel.getInstance().getClosePlace(loc.getLatitude(), loc.getLongitude());
                 if(p != null){
+                    System.out.println("On y est !");
                     ArrayList<Place> places = CurrentCircuitTravel.getInstance().getCircuitEnCours().getPlaces();
-
                     int NOTIFICATION_ID = (int)(Math.random()*9999);
-
-                    if(places.indexOf(p) == places.size()-1){
+                    if(places.indexOf(p) == places.size()-1 && ((double)(CurrentCircuitTravel.getInstance().getOnEstPassePar().size()) / (double)(places.size())) > 0.5 ){
                         // on a fini le parcours -> on appelle la vue des congratulations
                         NotificationCompat.Builder builder =
                                 new NotificationCompat.Builder(LocationService.this)
                                         .setSmallIcon(R.drawable.logo_smartooz)
-                                        .setContentTitle("Vous avez fini le parcours ! Vous êtes arrivé  au point remarquable : \"" + p.getName() + "\"")
-                                        .setContentText("Découvrez-en plus sur \"" + p.getName() + "\"");
+                                        .setContentTitle("Félicitations vous avez fini le parcours ! Vous êtes arrivé  au point remarquable : \"" + p.getName() + "\"")
+                                        .setContentText("Découvrez-en plus sur \"" + p.getName() + "\"...");
                         Intent intent = new Intent(LocationService.this, CongratulationsCircuitEndActivity.class);
                         PendingIntent contentIntent = PendingIntent.getActivity(LocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                         builder.setContentIntent(contentIntent);
                         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         nManager.notify(NOTIFICATION_ID, builder.build());
                     }else{
-//                        Intent intent = new Intent(LocationService.this, PlaceNearbyActivity.class);
-//                        Intent intent = new Intent(LocationService.this, CongratulationsCircuitEndActivity.class);
-//                        PendingIntent contentIntent = PendingIntent.getActivity(LocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                        builder.setContentIntent(contentIntent);
-//                        NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//                        nManager.notify(NOTIFICATION_ID, builder.build());
+                        NotificationCompat.Builder builder =
+                                new NotificationCompat.Builder(LocationService.this)
+                                        .setSmallIcon(R.drawable.logo_smartooz)
+                                        .setContentTitle("Vous êtes arrivé  au point remarquable : \"" + p.getName() + "\"")
+                                        .setContentText("Découvrez-en plus sur \"" + p.getName() + "\"...");
+                        Intent intent = new Intent(LocationService.this, PlaceNearbyActivity.class);
+                        PendingIntent contentIntent = PendingIntent.getActivity(LocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        builder.setContentIntent(contentIntent);
+                        NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        nManager.notify(NOTIFICATION_ID, builder.build());
                     }
                 }
             }

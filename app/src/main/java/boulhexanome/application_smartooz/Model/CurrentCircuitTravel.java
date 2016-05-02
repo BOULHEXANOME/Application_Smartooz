@@ -2,9 +2,12 @@ package boulhexanome.application_smartooz.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 public class CurrentCircuitTravel {
 
     private static CurrentCircuitTravel mInstance = null;
+    private ArrayList<Integer> onEstPassePar = new ArrayList<>();
 
     public static CurrentCircuitTravel getInstance(){
         if(mInstance == null)
@@ -26,7 +29,7 @@ public class CurrentCircuitTravel {
     }
 
     private CurrentCircuitTravel(){
-        placeIndex = 0;
+        placeIndex = -1;
     }
 
     public int getPlaceIndex() {
@@ -64,9 +67,18 @@ public class CurrentCircuitTravel {
 
         int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
         if(indexTrouve != placeIndex) {
+            onEstPassePar.add(indexTrouve);
             placeIndex = indexTrouve;
             return placeLaPlusProche;
         }
         return null;
+    }
+
+    public ArrayList<Integer> getOnEstPassePar() {
+        return onEstPassePar;
+    }
+
+    public void setOnEstPassePar(ArrayList<Integer> onEstPassePar) {
+        this.onEstPassePar = onEstPassePar;
     }
 }

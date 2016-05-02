@@ -86,7 +86,7 @@
                 <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="zterfgqz<fZFze    fqzefd<sfGzerzerzRZEFS<DFZEFZFZefqzefZ<EzerzerzqerqzerzerzrzeGSdfsfqsdfZETgsdgvsFDdEDFzefFdfdsfSFSDfZFfDFdfSDFsdfSDFdsfFSDFDSfsdFSsdfsDFDSdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                android:text="zterfgqz"
                 android:id="@+id/textViewDescriptionPlace" />
             </ScrollView>
         </LinearLayout>
