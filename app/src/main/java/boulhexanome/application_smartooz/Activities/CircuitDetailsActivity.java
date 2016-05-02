@@ -71,6 +71,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     // Infos issues du serveur
     private Circuit theCircuit;
     private ArrayList<Place> listOfPlaces = new ArrayList<Place>();
+    private boolean parcoursEstLance = false;
 
 
     @Override
@@ -155,14 +156,29 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
-                    startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                    clickLancerParcours();
                 }
             });
         }
 
 
     } // Fin onCreate
+    
+    public void clickLancerParcours(){
+        Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
+        if(!this.parcoursEstLance){
+            this.parcoursEstLance = true;
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+            startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            lancerCeParcoursButton.setText("Arrêter ce parcours");
+
+        }else{
+            this.parcoursEstLance = false;
+            stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
+            lancerCeParcoursButton.setText(R.string.lancer_ce_parcours);
+        }
+    }
 
 
     //Recupere le JSON un fois la requete au serveur effectuee
