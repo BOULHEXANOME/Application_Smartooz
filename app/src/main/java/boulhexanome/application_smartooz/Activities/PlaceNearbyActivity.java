@@ -13,11 +13,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 
 public class PlaceNearbyActivity extends AppCompatActivity {
     private TextView textViewDescription;
+    private TextView textViewSubtitle;
     private TextView textViewTitle;
     String API_KEY = "AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U";
     @Override
@@ -26,8 +29,10 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_nearby);
         textViewDescription = (TextView)findViewById(R.id.textViewDescriptionPlace);
         textViewTitle = (TextView)findViewById(R.id.textViewTitlePlace);
+        textViewSubtitle = (TextView)findViewById(R.id.textViewSubtitlePlace);
         textViewDescription.setVerticalScrollBarEnabled(true);
-        String nom = "cathédrale saint jean";
+        Circuit c = CurrentCircuitTravel.getInstance().getCircuitEnCours();
+        String nom = c.getName();
         nom+="+lyon";
         String keywords = "";
         try {
@@ -85,8 +90,8 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         JsonElement description = descriptionLongue.get("articleBody");
         textViewTitle.setText("");
         textViewTitle.append(name.getAsString());
-        textViewTitle.append("\r\n");
-        textViewTitle.append(descriptionCourte.getAsString());
+        textViewSubtitle.setText("");
+        textViewSubtitle.append(descriptionCourte.getAsString());
         textViewDescription.setText("");
         textViewDescription.append(description.getAsString());
         if(results !=null){

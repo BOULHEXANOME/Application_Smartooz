@@ -3,7 +3,10 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +36,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +58,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
-    ArrayList<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
@@ -61,7 +66,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private ActionBar toolbar;
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
-    boolean mapIsHidden;
+    boolean mapIsVisible;
 
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
@@ -71,6 +76,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     // Infos issues du serveur
     private Circuit theCircuit;
     private ArrayList<Place> listOfPlaces = new ArrayList<Place>();
+    private boolean parcoursEstLance = false;
 
 
     @Override
@@ -85,7 +91,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        mapIsHidden = false;
+        mapIsVisible = false;
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.circuit_details_map);
         mMapFragment.getMapAsync(this);
@@ -100,14 +106,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         scrollButtonLayout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
-                if (mapIsHidden) {
+                if (mapIsVisible) {
                     mMapFragment.getView().setVisibility(View.GONE);
                     mScrollView.setVisibility(View.VISIBLE);
-                    mapIsHidden = false;
+                    mapIsVisible = false;
                 } else {
                     mMapFragment.getView().setVisibility(View.VISIBLE);
                     mScrollView.setVisibility(View.GONE);
-                    mapIsHidden = true;
+                    mapIsVisible = true;
                 }
 
             }
@@ -155,14 +161,54 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
-                    startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                    clickLancerParcours();
+                }
+            });
+
+            final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
+            add.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int TAKE_PHOTO_CODE = 0;
+                    String file = "hola.jpg";
+                    File newfile = new File(file);
+                    try {
+                        newfile.createNewFile();
+                    }
+                    catch (IOException e)
+                    {
+                    }
+                    Uri outputFileUri = Uri.fromFile(newfile);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
                 }
             });
         }
 
 
     } // Fin onCreate
+    
+    public void clickLancerParcours(){
+        Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
+        if(!this.parcoursEstLance){
+            this.parcoursEstLance = true;
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+            startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            lancerCeParcoursButton.setText("Arrêter ce parcours");
+
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+            mScrollView.setVisibility(View.GONE);
+            mapIsVisible = true;
+        }else{
+            this.parcoursEstLance = false;
+            stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
+            lancerCeParcoursButton.setText(R.string.lancer_ce_parcours);
+        }
+    }
 
 
     //Recupere le JSON un fois la requete au serveur effectuee
@@ -182,9 +228,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 refreshPlacesList();
 
             }
-
         }
-
     }
 
     public void refreshPlacesList() {
