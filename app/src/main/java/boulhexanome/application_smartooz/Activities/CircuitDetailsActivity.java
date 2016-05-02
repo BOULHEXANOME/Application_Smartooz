@@ -61,7 +61,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
-    ArrayList<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
@@ -198,6 +198,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
             lancerCeParcoursButton.setText("Arrêter ce parcours");
 
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+            mScrollView.setVisibility(View.GONE);
+            mapIsHidden = true;
         }else{
             this.parcoursEstLance = false;
             stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
@@ -238,9 +241,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 refreshPlacesList();
 
             }
-
         }
-
     }
 
     public void refreshPlacesList() {

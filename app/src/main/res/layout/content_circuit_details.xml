@@ -72,7 +72,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:clickable="true">
+            android:clickable="true"
+            android:paddingBottom="500dp">
 
             <TextView
                 android:id="@+id/circuit_description"
