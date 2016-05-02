@@ -56,13 +56,10 @@
             android:label="@string/title_activity_creer_parcours"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".Activities.CreerParcours_AjoutTag" />
-
         <activity
             android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".Activities.CongratulationsCircuitEndActivity"
