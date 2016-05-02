@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -31,9 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.Utils.LocationService;
 import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
@@ -139,6 +142,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             //}
 
+            Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
+            lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+                    LocationService trackCircuit = new LocationService();
+                }
+            });
         }
 
 
@@ -214,8 +225,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     ASK_FOR_ACCESS_COARSE_LOCATION);
         }
-        if (
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     ASK_FOR_ACCESS_FINE_LOCATION);
