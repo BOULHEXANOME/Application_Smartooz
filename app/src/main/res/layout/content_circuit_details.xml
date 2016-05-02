@@ -120,7 +120,7 @@
             <Button
                 android:layout_width="225dp"
                 android:layout_height="wrap_content"
-                android:text="Lancer ce parcours"
+                android:text="@string/lancer_ce_parcours"
                 android:id="@+id/lancerCeParcours"
                 android:layout_margin="15dp"
                 android:layout_gravity="center_horizontal" />
