@@ -53,7 +53,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
-    ArrayList<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
@@ -61,7 +61,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private ActionBar toolbar;
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
-    boolean mapIsHidden;
+    boolean mapIsVisible;
 
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
@@ -86,7 +86,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        mapIsHidden = false;
+        mapIsVisible = false;
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.circuit_details_map);
         mMapFragment.getMapAsync(this);
@@ -101,14 +101,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         scrollButtonLayout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
-                if (mapIsHidden) {
+                if (mapIsVisible) {
                     mMapFragment.getView().setVisibility(View.GONE);
                     mScrollView.setVisibility(View.VISIBLE);
-                    mapIsHidden = false;
+                    mapIsVisible = false;
                 } else {
                     mMapFragment.getView().setVisibility(View.VISIBLE);
                     mScrollView.setVisibility(View.GONE);
-                    mapIsHidden = true;
+                    mapIsVisible = true;
                 }
 
             }
@@ -172,6 +172,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
             lancerCeParcoursButton.setText("Arrêter ce parcours");
 
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+            mScrollView.setVisibility(View.GONE);
+            mapIsVisible = true;
         }else{
             this.parcoursEstLance = false;
             stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
@@ -198,9 +201,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 refreshPlacesList();
 
             }
-
         }
-
     }
 
     public void refreshPlacesList() {
