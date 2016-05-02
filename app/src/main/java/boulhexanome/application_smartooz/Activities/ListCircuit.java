@@ -41,27 +41,6 @@ public class ListCircuit extends AppCompatActivity {
         listParcours = (ListView) findViewById(R.id.listViewParcours);
         parcours = CurrentCircuits.getInstance().getListOfCircuits();
 
-        /*parcours = new ArrayList<Circuit>();
-        ArrayList<String> tags = new ArrayList<>();
-        tags.add("try");
-        tags.add("better");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        tags.add("tag");
-        Circuit circuit = new Circuit("Randonnée dans les champs","grave stylé cette randonnée",(float)3.2,(float)5.0,3,300,300,tags,null,0);
-        Circuit circuit2 = new Circuit("Parcours tête d'Or","grave stylé cette randonnée",(float)3.2,(float)1.0,3,300,300,tags,null,1);
-        Circuit circuit4 = new Circuit("Visite vieux lyon","grave stylé cette randonnée",(float)3.2,(float)4.0,3,300,300,tags,null,2);
-        Circuit circuit3 = new Circuit("Fourvière","grave stylé cette randonnée",(float)3.2,(float)3.0,3,300,300,tags,null,3);
-        parcours.add(circuit);
-        parcours.add(circuit2);
-        parcours.add(circuit3);
-        parcours.add(circuit4);*/
-
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
         toolbar.setTitle("Parcours");
@@ -123,7 +102,7 @@ public class ListCircuit extends AppCompatActivity {
                     item.setTitle("Dénivelé ∧");
                     adapter.sort(new ComparateurDeniveleAsc());
                 }
-                return true;
+                break;
             case R.id.action_filter_km:
                 if(filterByKmAsc==-1){
                     filterByKmAsc = 1;
@@ -141,7 +120,7 @@ public class ListCircuit extends AppCompatActivity {
                     item.setTitle("Kilomètre ∧");
                     adapter.sort(new ComparateurKmAsc());
                 }
-                return true;
+                break;
             case R.id.action_filter_notes:
                 if(filterByNoteAsc==-1){
                     filterByKmAsc = -1;
@@ -159,7 +138,7 @@ public class ListCircuit extends AppCompatActivity {
                     item.setTitle("Notes ∧");
                     adapter.sort(new ComparateurNoteAsc());
                 }
-                return true;
+                break;
             case R.id.action_filter_popularity:
                 if(filterByNbVoteAsc==-1){
                     filterByKmAsc = -1;
@@ -177,11 +156,12 @@ public class ListCircuit extends AppCompatActivity {
                     item.setTitle("Popularité ∧");
                     adapter.sort(new ComparateurPopulariteAsc());
                 }
-                return true;
-            default:
-                return true;
-
+                break;
+            case android.R.id.home:
+                finish();
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public class ComparateurPopulariteDesc implements Comparator<Circuit> {
