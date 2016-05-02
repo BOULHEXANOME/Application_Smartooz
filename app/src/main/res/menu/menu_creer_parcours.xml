@@ -8,11 +8,5 @@
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/action_save"
-        android:title="@string/confirmer_parcours"
-        android:icon="@drawable/ic_save_white_24dp"
-        app:showAsAction="always"/>
-
 
 </menu>
