@@ -38,6 +38,7 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
+
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.LocationService;
