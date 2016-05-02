@@ -9,8 +9,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -176,7 +179,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 Place newPlace = new Place(thePlaceJson);
                 listOfPlaces.add(newPlace);
                 // MAJ de la vue avec le nouveau Place
-                addPlaceInformationsToList(newPlace);
+                refreshPlacesList();
 
             }
 
@@ -184,13 +187,43 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     }
 
-    public void addPlaceInformationsToList(Place theNewPlace) {
+    public void refreshPlacesList() {
 
         // Ajout d'un element a la liste des places et maj de ses infos sur la vue graphique
+        ArrayList<String> placesListString = new ArrayList<String>();
 
-        //theNewPlace
-        //ListView placesList
+        for (Place place : listOfPlaces) {
 
+            placesListString.add(place.getName());
+        }
+        final ListAdapter adapter = new ArrayAdapter<>(CircuitDetailsActivity.this, android.R.layout.simple_list_item_1, placesListString);
+        placesList.setAdapter(adapter);
+
+
+        // Taille de la liste dynamique
+        if (adapter != null) {
+
+            int numberOfItems = adapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = adapter.getView(itemPos, null, placesList);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = placesList.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = placesList.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            placesList.setLayoutParams(params);
+            placesList.requestLayout();
+
+        }
 
     }
 
@@ -216,7 +249,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 theCircuit.setPlaces(listOfPlaces);
 
                 // MAJ graphique de la liste des places
-                addPlaceInformationsToList(newPlace);
+                refreshPlacesList();
 
                 // Calcul de la polyligne via Google Maps
                 Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
