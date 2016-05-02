@@ -1,13 +1,19 @@
 package boulhexanome.application_smartooz.Activities;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -23,6 +29,7 @@ public class PlaceNearbyActivity extends AppCompatActivity {
     private TextView textViewSubtitle;
     private TextView textViewTitle;
     String API_KEY = "AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +58,29 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         */
         //AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U
         //002950127685759816034:9e5qtixkpfm
+
+
+        final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo_place);
+        add.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int TAKE_PHOTO_CODE = 0;
+                String file = "hola.jpg";
+                File newfile = new File(file);
+                try {
+                    newfile.createNewFile();
+                }
+                catch (IOException e)
+                {
+                }
+                Uri outputFileUri = Uri.fromFile(newfile);
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+                startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+            }
+        });
     }
     /* public void TheQueryIsHere() {
         String sparqlQueryString1 = "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>" +
@@ -72,6 +102,9 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         qexec.close();
         TextView zoneText = (TextView) findViewById(R.id.textViewDescription);
    }*/
+
+
+
     public void Querying (String parameters) throws IOException {
         GetTask getPlaceNearby = new GetTask("https://kgsearch.googleapis.com/v1/entities:search?query="+parameters+"&key="+API_KEY+"&limit=1&indent=True&languages=fr");
         getPlaceNearby.delegate = new HandleGetPlaceNearbyResponse(this);
