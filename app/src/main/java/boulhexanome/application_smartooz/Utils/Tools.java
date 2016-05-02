@@ -44,7 +44,6 @@ public class Tools {
                 stringBuilder.append(inputLine);
             }
             String line = stringBuilder.toString();
-            System.out.println(line);
             JsonParser parser = new JsonParser();
             JsonElement jsnelement = (JsonElement) parser.parse(line);
             JsonObject jsnobject = jsnelement.getAsJsonObject();

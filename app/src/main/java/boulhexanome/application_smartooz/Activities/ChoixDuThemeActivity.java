@@ -261,11 +261,14 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
         }
         jsonObject.add("places", places_array);
 
+        System.out.println(jsonObject);
+
         postTask.execute(jsonObject);
     }
 
     @Override
     public void processFinish(JsonObject results) {
+        System.out.println(results);
         if (results != null) {
             if (results.get("status").getAsString().equals("OK")) {
                 Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();

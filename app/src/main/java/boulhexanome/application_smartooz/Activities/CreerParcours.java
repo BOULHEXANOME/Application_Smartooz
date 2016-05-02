@@ -108,7 +108,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 for (int i = 0; i < markers.size(); i++){
                     for (int j = 0; j < places.size(); j++){
                         if (places.get(j).getPosition().equals(markers.get(i).getPosition())){
-                            User.getInstance().getCircuit_en_creation().addPlace(places.get(i));
+                            User.getInstance().getCircuit_en_creation().addPlace(places.get(j));
                             j = places.size();
                         }
                     }
@@ -334,7 +334,6 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     public void getPlacesReceived(JsonObject results){
         if (results != null) {
             JsonArray resultsArray = results.getAsJsonArray("places");
-            System.out.println(resultsArray);
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     places.add(new Place(resultsArray.get(i).getAsJsonObject()));
