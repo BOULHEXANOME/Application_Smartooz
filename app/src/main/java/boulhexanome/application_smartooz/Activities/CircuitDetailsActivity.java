@@ -11,8 +11,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -66,7 +69,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private ActionBar toolbar;
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
-    boolean mapIsVisible;
+    boolean mapIsHidden;
 
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
@@ -91,7 +94,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        mapIsVisible = false;
+        mapIsHidden = false;
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.circuit_details_map);
         mMapFragment.getMapAsync(this);
@@ -106,14 +109,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         scrollButtonLayout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
-                if (mapIsVisible) {
-                    mMapFragment.getView().setVisibility(View.GONE);
-                    mScrollView.setVisibility(View.VISIBLE);
-                    mapIsVisible = false;
-                } else {
+                if (mapIsHidden) {
                     mMapFragment.getView().setVisibility(View.VISIBLE);
                     mScrollView.setVisibility(View.GONE);
-                    mapIsVisible = true;
+                    mapIsHidden = false;
+                } else {
+                    mMapFragment.getView().setVisibility(View.GONE);
+                    mScrollView.setVisibility(View.VISIBLE);
+                    mapIsHidden = true;
                 }
 
             }
@@ -150,13 +153,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
-            // Appels au Back pour recuperer les Places associees
-            // Pour chaque id de place contenue dans circuit, on envoie une requete au back pour recuperer ce circuit
-            //for (int i = 0; i < theCircuit.getPlaces.lenght; i++) {
-
-
-            //}
-
             Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
             lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -188,6 +184,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             });
         }
 
+        // Demarrage sur la map directement
+        mMapFragment.getView().setVisibility(View.VISIBLE);
+        mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
     
@@ -201,13 +200,27 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             mMapFragment.getView().setVisibility(View.VISIBLE);
             mScrollView.setVisibility(View.GONE);
-            mapIsVisible = true;
+            mapIsHidden = true;
         }else{
             this.parcoursEstLance = false;
             stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
             CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
             lancerCeParcoursButton.setText(R.string.lancer_ce_parcours);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == android.R.id.home){
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -269,6 +282,36 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
         }
 
+        // Permettre le scroll avec la ScrollView
+        /*
+        placesList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });*/
+
+
+        // Set le listener pour afficher sur la carte quand on clique sur la liste
+        placesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                System.out.println("Position : " + position);
+
+                // Montrer la map
+                mMapFragment.getView().setVisibility(View.VISIBLE);
+                mScrollView.setVisibility(View.GONE);
+                mapIsHidden = true;
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(markers.get(position).getPosition()));
+                markers.get(position).showInfoWindow();
+
+
+            }
+        });
+
     }
 
 
@@ -316,6 +359,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
 
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
