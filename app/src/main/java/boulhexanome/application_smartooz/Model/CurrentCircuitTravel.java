@@ -25,7 +25,7 @@ public class CurrentCircuitTravel {
         this.circuitEnCours = circuitEnCours;
     }
 
-    public CurrentCircuitTravel(){
+    private CurrentCircuitTravel(){
         placeIndex = 0;
     }
 
@@ -52,9 +52,9 @@ public class CurrentCircuitTravel {
             LatLng position = p.getPosition();
             double deltaLatitude = position.latitude - latitude;
             double deltaLongitude = position.longitude - longitude;
-            double deltaLatitudeKM = deltaLatitude * facteurLatitude;
-            double deltaLongitudeKM = deltaLongitude * facteurLongitude;
-            double distance = deltaLatitudeKM*deltaLatitudeKM + deltaLongitudeKM*deltaLongitudeKM;
+            double deltaLatitudeKM = deltaLatitude / facteurLatitude;
+            double deltaLongitudeKM = deltaLongitude / facteurLongitude;
+            double distance = Math.sqrt(deltaLatitudeKM*deltaLatitudeKM + deltaLongitudeKM*deltaLongitudeKM);
             System.out.println(distance);
             if(distance < rayonEnKM && distance < distanceLaPlusProche){
                 placeLaPlusProche = p;
@@ -62,6 +62,11 @@ public class CurrentCircuitTravel {
             }
         }
 
-        return placeLaPlusProche;
+        int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
+        if(indexTrouve != placeIndex) {
+            placeIndex = indexTrouve;
+            return placeLaPlusProche;
+        }
+        return null;
     }
 }
