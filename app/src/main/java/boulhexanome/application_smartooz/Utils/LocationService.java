@@ -14,6 +14,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.Place;
+
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
@@ -21,13 +24,13 @@ public class LocationService extends Service {
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
-    Intent intent;
+    // Intent intent;
     int counter = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        intent = new Intent(BROADCAST_ACTION);
+        // intent = new Intent(BROADCAST_ACTION);
     }
 
     @Override
@@ -133,12 +136,14 @@ public class LocationService extends Service {
         {
             System.out.println("************************************** Location changed");
             if(isBetterLocation(loc, previousBestLocation)) {
-                loc.getLatitude();
-                loc.getLongitude();
-                intent.putExtra("Latitude", loc.getLatitude());
-                intent.putExtra("Longitude", loc.getLongitude());
-                intent.putExtra("Provider", loc.getProvider());
-                sendBroadcast(intent);
+//                intent.putExtra("Latitude", loc.getLatitude());
+//                intent.putExtra("Longitude", loc.getLongitude());
+//                intent.putExtra("Provider", loc.getProvider());
+//                sendBroadcast(intent);
+                Place p = CurrentCircuitTravel.getInstance().getClosePlace(loc.getLatitude(), loc.getLongitude());
+                if(p != null){
+
+                }
             }
         }
 

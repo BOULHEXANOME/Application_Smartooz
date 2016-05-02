@@ -57,6 +57,8 @@ public class ListCircuit extends AppCompatActivity {
         listParcours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                System.out.println("Rentre dans le Onclick !!");
                 Circuit c = (Circuit)listParcours.getItemAtPosition(position);
                 CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                 Intent myIntent = new Intent(ListCircuit.this, CircuitDetailsActivity.class);
