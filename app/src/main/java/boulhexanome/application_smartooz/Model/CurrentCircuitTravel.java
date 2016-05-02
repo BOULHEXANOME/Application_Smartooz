@@ -2,9 +2,12 @@ package boulhexanome.application_smartooz.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 public class CurrentCircuitTravel {
 
     private static CurrentCircuitTravel mInstance = null;
+    private ArrayList<Integer> onEstPassePar = new ArrayList<>();
 
     public static CurrentCircuitTravel getInstance(){
         if(mInstance == null)
@@ -25,8 +28,8 @@ public class CurrentCircuitTravel {
         this.circuitEnCours = circuitEnCours;
     }
 
-    public CurrentCircuitTravel(){
-        placeIndex = 0;
+    private CurrentCircuitTravel(){
+        placeIndex = -1;
     }
 
     public int getPlaceIndex() {
@@ -52,9 +55,9 @@ public class CurrentCircuitTravel {
             LatLng position = p.getPosition();
             double deltaLatitude = position.latitude - latitude;
             double deltaLongitude = position.longitude - longitude;
-            double deltaLatitudeKM = deltaLatitude * facteurLatitude;
-            double deltaLongitudeKM = deltaLongitude * facteurLongitude;
-            double distance = deltaLatitudeKM*deltaLatitudeKM + deltaLongitudeKM*deltaLongitudeKM;
+            double deltaLatitudeKM = deltaLatitude / facteurLatitude;
+            double deltaLongitudeKM = deltaLongitude / facteurLongitude;
+            double distance = Math.sqrt(deltaLatitudeKM*deltaLatitudeKM + deltaLongitudeKM*deltaLongitudeKM);
             System.out.println(distance);
             if(distance < rayonEnKM && distance < distanceLaPlusProche){
                 placeLaPlusProche = p;
@@ -62,6 +65,20 @@ public class CurrentCircuitTravel {
             }
         }
 
-        return placeLaPlusProche;
+        int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
+        if(indexTrouve != placeIndex) {
+            onEstPassePar.add(indexTrouve);
+            placeIndex = indexTrouve;
+            return placeLaPlusProche;
+        }
+        return null;
+    }
+
+    public ArrayList<Integer> getOnEstPassePar() {
+        return onEstPassePar;
+    }
+
+    public void setOnEstPassePar(ArrayList<Integer> onEstPassePar) {
+        this.onEstPassePar = onEstPassePar;
     }
 }

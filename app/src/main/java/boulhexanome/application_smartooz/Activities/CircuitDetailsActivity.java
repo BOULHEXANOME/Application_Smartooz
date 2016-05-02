@@ -3,14 +3,23 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -30,6 +39,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +62,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
-    ArrayList<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
@@ -69,6 +80,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     // Infos issues du serveur
     private Circuit theCircuit;
     private ArrayList<Place> listOfPlaces = new ArrayList<Place>();
+    private boolean parcoursEstLance = false;
 
 
     @Override
@@ -99,12 +111,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             public void onClick(View arg0) {
 
                 if (mapIsHidden) {
-                    mMapFragment.getView().setVisibility(View.GONE);
-                    mScrollView.setVisibility(View.VISIBLE);
-                    mapIsHidden = false;
-                } else {
                     mMapFragment.getView().setVisibility(View.VISIBLE);
                     mScrollView.setVisibility(View.GONE);
+                    mapIsHidden = false;
+                } else {
+                    mMapFragment.getView().setVisibility(View.GONE);
+                    mScrollView.setVisibility(View.VISIBLE);
                     mapIsHidden = true;
                 }
 
@@ -142,33 +154,143 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
-            // Appels au Back pour recuperer les Places associees
-            // Pour chaque id de place contenue dans circuit, on envoie une requete au back pour recuperer ce circuit
-            //for (int i = 0; i < theCircuit.getPlaces.lenght; i++) {
-
-
-            //}
-
             Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
             lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
-                    startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+                    clickLancerParcours();
+                }
+            });
+
+            final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
+            add.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int TAKE_PHOTO_CODE = 0;
+                    String file = "hola.jpg";
+                    File newfile = new File(file);
+                    try {
+                        newfile.createNewFile();
+                    }
+                    catch (IOException e)
+                    {
+                    }
+                    Uri outputFileUri = Uri.fromFile(newfile);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
                 }
             });
         }
 
+        // Demarrage sur la map directement
+        mMapFragment.getView().setVisibility(View.VISIBLE);
+        mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
+    
+    public void clickLancerParcours(){
+        Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
+        if(!this.parcoursEstLance){
+            this.parcoursEstLance = true;
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(theCircuit);
+            startService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            lancerCeParcoursButton.setText("Arrêter ce parcours");
 
-    public void addPlaceInformationsToList(Place theNewPlace) {
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+            mScrollView.setVisibility(View.GONE);
+            mapIsHidden = true;
+        }else{
+            this.parcoursEstLance = false;
+            stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
+            CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
+            lancerCeParcoursButton.setText(R.string.lancer_ce_parcours);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == android.R.id.home){
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void refreshPlacesList() {
 
         // Ajout d'un element a la liste des places et maj de ses infos sur la vue graphique
+        ArrayList<String> placesListString = new ArrayList<String>();
 
-        //theNewPlace
-        //ListView placesList
+        for (Place place : listOfPlaces) {
 
+            placesListString.add(place.getName());
+        }
+        final ListAdapter adapter = new ArrayAdapter<>(CircuitDetailsActivity.this, android.R.layout.simple_list_item_1, placesListString);
+        placesList.setAdapter(adapter);
+
+
+        // Taille de la liste dynamique
+        if (adapter != null) {
+
+            int numberOfItems = adapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = adapter.getView(itemPos, null, placesList);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = placesList.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = placesList.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            placesList.setLayoutParams(params);
+            placesList.requestLayout();
+
+        }
+
+        // Permettre le scroll avec la ScrollView
+        /*
+        placesList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });*/
+
+
+        // Set le listener pour afficher sur la carte quand on clique sur la liste
+        placesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                System.out.println("Position : " + position);
+
+                // Montrer la map
+                mMapFragment.getView().setVisibility(View.VISIBLE);
+                mScrollView.setVisibility(View.GONE);
+                mapIsHidden = true;
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(markers.get(position).getPosition()));
+                markers.get(position).showInfoWindow();
+
+
+            }
+        });
 
     }
 
@@ -193,7 +315,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 theCircuit.setPlaces(listOfPlaces);
 
                 // MAJ graphique de la liste des places
-                addPlaceInformationsToList(newPlace);
+                refreshPlacesList();
 
                 // Calcul de la polyligne via Google Maps
                 Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
@@ -213,6 +335,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
