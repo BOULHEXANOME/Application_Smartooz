@@ -66,6 +66,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         }
         viewHolder.tags.setText(tag);
         viewHolder.note.setRating(parcours.getNoteOn5());
+        viewHolder.note.setFocusable(false);
         //TODO
         viewHolder.image.setImageDrawable(new ColorDrawable(Color.RED));
 

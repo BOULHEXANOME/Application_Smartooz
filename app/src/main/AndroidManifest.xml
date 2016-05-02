@@ -24,12 +24,19 @@
         <activity android:name=".Activities.InscriptionActivity" />
         <activity
             android:name=".Activities.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:windowSoftInputMode="stateHidden"></activity>
-        <activity
-            android:name=".Activities.VisiterLyonActivity"
-            android:windowSoftInputMode="stateHidden"></activity>
-        <activity android:name=".Activities.ListCircuit" />
+            android:windowSoftInputMode="stateHidden"
+            android:label="@string/title_activity_login">
+        </activity>
+
+        <activity android:name=".Activities.VisiterLyonActivity"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".Activities.ListCircuit"/>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -46,17 +53,13 @@
             android:name=".Activities.CreerParcours"
             android:label="@string/title_activity_creer_parcours"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.CreerParcours_AjoutTag" />
+
+
         <activity
             android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/AppTheme" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
