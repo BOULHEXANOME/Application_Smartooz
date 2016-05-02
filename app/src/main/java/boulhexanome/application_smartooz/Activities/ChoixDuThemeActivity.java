@@ -257,7 +257,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
         JsonArray places_array = new JsonArray();
         for (int i = 0; i < circuit.getPlaces().size(); i++) {
-            places_array.add(circuit.getPlaces().get(i).getPosition().toString());
+            places_array.add(circuit.getPlaces().get(i).getId());
         }
         jsonObject.add("places", places_array);
 
