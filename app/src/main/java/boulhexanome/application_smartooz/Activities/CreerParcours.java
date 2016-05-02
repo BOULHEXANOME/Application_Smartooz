@@ -3,6 +3,7 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -125,11 +126,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     if (CreerParcours.this.boucle) {
                         markers.remove(markers.size() - 1);
                         CreerParcours.this.boucle = false;
+                        boucle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                         Toast.makeText(CreerParcours.this, "Le circuit ne boucle plus", Toast.LENGTH_SHORT).show();
                         showPolyline();
                     } else {
                         markers.add(markers.get(0));
                         CreerParcours.this.boucle = true;
+                        boucle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentPlus)));
                         Toast.makeText(CreerParcours.this, "Le circuit boucle", Toast.LENGTH_SHORT).show();
                         showPolyline();
                     }

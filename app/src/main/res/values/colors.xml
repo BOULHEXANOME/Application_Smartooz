@@ -4,5 +4,6 @@
     <color name="colorPrimaryLight">#ba6057</color>
     <color name="colorPrimaryDark">#7c3730</color>
     <color name="colorAccent">#f87b1f</color>
+    <color name="colorAccentPlus">#bf5303</color>
     <color name="colorBackgroundSearch">#fff3f3f3</color>
 </resources>
