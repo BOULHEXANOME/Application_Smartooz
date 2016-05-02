@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuits;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
@@ -49,13 +51,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     // Interface
     private ActionBar toolbar;
-
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
     boolean mapIsHidden;
 
     // Les elements qu'on doit mettre a jour
-    private TextView circuitTitle, circuitInformationsTextview, circuitDescription, timeMinutesTextview, lengthKmTextview, heightDifferenceTextview;
+    private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
     private RatingBar circuitRatingBar;
 
     // Infos issues du serveur
@@ -103,18 +104,18 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             }
         }); // Fin decla listener
 
-
         // Definition des objets graphiques que l'on va mettre a jour
         circuitTitle = (TextView) findViewById(R.id.circuit_title);
         circuitInformationsTextview = (TextView) findViewById(R.id.circuit_global_informations);
         circuitRatingBar = (RatingBar) findViewById(R.id.circuit_details_rating);
         circuitDescription = (TextView) findViewById(R.id.circuit_description);
-        timeMinutesTextview = (TextView) findViewById(R.id.time_minutes);
+        keywordsTextview = (TextView) findViewById(R.id.keywords_circuit_details);
         lengthKmTextview = (TextView) findViewById(R.id.length_km);
         heightDifferenceTextview = (TextView) findViewById(R.id.circuit_height_difference_m);
 
         // Recuperation de l'objet circuit transmis depuis la liste des circuits
-        theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
+        theCircuit = CurrentCircuits.getInstance().getSelectedCircuit();
+        //theCircuit = (Circuit) getIntent().getSerializableExtra("Circuit");
         if (theCircuit != null) {
             // MAJ des elements de la vue pour afficher les infos dans l'objet circuit
             circuitTitle.setText(theCircuit.getName());
@@ -125,10 +126,10 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 keywords += theCircuit.getKeywords().get(i) + " ";
             }
 
-            //circuitInformationsTextview.setText(Durée, theCircuit.getLengthKm(), keywords);
+            circuitInformationsTextview.setText(theCircuit.getLengthKm() + " km - " + keywords);
             circuitRatingBar.setRating(theCircuit.getNoteOn5());
             circuitDescription.setText(theCircuit.getDescription());
-            //timeMinutesTextview.setText("Durée conseillée : " + duree + " mins");
+            keywordsTextview.setText("Mots-clefs : " + keywords);
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
@@ -297,9 +298,16 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 }
             });
 
-            GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
-            getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
-            getTask.execute();
+
+            //Recuperation des id des places pour requetage
+            ArrayList<Integer> placesId = theCircuit.getPlacesId();
+
+            for (Integer id : placesId) {
+                GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES_ID) + "/" + id);
+                getTask.delegate = new HandleGetPlacesDetailsCircuit(this);
+                getTask.execute();
+            }
+
 
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
@@ -322,11 +330,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             case ASK_FOR_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 & grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay!
 
                 } else {
-
                     // permission denied, boo!
                 }
                 return;
