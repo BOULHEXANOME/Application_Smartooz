@@ -151,12 +151,14 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         JsonElement imageURL = imagesURL.get("contentUrl");
         JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
         JsonElement description = descriptionLongue.get("articleBody");
+
         textViewTitle.setText("");
         if(name !=null) {
             textViewTitle.append(name.getAsString());
-        }else{
+        }else if(place.getName()!=null){
             textViewTitle.append(place.getName());
         }
+
         textViewSubtitle.setText("");
         if(descriptionCourte!=null) {
             textViewSubtitle.append(descriptionCourte.getAsString());
@@ -166,29 +168,33 @@ public class PlaceNearbyActivity extends AppCompatActivity {
                 textViewSubtitle.append(" ");
             }
         }
+
         textViewDescription.setText("");
         if(description!=null) {
             textViewDescription.append(description.getAsString());
-        }else{
+        }else if(place.getDescription()!=null){
             textViewDescription.append(place.getDescription());
         }
+
         if(imageURL !=null){
             new DownloadImageTask(imageView).execute(imageURL.getAsString());
+        }else if(place.getUrlImage()!=null){
+            new DownloadImageTask(imageView).execute(place.getUrlImage());
         }
+
+        textViewAddress.setText("");
         if(place.getAddress()!=null){
             textViewAddress.setText("adresse : "+place.getAddress());
-        }else{
-            textViewAddress.setText("");
         }
+
+        textViewNumTel.setText("");
         if(place.getPhone()!=null){
             textViewNumTel.setText("adresse : "+place.getPhone());
-        }else{
-            textViewNumTel.setText("");
         }
+
+        textViewWebSite.setText("");
         if(place.getWebsite()!=null){
             textViewWebSite.setText("adresse : "+place.getWebsite());
-        }else{
-            textViewWebSite.setText("");
         }
         ratingBar.setRating(place.getNoteOn5());
     }
