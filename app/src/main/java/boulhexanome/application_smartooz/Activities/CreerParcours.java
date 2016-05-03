@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -229,6 +230,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         TextView description = (TextView) v.findViewById(R.id.description);
                         TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
                         TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
+
+                        ImageView image = (ImageView)v.findViewById(R.id.imagePi);
+                        if(placeMarked.getUrlImage()!=null){
+                            new DownloadImageTask(image).execute(placeMarked.getUrlImage());
+                        }
 
                         String numeroListe ="";
                         for (int i = 0; i < markers.size(); i++) {
