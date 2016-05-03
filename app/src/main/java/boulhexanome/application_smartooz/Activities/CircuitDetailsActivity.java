@@ -508,10 +508,28 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     TextView description = (TextView) v.findViewById(R.id.description);
                     RatingBar noteOn5 = (RatingBar) v.findViewById(R.id.noteOn5);
                     TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
+                    TextView numero = (TextView) v.findViewById(R.id.numero_place);
                     ImageView image = (ImageView) v.findViewById(R.id.imagePi);
                     title.setText(placeMarked.getName());
                     description.setText(placeMarked.getDescription());
                     noteOn5.setRating(Float.valueOf(placeMarked.getNoteOn5()));
+
+                    String numeroListe ="";
+                    for (int i = 0; i < markers.size(); i++) {
+                        if (placeMarked.getPosition().equals(markers.get(i).getPosition())){
+                            numeroListe = numeroListe + String.valueOf(i+1) + "&";
+                        }
+                    }
+
+                    if (numeroListe.endsWith("&")){
+                        numero.setHeight(75);
+                        numeroListe = numeroListe.substring(0,numeroListe.length()-1);
+                        numero.setText("Etape " + numeroListe);
+                    } else {
+                        numero.setHeight(0);
+                        numero.setText("");
+                    }
+
                     if(placeMarked.getUrlImage()!=null){
                         if(not_first_time_showing_info_window){
                             Picasso.with(CircuitDetailsActivity.this).load(placeMarked.getUrlImage()).into(image);
