@@ -482,7 +482,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         // draw the text if sliders have moved from default edges
         if (!selectedValuesAreDefault) {
             paint.setTextSize(mTextSize);
-            paint.setColor(Color.WHITE);
+            paint.setColor(Color.TRANSPARENT);
             // give text a bit more space here so it doesn't get cut off
             int offset = PixelUtil.dpToPx(getContext(), TEXT_LATERAL_PADDING_IN_DP);
 

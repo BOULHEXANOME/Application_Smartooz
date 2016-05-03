@@ -8,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -94,9 +95,9 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
         // Range seekbar
         rangeSeekBar = new RangeSeekBar<Integer>(this);
-        rangeSeekBar.setRangeValues(0, 100);
+        rangeSeekBar.setRangeValues(0, 200);
         rangeSeekBar.setSelectedMinValue(20);
-        rangeSeekBar.setSelectedMaxValue(50);
+        rangeSeekBar.setSelectedMaxValue(80);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.layoutrangebar);
         assert layout != null;
@@ -159,24 +160,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
-
-                switch (listMotsChoisis.getCount() ) {
-                    case 0 :
-                        listMotsChoisis.setMinimumHeight(0);
-                        break;
-                    case 1 :
-                        listMotsChoisis.setMinimumHeight(50);
-                        break;
-                    case 2 :
-                        listMotsChoisis.setMinimumHeight(100);
-                        break;
-                    case 3 :
-                        listMotsChoisis.setMinimumHeight(150);
-                        break;
-                    default :
-                        listMotsChoisis.setMinimumHeight(200);
-                        break;
-                }
             }
         });
 
@@ -215,24 +198,6 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisis = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
-
-                switch (listMotsChoisis.getCount() ) {
-                    case 0 :
-                        listMotsChoisis.setMinimumHeight(0);
-                        break;
-                    case 1 :
-                        listMotsChoisis.setMinimumHeight(50);
-                        break;
-                    case 2 :
-                        listMotsChoisis.setMinimumHeight(100);
-                        break;
-                    case 3 :
-                        listMotsChoisis.setMinimumHeight(150);
-                        break;
-                    default :
-                        listMotsChoisis.setMinimumHeight(200);
-                        break;
-                }
             }
         });
 
