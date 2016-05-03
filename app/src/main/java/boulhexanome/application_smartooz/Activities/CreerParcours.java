@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -227,7 +228,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         TextView numero = (TextView) v.findViewById(R.id.numero_place);
                         TextView title = (TextView) v.findViewById(R.id.title_place);
                         TextView description = (TextView) v.findViewById(R.id.description);
-                        TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                        RatingBar noteOn5 = (RatingBar) v.findViewById(R.id.noteOn5);
                         TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
 
                         ImageView image = (ImageView)v.findViewById(R.id.imagePi);
@@ -252,7 +253,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         }
                         title.setText(placeMarked.getName());
                         description.setText(placeMarked.getDescription());
-                        noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
+                        noteOn5.setRating(Float.valueOf(placeMarked.getNoteOn5()));
 
 
                         StringBuilder stringBuilder = new StringBuilder();
