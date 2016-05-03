@@ -530,11 +530,13 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     TextView description = (TextView) v.findViewById(R.id.description);
                     TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
                     TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
-
+                    ImageView image = (ImageView) v.findViewById(R.id.imagePi);
                     title.setText(placeMarked.getName());
                     description.setText(placeMarked.getDescription());
                     noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
-
+                    if(placeMarked.getUrlImage()!=null){
+                        new DownloadImageTask(image).execute(placeMarked.getUrlImage());
+                    }
 
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("Tags : ");
@@ -765,3 +767,5 @@ class UploadToServer extends AsyncTask<Void, Void, String> {
         pd.dismiss();
     }
 }
+
+

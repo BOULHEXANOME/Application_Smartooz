@@ -73,12 +73,12 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
 
         // ---------------- En vrai :
         // on délègue la tâche de la requête à un handler
-        /*GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
+        GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
         getIdCircuitsCreatedThread.delegate = new HandleGetAllCreatedCircuitsResponse(this);
-        getIdCircuitsCreatedThread.execute();*/
+        getIdCircuitsCreatedThread.execute();
 
         // ---------------- Pour les tests :
-        ArrayList<String> keywordsCrees = new ArrayList<>();
+        /*ArrayList<String> keywordsCrees = new ArrayList<>();
         keywordsCrees.add("tag1");
         keywordsCrees.add("tag2");
         keywordsCrees.add("tag3");
@@ -88,7 +88,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         parcoursCrees.add(circTestCrees);
         parcoursCrees.add(circTestCrees2);
         parcoursCrees.add(circTestCrees3);
-        parcoursCrees.add(circTestCrees);
+        parcoursCrees.add(circTestCrees);*/
 
         if(!parcoursCrees.isEmpty()) {
             TextView parcCrees_text = (TextView) findViewById(R.id.parcCrees_textView);
