@@ -185,6 +185,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 
                     startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+
+                    String url = Config.getRequest(Config.UPLOAD_PICTURE_PLACE_CIRCUIT + "/" + Integer.toString(theCircuit.getId()));
+
+                    PostTask postTask = new PostTask(url);
+                    postTask.delegate = new HandleVisualization(CircuitDetailsActivity.this);
+                    //postTask.execute(newfile);
                 }
             });
         }
@@ -194,7 +200,36 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
-    
+
+    class HandleVisualization implements PostTask.AsyncResponse{
+
+        private CircuitDetailsActivity circuitDetailsActivity;
+
+        public HandleVisualization(CircuitDetailsActivity circuitDetailsActivity) {
+            this.circuitDetailsActivity = circuitDetailsActivity;
+        }
+
+        @Override
+        public void processFinish(JsonObject results) {
+            this.circuitDetailsActivity.visualizeReceived(results);
+        }
+    }
+
+    class HandleGetPlaces implements GetTask.AsyncResponse{
+
+        private CreerParcours creerParcours;
+
+        public HandleGetPlaces(CreerParcours creerParcours) {
+            this.creerParcours = creerParcours;
+        }
+
+        @Override
+        public void processFinish(JsonObject results) {
+            this.creerParcours.getPlacesReceived(results);
+        }
+    }
+
+
     public void clickLancerParcours(){
         Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
         if(!this.parcoursEstLance){
