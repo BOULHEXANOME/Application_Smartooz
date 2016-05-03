@@ -184,19 +184,19 @@ public class Place {
         for (int j = 0; j < keywords.size(); j++) {
             pi_keywords.add(keywords.get(j).getAsJsonObject().get("name").getAsString());
         }
-        this.position = new LatLng(jsonObject.get("lat").getAsDouble(), jsonObject.get("long").getAsDouble());
-        this.address = jsonObject.get("address").getAsString();
-        this.phone = jsonObject.get("phone").toString();
-        this.website = jsonObject.get("website").toString();
-        this.openingHours = jsonObject.get("openning_hours").getAsString();
-        this.name = jsonObject.get("name").getAsString();
-        this.description = jsonObject.get("description").getAsString();
-        this.idUser = jsonObject.get("id_user").getAsInt();
-        this.noteOn5 = jsonObject.get("note_5").getAsFloat();
-        this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();
-        this.keywords = pi_keywords;
-        this.id = jsonObject.get("id").getAsInt();
-        this.urlImage = jsonObject.get("image").getAsString();
+        try{this.position = new LatLng(jsonObject.get("lat").getAsDouble(), jsonObject.get("long").getAsDouble());}catch(Exception e){}
+        try{this.address = jsonObject.get("address").getAsString();}catch(Exception e){}
+        try{this.phone = jsonObject.get("phone").getAsString();}catch(Exception e){}
+        try{this.website = jsonObject.get("website").getAsString();}catch(Exception e){}
+        try{this.openingHours = jsonObject.get("openning_hours").getAsString();}catch(Exception e){}
+        try{this.name = jsonObject.get("name").getAsString();}catch(Exception e){}
+        try{this.description = jsonObject.get("description").getAsString();}catch(Exception e){}
+        try{this.idUser = jsonObject.get("id_user").getAsInt();}catch(Exception e){}
+        try{this.noteOn5 = jsonObject.get("note_5").getAsFloat();}catch(Exception e){}
+        try{this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();}catch(Exception e){}
+        try{this.keywords = pi_keywords;}catch(Exception e){}
+        try{this.id = jsonObject.get("id").getAsInt();}catch(Exception e){}
+        try{this.urlImage = jsonObject.get("image").getAsString();}catch(Exception e){}
     }
 
     public MarkerOptions toMarkerOptions(){

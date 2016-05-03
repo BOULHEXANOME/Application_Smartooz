@@ -65,12 +65,13 @@ public class CurrentCircuitTravel {
                 distanceLaPlusProche = distance;
             }
         }
-
-        int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
-        if(indexTrouve != placeIndex) {
-            onEstPassePar.add(indexTrouve);
-            placeIndex = indexTrouve;
-            return placeLaPlusProche;
+        if(placeLaPlusProche != null){
+            int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
+            if(indexTrouve != placeIndex) {
+                onEstPassePar.add(indexTrouve);
+                placeIndex = indexTrouve;
+                return placeLaPlusProche;
+            }
         }
         return null;
     }
@@ -81,5 +82,11 @@ public class CurrentCircuitTravel {
 
     public void setOnEstPassePar(ArrayList<Integer> onEstPassePar) {
         this.onEstPassePar = onEstPassePar;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        getInstance().setCircuitEnCours(this.circuitEnCours);
+        super.finalize(); // questionable, but you should ensure calling it somewhere.
     }
 }
