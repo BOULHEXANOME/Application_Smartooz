@@ -223,7 +223,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             if (votingBar != null) {
                 System.out.print("Voting Bar listener");
-
+                votingBar.setRating(theCircuit.getNoteOn5());
                 votingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {

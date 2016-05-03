@@ -73,14 +73,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp">
+            android:layout_marginLeft="8dp">
 
             <RatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/noteParcours"
                 android:numStars="5"
-                android:rating="3.5"
                 android:isIndicator="true"
                 android:clickable="false"
                 style="@style/foodRatingBar"  />

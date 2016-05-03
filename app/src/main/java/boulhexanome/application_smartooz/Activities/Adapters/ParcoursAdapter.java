@@ -74,7 +74,8 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
             if(i!=0){
                 tag+=" ";
             }
-            if(i>6){
+            if(i>2){
+                tag+="...";
                 break;
             }
             tag += tags.get(i);
