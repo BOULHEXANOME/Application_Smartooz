@@ -128,7 +128,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         // Pour ne lancer la requete Gmap que quand on a recupere toutes les places
         numberOfReceivedPlaces = 0;
 
@@ -215,20 +214,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                 @Override
                 public void onClick(View v) {
-//                    int TAKE_PHOTO_CODE = 0;
-//                    String file = "hola.jpg";
-//                    File newfile = new File(file);
-//                    try {
-//                        newfile.createNewFile();
-//                    }
-//                    catch (IOException e)
-//                    {
-//                    }
-//                    Uri outputFileUri = Uri.fromFile(newfile);
-//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-//                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
 
                     if (getApplicationContext().getPackageManager().hasSystemFeature(
                             PackageManager.FEATURE_CAMERA)) {
@@ -245,48 +230,20 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                     url = Config.getRequest(Config.UPLOAD_IMAGE_CIRCUIT + Integer.toString(theCircuit.getId()));
 
-                    //postTask.execute(newfile);
                 }
             });
 
-            /*
+
             if (votingBar != null) {
                 //System.out.print("Voting Bar listener");
 
                 votingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                        System.out.println(rating);
-                        postVote(rating, fromUser);
+                        postVote(rating);
                     }
                 });
-            } */
-
-            votingBar.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        float touchPositionX = event.getX();
-                        float width = votingBar.getWidth();
-                        float rating = (touchPositionX / width) * 5.0f;
-                        //int stars = (int)starsf + 1;
-                        votingBar.setRating(rating);
-                        //Toast.makeText(CircuitDetailsActivity.this, String.valueOf("test"), Toast.LENGTH_SHORT).show();
-                        postVote(rating);
-                        v.setPressed(false);
-
-                    }
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        v.setPressed(true);
-                    }
-
-                    if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-                        v.setPressed(false);
-                    }
-                    return true;
-                }});
-
-
+            }
         }
 
         // Demarrage sur la map directement
@@ -297,15 +254,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
 
     protected void postVote(float rating) {
-        int placeId = theCircuit.getId();
+        int circuitId = theCircuit.getId();
 
         PostTask voteTask = new PostTask(Config.getRequest(Config.VOTE_CIRCUIT));
         voteTask.delegate = new HandleCircuitVote(CircuitDetailsActivity.this);
 
         JsonObject vote = new JsonObject();
-        vote.addProperty("id", placeId);
+        vote.addProperty("id", circuitId);
         vote.addProperty("note", rating);
-        //System.out.println("Vote : " + placeId + ", note : " + rating);
 
         voteTask.execute(vote);
     }

@@ -253,21 +253,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
             @Override
             public void onClick(View v) {
-//                    int TAKE_PHOTO_CODE = 0;
-//                    String file = "hola.jpg";
-//                    File newfile = new File(file);
-//                    try {
-//                        newfile.createNewFile();
-//                    }
-//                    catch (IOException e)
-//                    {
-//                    }
-//                    Uri outputFileUri = Uri.fromFile(newfile);
-//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-//                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
-
                 if (getApplicationContext().getPackageManager().hasSystemFeature(
                         PackageManager.FEATURE_CAMERA)) {
                     // Open default camera
@@ -282,8 +267,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 }
 
                 url = Config.getRequest(Config.UPLOAD_IMAGE_CIRCUIT);
-
-                //postTask.execute(newfile);
             }
         });
 
@@ -295,9 +278,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -373,11 +353,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             picturePath = cursor.getString(columnIndex);
             cursor.close();
-
-//            Bitmap photo = (Bitmap) data.getExtras().get("data");
-//            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
-//            imageView.setImageBitmap(photo);
-
 
             Bitmap bm = BitmapFactory.decodeFile(picturePath);
             ByteArrayOutputStream bao = new ByteArrayOutputStream();

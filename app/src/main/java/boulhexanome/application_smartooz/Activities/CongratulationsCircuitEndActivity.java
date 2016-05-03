@@ -40,7 +40,6 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
             ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    System.out.println(rating);
                     handleVote(rating, fromUser);
                 }
             });

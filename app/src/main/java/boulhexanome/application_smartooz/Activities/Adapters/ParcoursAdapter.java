@@ -82,7 +82,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         viewHolder.note.setFocusable(false);
         ArrayList<Place> places = parcours.getPlaces();
         parcours.getNoteOn5();
-        String urlImage = "Config.IP_SERV"+"/circuits/"+Integer.toString(parcours.getId());
+        String urlImage = Config.PROTOCOL + "://" + Config.IP_SERV + ":" + Config.PORT + "/circuits/" + Integer.toString(parcours.getId());
         new DownloadImageTask(viewHolder.image).execute(urlImage);
 
         return convertView;
@@ -111,8 +111,6 @@ class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             InputStream in = new java.net.URL(urldisplay).openStream();
             mIcon11 = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
             InputStream in = null;
             try {
                 in = new java.net.URL("http://www.mediterranee-air-training.fr/wp-content/plugins/lightbox/images/No-image-found.jpg").openStream();
