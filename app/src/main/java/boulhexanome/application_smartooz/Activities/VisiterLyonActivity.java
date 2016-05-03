@@ -159,6 +159,24 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
+
+                switch (listMotsChoisis.getCount() ) {
+                    case 0 :
+                        listMotsChoisis.setMinimumHeight(0);
+                        break;
+                    case 1 :
+                        listMotsChoisis.setMinimumHeight(50);
+                        break;
+                    case 2 :
+                        listMotsChoisis.setMinimumHeight(100);
+                        break;
+                    case 3 :
+                        listMotsChoisis.setMinimumHeight(150);
+                        break;
+                    default :
+                        listMotsChoisis.setMinimumHeight(200);
+                        break;
+                }
             }
         });
 
@@ -197,6 +215,24 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisis = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
+
+                switch (listMotsChoisis.getCount() ) {
+                    case 0 :
+                        listMotsChoisis.setMinimumHeight(0);
+                        break;
+                    case 1 :
+                        listMotsChoisis.setMinimumHeight(50);
+                        break;
+                    case 2 :
+                        listMotsChoisis.setMinimumHeight(100);
+                        break;
+                    case 3 :
+                        listMotsChoisis.setMinimumHeight(150);
+                        break;
+                    default :
+                        listMotsChoisis.setMinimumHeight(200);
+                        break;
+                }
             }
         });
 

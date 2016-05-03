@@ -61,24 +61,24 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
         assert toolbar != null;
-        toolbar.setTitle("Mes Parcours Créés et Effectués");
+        toolbar.setTitle("Mes Parcours");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        // ---------------- PARCOURS CREES
+        // ------------ PARCOURS CREES ------------
 
         listParcoursCrees = (ListView) findViewById(R.id.mesParc_listView2);
 
-        //parcoursCrees = CurrentCircuits.getInstance().getListOfCircuits();
-        // Pour les tests :
         parcoursCrees = new ArrayList<Circuit>();
 
+        // ---------------- En vrai :
         // on délègue la tâche de la requête à un handler
-        GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
+        /*GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
         getIdCircuitsCreatedThread.delegate = new HandleGetAllCreatedCircuitsResponse(this);
-        getIdCircuitsCreatedThread.execute();
+        getIdCircuitsCreatedThread.execute();*/
 
-        /*ArrayList<String> keywordsCrees = new ArrayList<>();
+        // ---------------- Pour les tests :
+        ArrayList<String> keywordsCrees = new ArrayList<>();
         keywordsCrees.add("tag1");
         keywordsCrees.add("tag2");
         keywordsCrees.add("tag3");
@@ -88,7 +88,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         parcoursCrees.add(circTestCrees);
         parcoursCrees.add(circTestCrees2);
         parcoursCrees.add(circTestCrees3);
-        parcoursCrees.add(circTestCrees);*/
+        parcoursCrees.add(circTestCrees);
 
         if(!parcoursCrees.isEmpty()) {
             TextView parcCrees_text = (TextView) findViewById(R.id.parcCrees_textView);
@@ -130,18 +130,19 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
             });
         }
 
-        // --------- PARCOURS EFFECTUES
+        // ------------ PARCOURS EFFECTUES ------------
 
         listParcours = (ListView) findViewById(R.id.mesParc_listView1);
 
         parcoursEffectues = new ArrayList<>();
-        // on délègue la tâche de la requête à un handler
-        GetTask getIdCircuitsDoneThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
-        getIdCircuitsDoneThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
-        getIdCircuitsDoneThread.execute();
-        // Pour les tests :
 
-        /*
+        // -------- En vrai :
+        // on délègue la tâche de la requête à un handler
+        /*GetTask getIdCircuitsDoneThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
+        getIdCircuitsDoneThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
+        getIdCircuitsDoneThread.execute();*/
+
+        // -------- Pour les tests :
         ArrayList<String> keywords = new ArrayList<>();
         keywords.add("tag1");
         keywords.add("tag2");
@@ -152,7 +153,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         parcoursEffectues.add(circTest);
         parcoursEffectues.add(circTest2);
         parcoursEffectues.add(circTest3);
-        parcoursEffectues.add(circTest);*/
+        parcoursEffectues.add(circTest);
 
         TextView parcEffectues_text = (TextView) findViewById(R.id.parcEffectues_textView);
         assert parcEffectues_text != null;
@@ -435,12 +436,12 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
             JsonArray resultsArray = results.getAsJsonArray("circuits");
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
+                    // Je ne sais pas comment récupérer l'id ! Là je pense que je récupère un objet "circuit" composé d'un int et d'une date
                     idCircuitsEffectues.add(resultsArray.get(i).getAsInt());
                 }
             }
             // Pour les tests on rajoute deux id dans la liste
             idCircuitsEffectues.add(1);
-            idCircuitsEffectues.add(2);
 
             if(!idCircuitsEffectues.isEmpty()) {
                 for(int id:idCircuitsEffectues) {
