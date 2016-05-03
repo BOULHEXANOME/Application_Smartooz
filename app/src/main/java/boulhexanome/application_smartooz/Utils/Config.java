@@ -41,7 +41,8 @@ public class Config {
     public static final String DOWNLOAD_IMAGE_CIRCUIT = "/download-picture/"; // + circuit id !!!!
 
     /************PICTURE************/
-    public static final String UPLOAD_PICTURE = "/upload";
+    public static final String UPLOAD_PICTURE_PLACE = "/upload";
+    public static final String UPLOAD_PICTURE_PLACE_CIRCUIT = "/upload-image-circuit";
     public static final String DOWNLOAD_PICTURE = "/download-picture";
 
 
