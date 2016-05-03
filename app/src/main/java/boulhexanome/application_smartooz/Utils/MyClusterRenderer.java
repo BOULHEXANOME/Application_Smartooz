@@ -34,20 +34,4 @@ public class MyClusterRenderer extends DefaultClusterRenderer{
         super(context, map, clusterManager);
         this.creerParcours = creerParcours;
     }
-
-
-    @Override
-    protected void onClusterItemRendered(ClusterItem clusterItem, Marker marker) {
-        super.onClusterItemRendered(clusterItem, marker);
-        if (creerParcours.getMarkers() != null) {
-            for (Marker m : creerParcours.getMarkers()) {
-                System.out.println("Liste Markers : " + creerParcours.getMarkers());
-                if (marker != null) {
-                    if (marker.getTitle().equals(m.getTitle())) {
-                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    }
-                }
-            }
-        }
-    }
 }

@@ -264,6 +264,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
+            mClusterManager.setRenderer(new MyClusterRenderer(this,mMap,mClusterManager));
+
             mMap.setOnCameraChangeListener(mClusterManager);
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
@@ -283,7 +285,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                             markers.add(marker);
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            marker.showInfoWindow();
+                            //marker.showInfoWindow();
                             //Affichage dynamique du parcours
                             if (markers.size() >= 2) {
                                 showPolyline();
