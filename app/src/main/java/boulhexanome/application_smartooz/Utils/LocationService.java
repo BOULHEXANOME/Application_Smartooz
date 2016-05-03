@@ -146,7 +146,10 @@ public class LocationService extends Service {
         {
             if(isBetterLocation(loc, previousBestLocation)) {
                 System.out.println("************************************** Location changed");
-                Place p = CurrentCircuitTravel.getInstance().getClosePlace(loc.getLatitude(), loc.getLongitude());
+                CurrentCircuitTravel currentCircuitTravel = CurrentCircuitTravel.getInstance();
+                Place p = null;
+                if(currentCircuitTravel != null)
+                    p = currentCircuitTravel.getClosePlace(loc.getLatitude(), loc.getLongitude());
                 if(p != null){
                     System.out.println("On y est !");
                     ArrayList<Place> places = CurrentCircuitTravel.getInstance().getCircuitEnCours().getPlaces();

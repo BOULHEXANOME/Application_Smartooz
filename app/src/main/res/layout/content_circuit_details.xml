@@ -65,15 +65,14 @@
         android:id="@+id/circuit_details_scrollview"
         android:layout_width="fill_parent"
         android:padding="10dp"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/linear_layout_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:clickable="true"
-            android:paddingBottom="500dp">
+            android:clickable="true">
 
             <TextView
                 android:id="@+id/circuit_description"
@@ -165,8 +164,9 @@
 
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/places_list" />
+                android:layout_height="wrap_content"
+                android:id="@+id/places_list"
+                />
 
         </LinearLayout>
     </ScrollView>

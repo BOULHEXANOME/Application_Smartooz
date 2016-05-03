@@ -1,10 +1,13 @@
 package boulhexanome.application_smartooz.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -14,6 +17,7 @@ import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.LocationService;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 import static android.widget.RatingBar.*;
@@ -42,6 +46,14 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
             });
         }
 
+        final Button finirParcours = (Button) findViewById(R.id.finirParcours);
+        finirParcours.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finirParcoursClicked();
+            }
+        });
+
         int placeId = CurrentCircuitTravel.getInstance().getCircuitEnCours().getId();
 
         PostTask inscription_thread = new PostTask(Config.getRequest(Config.CIRCUIT_DONE));
@@ -52,6 +64,13 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
 
         inscription_thread.execute(vote);
 
+    }
+
+    private void finirParcoursClicked(){
+        CurrentCircuitTravel.getInstance().toDelete = true;
+        Intent intent = new Intent(CongratulationsCircuitEndActivity.this, PlaceNearbyActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

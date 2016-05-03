@@ -65,6 +65,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
+    private int numberOfReceivedPlaces;
 
     // Interface
     private ActionBar toolbar;
@@ -85,6 +86,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Pour ne lancer la requete Gmap que quand on a recupere toutes les places
+        numberOfReceivedPlaces = 0;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_circuit_details);
@@ -181,6 +185,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 
                     startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+
+                    String url = Config.getRequest(Config.UPLOAD_PICTURE_PLACE_CIRCUIT + "/" + Integer.toString(theCircuit.getId()));
+
+                    PostTask postTask = new PostTask(url);
+                    postTask.delegate = new HandleVisualization(CircuitDetailsActivity.this);
+                    //postTask.execute(newfile);
                 }
             });
         }
@@ -190,7 +200,36 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
-    
+
+    class HandleVisualization implements PostTask.AsyncResponse{
+
+        private CircuitDetailsActivity circuitDetailsActivity;
+
+        public HandleVisualization(CircuitDetailsActivity circuitDetailsActivity) {
+            this.circuitDetailsActivity = circuitDetailsActivity;
+        }
+
+        @Override
+        public void processFinish(JsonObject results) {
+            this.circuitDetailsActivity.visualizeReceived(results);
+        }
+    }
+
+    class HandleGetPlaces implements GetTask.AsyncResponse{
+
+        private CreerParcours creerParcours;
+
+        public HandleGetPlaces(CreerParcours creerParcours) {
+            this.creerParcours = creerParcours;
+        }
+
+        @Override
+        public void processFinish(JsonObject results) {
+            this.creerParcours.getPlacesReceived(results);
+        }
+    }
+
+
     public void clickLancerParcours(){
         Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
         if(!this.parcoursEstLance){
@@ -236,7 +275,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         final ListAdapter adapter = new ArrayAdapter<>(CircuitDetailsActivity.this, android.R.layout.simple_list_item_1, placesListString);
         placesList.setAdapter(adapter);
 
-
+/*
         // Taille de la liste dynamique
         if (adapter != null) {
 
@@ -254,13 +293,17 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             int totalDividersHeight = placesList.getDividerHeight() *
                     (numberOfItems - 1);
 
+            System.out.println("Heights : " + totalItemsHeight + " " + totalDividersHeight);
+
             // Set list height.
             ViewGroup.LayoutParams params = placesList.getLayoutParams();
             params.height = totalItemsHeight + totalDividersHeight;
             placesList.setLayoutParams(params);
+            invalidate
             placesList.requestLayout();
 
         }
+        */
 
         // Permettre le scroll avec la ScrollView
         /*
@@ -288,7 +331,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(markers.get(position).getPosition()));
                 markers.get(position).showInfoWindow();
 
-
             }
         });
 
@@ -310,24 +352,37 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                 Place newPlace = new Place(resultObject);
                 listOfPlaces.add(newPlace);
+                numberOfReceivedPlaces++;
 
-                // MAJ du circuit
-                theCircuit.setPlaces(listOfPlaces);
-
-                // MAJ graphique de la liste des places
-                refreshPlacesList();
-
-                // Calcul de la polyligne via Google Maps
                 Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
                 markers.add(newMarker);
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
-                //newMarker.showInfoWindow();
 
-                //Affichage dynamique du parcours
-                URL url = Tools.generateGoogleMapURL(markers);
-                PostTask postTask = new PostTask(url.toString());
-                postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
-                postTask.execute();
+                //mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
+
+
+                if (numberOfReceivedPlaces == theCircuit.getPlacesId().size()) {
+
+                    // MAJ du circuit
+                    theCircuit.setPlaces(listOfPlaces);
+
+                    // MAJ graphique de la liste des places
+                    refreshPlacesList();
+
+                    // Calcul de la polyligne via Google Maps
+                    /*
+                    Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
+                    markers.add(newMarker);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition())); */
+                    //newMarker.showInfoWindow();
+
+                    //Affichage dynamique du parcours
+                    URL url = Tools.generateGoogleMapURL(markers);
+                    PostTask postTask = new PostTask(url.toString());
+                    postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
+                    postTask.execute();
+
+                }
+
             }
         }
     }
