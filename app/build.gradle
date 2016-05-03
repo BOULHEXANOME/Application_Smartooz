@@ -34,4 +34,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
     compile 'com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.1.0'
+    compile files('src/picasso-2.5.2.jar')
 }
