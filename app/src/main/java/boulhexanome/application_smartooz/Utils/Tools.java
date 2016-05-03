@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.gson.JsonArray;
@@ -24,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import boulhexanome.application_smartooz.Activities.CreerParcours;
 import boulhexanome.application_smartooz.Activities.VisiterLyonActivity;
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.User;
@@ -148,6 +153,33 @@ public class Tools {
             Log.e("googleMapError", "Error while decoding polyline");
             return new ArrayList<LatLng>();
         }
+    }
+
+    public static CameraUpdate goOnParcours(ArrayList<Marker> markers) {
+            try {
+                /*if (markers.size()!=0) {
+                    double latitudeMin = 0;
+                    double longitudeMin = 0;
+                    double latitudeMax = 0;
+                    double longitudeMax = 0;
+                    for (int i = 0; i < markers.size(); i++) {
+                        if (Math.abs(markers.get(i).getPosition().latitude) < latitudeMin)
+                            latitudeMin = markers.get(i).getPosition().latitude;
+                        if (Math.abs(markers.get(i).getPosition().latitude) > latitudeMax)
+                            latitudeMax = markers.get(i).getPosition().latitude;
+                        if (Math.abs(markers.get(i).getPosition().longitude) < longitudeMin)
+                            latitudeMin = markers.get(i).getPosition().longitude;
+                        if (Math.abs(markers.get(i).getPosition().longitude) > longitudeMax)
+                            latitudeMax = markers.get(i).getPosition().longitude;
+                    }
+
+                    LatLngBounds latLngBounds = new LatLngBounds(new LatLng(latitudeMin, longitudeMin), new LatLng(latitudeMax, longitudeMax));
+                    return CameraUpdateFactory.newLatLngBounds(latLngBounds, 10);
+                }*/
+                return CameraUpdateFactory.newLatLngBounds(CreerParcours.GRAND_LYON,10);
+            } catch (Exception e) {
+                return CameraUpdateFactory.newLatLngBounds(CreerParcours.GRAND_LYON,10);
+            }
     }
 
 }

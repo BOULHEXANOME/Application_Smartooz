@@ -78,7 +78,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     private ActionMode mActionModeRecherche;
     private ClusterManager mClusterManager;
 
-    final LatLngBounds GRAND_LYON = new LatLngBounds(new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
+    public static final LatLngBounds GRAND_LYON = new LatLngBounds(new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
 
     Polyline currentLine;
 
@@ -188,8 +188,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         not_first_time_showing_info_window = false;
         mMap = googleMap;
 
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngBounds(GRAND_LYON,10));
+        mMap.moveCamera(Tools.goOnParcours(markers));
 
         GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
         getTask.delegate = new HandleGetPlaces(this);
@@ -410,8 +409,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 }
             }
         }
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngBounds(GRAND_LYON,10));
+        mMap.moveCamera(Tools.goOnParcours(markers));
     }
 
     public void showPolyline() {
@@ -441,8 +439,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     clusterItems.add(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
                     mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
                 }
-                mMap.moveCamera(CameraUpdateFactory
-                        .newLatLngBounds(GRAND_LYON,10));
+                mMap.moveCamera(Tools.goOnParcours(markers));
             }
         }
     }
