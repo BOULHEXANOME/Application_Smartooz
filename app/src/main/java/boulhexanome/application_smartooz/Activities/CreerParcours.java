@@ -99,11 +99,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creer_parcours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        ActionBar toolbar = getSupportActionBar();
+        final ActionBar toolbar = getSupportActionBar();
         EditText barre_recherche = (EditText) findViewById(R.id.barre_recherche);
         barre_recherche.setVisibility(View.INVISIBLE);
         toolbar.setDisplayShowTitleEnabled(true);
-        toolbar.setTitle("Créer Parcours");
+        toolbar.setTitle("Centres d'intérêts");
         toolbar.setDisplayHomeAsUpEnabled(true);
 
         currentLine = null;
@@ -121,10 +121,12 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 if (modeAjout == false) {
                     ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentPlus)));
                     modeAjout = true;
+                    toolbar.setTitle("Création de parcours");
                     Toast.makeText(CreerParcours.this, "Sélectionnez les étapes du parcours...", Toast.LENGTH_SHORT).show();
                 } else {
                     ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                     modeAjout = false;
+                    toolbar.setTitle("Centres d'intérêts");
                 }
             }
         });
