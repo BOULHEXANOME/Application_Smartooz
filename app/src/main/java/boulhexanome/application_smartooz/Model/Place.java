@@ -23,12 +23,20 @@ public class Place {
     private String openingHours;
     private String name;
     private String description;
+    private String urlImage;
     private int idUser;
     private float noteOn5;
     private int numberOfVotes;
     private ArrayList<String> keywords;
     private int id;
 
+    public String getUrlImage() {
+        return urlImage;
+    }
+
+    public void setUrlImage(String urlImage) {
+        this.urlImage = urlImage;
+    }
     public LatLng getPosition() {
         return position;
     }
@@ -144,6 +152,7 @@ public class Place {
                 ", numberOfVotes=" + numberOfVotes +
                 ", keywords=" + keywords +
                 "' id=" + id +
+                "' url image=" + urlImage +
                 '}';
     }
 
@@ -153,7 +162,7 @@ public class Place {
         keywords = new ArrayList<>();
     }
 
-    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, int idUser, float noteOn5, int numberOfVotes, ArrayList<String> keywords, int id) {
+    public Place(LatLng position, String address, String phone, String website, String openingHours, String name, String description, String urlImage, int idUser, float noteOn5, int numberOfVotes, ArrayList<String> keywords, int id) {
         this.position = position;
         this.address = address;
         this.phone = phone;
@@ -166,6 +175,7 @@ public class Place {
         this.numberOfVotes = numberOfVotes;
         this.keywords = keywords;
         this.id = id;
+        this.urlImage = urlImage;
     }
 
     public Place(JsonObject jsonObject) {
@@ -186,6 +196,7 @@ public class Place {
         this.numberOfVotes = jsonObject.get("nb_vote").getAsInt();
         this.keywords = pi_keywords;
         this.id = jsonObject.get("id").getAsInt();
+        this.urlImage = jsonObject.get("image").getAsString();
     }
 
     public MarkerOptions toMarkerOptions(){
