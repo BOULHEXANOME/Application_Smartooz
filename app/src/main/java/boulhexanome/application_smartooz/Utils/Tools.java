@@ -118,7 +118,7 @@ public class Tools {
 
         String waypoints = "";
         if (circuit.getPlaces().size()>2) {
-            waypoints = "&waypoints=optimize:true|";
+            waypoints = "&waypoints=";
             for (int i = 1; i < circuit.getPlaces().size() - 1; i++) {
                 waypoints = waypoints
                         + circuit.getPlaces().get(i).getPosition().latitude
