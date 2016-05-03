@@ -5,10 +5,13 @@ function pause(){
 }
 
 pause 'Press [Enter] key to continue...'
-echo "geo fix 4,827847 45,77797" | nc localhost 5554
+echo "geo fix 4,842479 45,757899" | nc localhost 5554
 pause 'Press [Enter] key to continue...'
-echo "geo fix 4,83215 45,773778" | nc localhost 5554
+echo "geo fix 4,842579 45,757869" | nc localhost 5554
 pause 'Press [Enter] key to continue...'
-echo "geo fix 4,833746 45,776147" | nc localhost 5554
+echo "geo fix 4,872544 45,762209 " | nc localhost 5554
 pause 'Press [Enter] key to continue...'
-echo "geo fix 4,835787 45,780095" | nc localhost 5554
+echo "geo fix 4,845434 45,766423" | nc localhost 5554
+pause 'Press [Enter] key to continue...'
+echo "geo fix 4,85983 45,752336" | nc localhost 5554
+
