@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitDetail;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
@@ -44,7 +45,7 @@ import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class PlaceNearbyActivity extends AppCompatActivity {
+public class DetailParcoursPlace extends AppCompatActivity {
     private TextView textViewDescription;
     private TextView textViewSubtitle;
     private TextView textViewTitle;
@@ -61,7 +62,7 @@ public class PlaceNearbyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_place_nearby);
+        setContentView(R.layout.activity_detail_parcours_place);
         textViewDescription = (TextView)findViewById(R.id.textViewDescriptionPlace);
         textViewTitle = (TextView)findViewById(R.id.textViewTitlePlace);
         textViewSubtitle = (TextView)findViewById(R.id.textViewSubtitlePlace);
@@ -81,12 +82,11 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        circuit = CurrentCircuitTravel.getInstance().getCircuitEnCours();
-        int placeId = CurrentCircuitTravel.getInstance().getPlaceIndex();
+        circuit = CurrentCircuitDetail.getInstance().getCircuitEnCours();
+        int placeId = CurrentCircuitDetail.getInstance().getPlaceIndex();
         place = circuit.getPlaces().get(placeId);
-        System.out.println(place.getName());
-        String nom = place.getName();
-        //String nom="parc+tete+or";
+        //String nom = place.getName();
+        String nom="parc+tete+or";
         nom+="+lyon";
         String keywords = "";
         try {
@@ -136,10 +136,10 @@ public class PlaceNearbyActivity extends AppCompatActivity {
     }
 
     protected void handleVote(float rating, boolean fromUser){
-        int placeId = CurrentCircuitTravel.getInstance().getPlaceIndex();
+        int placeId = CurrentCircuitDetail.getInstance().getPlaceIndex();
 
         PostTask inscription_thread = new PostTask(Config.getRequest(Config.VOTE_PLACE));
-        inscription_thread.delegate = new HandleNoteReceived(this);
+        inscription_thread.delegate = new HandleNoteReceived2(this);
 
         JsonObject vote = new JsonObject();
         vote.addProperty("id", placeId);
@@ -156,8 +156,8 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home){
-            if(CurrentCircuitTravel.getInstance().toDelete){
-                CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
+            if(CurrentCircuitDetail.getInstance().toDelete){
+                CurrentCircuitDetail.getInstance().setCircuitEnCours(null);
             }
             finish();
         }
@@ -167,7 +167,7 @@ public class PlaceNearbyActivity extends AppCompatActivity {
 
     public void Querying (String parameters) throws IOException {
         GetTask getPlaceNearby = new GetTask("https://kgsearch.googleapis.com/v1/entities:search?query="+parameters+"&key="+API_KEY+"&limit=1&indent=True&languages=fr");
-        getPlaceNearby.delegate = new HandleGetPlaceNearbyResponse(this);
+        getPlaceNearby.delegate = new HandleGetPlaceNearbyResponse2(this);
         JsonObject j = new JsonObject();
         getPlaceNearby.execute(j);
     }
@@ -229,71 +229,46 @@ public class PlaceNearbyActivity extends AppCompatActivity {
 
         textViewNumTel.setText("");
         if(place.getPhone()!=null){
-            textViewNumTel.setText("Numéro téléphone : "+place.getPhone());
+            textViewNumTel.setText("adresse : "+place.getPhone());
         }
 
         textViewWebSite.setText("");
         if(place.getWebsite()!=null){
-            textViewWebSite.setText("Site Web : "+place.getWebsite());
+            textViewWebSite.setText("adresse : "+place.getWebsite());
         }
         ratingBar.setRating(place.getNoteOn5());
     }
 
     public void noteReceived(JsonObject results) {
         if (results.get("status").getAsString().equals("KO")) {
-            Toast.makeText(PlaceNearbyActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailParcoursPlace.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(PlaceNearbyActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailParcoursPlace.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
         }
     }
 }
+class HandleNoteReceived2 implements PostTask.AsyncResponse{
+    private DetailParcoursPlace detailParcoursPlace;
 
-class HandleGetPlaceNearbyResponse implements GetTask.AsyncResponse{
-
-    private PlaceNearbyActivity placeNearbyActivity;
-
-    public HandleGetPlaceNearbyResponse(PlaceNearbyActivity placeNearbyActivity) {
-        this.placeNearbyActivity = placeNearbyActivity;
+    public HandleNoteReceived2(DetailParcoursPlace detailParcoursPlace) {
+        this.detailParcoursPlace = detailParcoursPlace;
     }
 
     @Override
     public void processFinish(JsonObject results) {
-        this.placeNearbyActivity.placeReceived(results);
+        this.detailParcoursPlace.noteReceived(results);
     }
 }
+class HandleGetPlaceNearbyResponse2 implements GetTask.AsyncResponse{
 
-class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
-    }
-    @Override
-    protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return mIcon11;
-    }
-    @Override
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
-    }
-}
-class HandleNoteReceived implements PostTask.AsyncResponse{
-    private PlaceNearbyActivity placeNearbyActivity;
+    private DetailParcoursPlace detailParcoursPlace;
 
-    public HandleNoteReceived(PlaceNearbyActivity placeNearbyActivity) {
-        this.placeNearbyActivity = placeNearbyActivity;
+    public HandleGetPlaceNearbyResponse2(DetailParcoursPlace detailParcoursPlace) {
+        this.detailParcoursPlace = detailParcoursPlace;
     }
 
     @Override
     public void processFinish(JsonObject results) {
-        this.placeNearbyActivity.noteReceived(results);
+        this.detailParcoursPlace.placeReceived(results);
     }
 }

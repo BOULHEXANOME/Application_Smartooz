@@ -4,15 +4,15 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-public class CurrentCircuitTravel {
+public class CurrentCircuitDetail {
 
-    private static CurrentCircuitTravel mInstance = null;
+    private static CurrentCircuitDetail mInstance = null;
     private ArrayList<Integer> onEstPassePar = new ArrayList<>();
 
-    public static CurrentCircuitTravel getInstance(){
+    public static CurrentCircuitDetail getInstance(){
         if(mInstance == null)
         {
-            mInstance = new CurrentCircuitTravel();
+            mInstance = new CurrentCircuitDetail();
         }
         return mInstance;
     }
@@ -29,7 +29,7 @@ public class CurrentCircuitTravel {
         this.circuitEnCours = circuitEnCours;
     }
 
-    private CurrentCircuitTravel(){
+    private CurrentCircuitDetail(){
         placeIndex = -1;
     }
 
@@ -65,13 +65,12 @@ public class CurrentCircuitTravel {
                 distanceLaPlusProche = distance;
             }
         }
-        if(placeLaPlusProche != null){
-            int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
-            if(indexTrouve != placeIndex) {
-                onEstPassePar.add(indexTrouve);
-                placeIndex = indexTrouve;
-                return placeLaPlusProche;
-            }
+
+        int indexTrouve = getCircuitEnCours().getPlaces().indexOf(placeLaPlusProche);
+        if(indexTrouve != placeIndex) {
+            onEstPassePar.add(indexTrouve);
+            placeIndex = indexTrouve;
+            return placeLaPlusProche;
         }
         return null;
     }
@@ -82,11 +81,5 @@ public class CurrentCircuitTravel {
 
     public void setOnEstPassePar(ArrayList<Integer> onEstPassePar) {
         this.onEstPassePar = onEstPassePar;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        getInstance().setCircuitEnCours(this.circuitEnCours);
-        super.finalize(); // questionable, but you should ensure calling it somewhere.
     }
 }

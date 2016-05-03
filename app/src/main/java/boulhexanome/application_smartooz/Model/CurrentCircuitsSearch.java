@@ -9,6 +9,14 @@ public class CurrentCircuitsSearch {
 
     private static CurrentCircuitsSearch mInstance = null;
 
+    public static CurrentCircuitsSearch getmInstance() {
+        return mInstance;
+    }
+
+    public static void setmInstance(CurrentCircuitsSearch mInstance) {
+        CurrentCircuitsSearch.mInstance = mInstance;
+    }
+
     public static CurrentCircuitsSearch getInstance(){
         if(mInstance == null)
         {
@@ -37,5 +45,9 @@ public class CurrentCircuitsSearch {
         this.listOfCircuits = listOfCircuits;
     }
 
-
+    @Override
+    protected void finalize() throws Throwable {
+        getInstance().setmInstance(this.mInstance);
+        super.finalize(); // questionable, but you should ensure calling it somewhere.
+    }
 }

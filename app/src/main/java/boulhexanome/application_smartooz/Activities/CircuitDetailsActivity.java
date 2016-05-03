@@ -79,6 +79,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitDetail;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
@@ -376,7 +377,10 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
+                CurrentCircuitDetail.getInstance().setCircuitEnCours(theCircuit);
+                CurrentCircuitDetail.getInstance().setPlaceIndex(position);
+                Intent myIntent = new Intent(CircuitDetailsActivity.this, DetailParcoursPlace.class);
+                CircuitDetailsActivity.this.startActivity(myIntent);
                 // Lancer PlaceNearbyActivity : 
 
                 //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -393,57 +397,67 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
     public void visualizeReceived(JsonObject results) {
         if (results != null) {
-            List<LatLng> listePoints = Tools.decodeDirections(results);
-            currentLine = mMap.addPolyline(new PolylineOptions()
-                    .addAll(listePoints != null ? listePoints : null));
+            if (results.get("status").getAsString().equals("OK")) {
+                List<LatLng> listePoints = Tools.decodeDirections(results);
+                currentLine = mMap.addPolyline(new PolylineOptions()
+                        .addAll(listePoints != null ? listePoints : null));
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(CircuitDetailsActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(CircuitDetailsActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     public void getPlacesReceived(JsonObject results) {
         if (results != null) {
-            JsonObject resultObject = results.getAsJsonObject("place");
-           //System.out.println("Le results array : " + resultObject);
-            if (resultObject != null) {
+            if (results.get("status").getAsString().equals("OK")) {
+                JsonObject resultObject = results.getAsJsonObject("place");
+                //System.out.println("Le results array : " + resultObject);
+                if (resultObject != null) {
 
-                Place newPlace = new Place(resultObject);
-                listOfPlaces.add(newPlace);
-                numberOfReceivedPlaces++;
+                    Place newPlace = new Place(resultObject);
+                    listOfPlaces.add(newPlace);
+                    numberOfReceivedPlaces++;
 
-                Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
-                markers.add(newMarker);
+                    Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
+                    markers.add(newMarker);
 
-                //mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
+                    if (numberOfReceivedPlaces == theCircuit.getPlacesId().size()) {
 
+                        // MAJ du circuit
+                        theCircuit.setPlaces(listOfPlaces);
 
-                if (numberOfReceivedPlaces == theCircuit.getPlacesId().size()) {
+                        // MAJ graphique de la liste des places
+                        refreshPlacesList();
 
-                    // MAJ du circuit
-                    theCircuit.setPlaces(listOfPlaces);
-
-                    // MAJ graphique de la liste des places
-                    refreshPlacesList();
-
-                    // Calcul de la polyligne via Google Maps
+                        // Calcul de la polyligne via Google Maps
                     /*
                     Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
                     markers.add(newMarker);
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition())); */
-                    //newMarker.showInfoWindow();
+                        //newMarker.showInfoWindow();
 
-                    //Affichage dynamique du parcours
-                    URL url = Tools.generateGoogleMapURL(markers);
-                    PostTask postTask = new PostTask(url.toString());
-                    postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
-                    postTask.execute();
+                        //Affichage dynamique du parcours
+                        URL url = Tools.generateGoogleMapURL(markers);
+                        PostTask postTask = new PostTask(url.toString());
+                        postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
+                        postTask.execute();
+
+                    }
 
                 }
-
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(CircuitDetailsActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(CircuitDetailsActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        theCircuit = CurrentCircuitsSearch.getInstance().getSelectedCircuit();
         mMap = googleMap;
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
