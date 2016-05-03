@@ -90,7 +90,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 String texte = (String) listMotsProposes.getItemAtPosition(position);
 
                 if(!motsSelectionnes.contains(texte))
-                    motsSelectionnes.add(texte.toLowerCase());
+                    motsSelectionnes.add(texte);
                 motsClefs.remove(texte);
 
                 if(edittext.getText().toString().length() > 0) {

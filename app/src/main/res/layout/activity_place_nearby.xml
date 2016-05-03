@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/relativeLayoutPN"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="boulhexanome.application_smartooz.Activities.PlaceNearbyActivity">
@@ -26,24 +27,28 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbarC"
         android:layout_alignLeft="@+id/toolbarC"
         android:layout_alignStart="@+id/toolbarC"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/linearLayoutPN"
         android:weightSum="1">
 
         <LinearLayout
             android:orientation="horizontal"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginLeft="7dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.40"
-            android:weightSum="1">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/imageViewPlace"
                 android:layout_weight="0.55" />
@@ -53,21 +58,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
                 android:clickable="false"
                 android:layout_weight="0.45"
                 android:weightSum="0.45">
 
                 <android.support.design.widget.FloatingActionButton
                     android:layout_width="56dp"
-                    android:layout_height="39dp"
+                    android:layout_height="56dp"
                     android:layout_marginLeft="50dp"
                     android:id="@+id/action_add_photo_place"
                     android:clickable="true"
-                    android:src="@drawable/ic_add_a_photo_white_24dp"
-                    android:layout_weight="0.08" />
+                    android:src="@drawable/ic_add_a_photo_white_24dp" />
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -91,6 +93,12 @@
                         android:layout_marginTop="2dp"
                         android:text="New Text"
                         android:id="@+id/textViewSubtitlePlace"/>
+
+                    <RatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ratingBarPN"
+                        style="@style/foodRatingBar"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -98,11 +106,11 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0.60">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginLeft="7dp">
 
 
 
@@ -110,11 +118,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/scrollView2" >
-                <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="zzzzddddddddddddddddddddddddddddddddddddd"
-                android:id="@+id/textViewDescriptionPlace" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Numéro de téléphone"
+                        android:id="@+id/textViewNumTel" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Site internet"
+                        android:id="@+id/textViewWebSite" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Adresse"
+                        android:id="@+id/textViewAddress" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Description"
+                        android:id="@+id/textViewDescriptionPlace" />
+                </LinearLayout>
             </ScrollView>
         </LinearLayout>
     </LinearLayout>

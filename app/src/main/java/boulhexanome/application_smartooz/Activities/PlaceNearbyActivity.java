@@ -1,12 +1,24 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -15,12 +27,14 @@ import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 
@@ -28,6 +42,14 @@ public class PlaceNearbyActivity extends AppCompatActivity {
     private TextView textViewDescription;
     private TextView textViewSubtitle;
     private TextView textViewTitle;
+    private TextView textViewNumTel;
+    private TextView textViewWebSite;
+    private TextView textViewAddress;
+    private ImageView imageView;
+    private RatingBar ratingBar;
+    private ActionBar toolbar;
+    private Circuit circuit;
+    private Place place;
     String API_KEY = "AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U";
 
     @Override
@@ -37,9 +59,27 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         textViewDescription = (TextView)findViewById(R.id.textViewDescriptionPlace);
         textViewTitle = (TextView)findViewById(R.id.textViewTitlePlace);
         textViewSubtitle = (TextView)findViewById(R.id.textViewSubtitlePlace);
+        textViewNumTel = (TextView)findViewById(R.id.textViewNumTel);
+        textViewWebSite = (TextView)findViewById(R.id.textViewWebSite);
+        textViewAddress = (TextView)findViewById(R.id.textViewAddress);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBarPN);
         textViewDescription.setVerticalScrollBarEnabled(true);
-        Circuit c = CurrentCircuitTravel.getInstance().getCircuitEnCours();
-        String nom = c.getName();
+        imageView = (ImageView)findViewById(R.id.imageViewPlace);
+        RelativeLayout RL = (RelativeLayout)findViewById(R.id.relativeLayoutPN);
+        RL.setBackgroundColor(Color.LTGRAY);
+        LinearLayout LL = (LinearLayout) findViewById(R.id.linearLayoutPN);
+        LL.setBackgroundResource(R.drawable.rectangle);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = getSupportActionBar();
+        toolbar.setTitle("Détails du Lieu");
+        toolbar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setDisplayShowHomeEnabled(true);
+
+        circuit = CurrentCircuitTravel.getInstance().getCircuitEnCours();
+        int placeId = CurrentCircuitTravel.getInstance().getPlaceIndex();
+        place = circuit.getPlaces().get(placeId);
+        //String nom = place.getName();
+        String nom="parc+tete+or";
         nom+="+lyon";
         String keywords = "";
         try {
@@ -53,12 +93,6 @@ public class PlaceNearbyActivity extends AppCompatActivity {
             e.printStackTrace();
             textViewDescription.append("nike sa m...");
         }
-        /*Result response =  new Result();
-        new RequestTask(response).execute("https://www.google.fr/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q="+keyWords);
-        */
-        //AIzaSyDWlPi3Sbzq33C6yK-dem9XPga0E9a402U
-        //002950127685759816034:9e5qtixkpfm
-
 
         final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo_place);
         add.setOnClickListener(new View.OnClickListener() {
@@ -82,28 +116,23 @@ public class PlaceNearbyActivity extends AppCompatActivity {
             }
         });
     }
-    /* public void TheQueryIsHere() {
-        String sparqlQueryString1 = "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>" +
-                "PREFIX dbo: <http://dbpedia.org/ontology/>" +
-                "   SELECT * WHERE {" +
-                "   ?s geo:lat ?lat ." +
-                "   ?s geo:long ?long ."+
-                "   FILTER (?lat>= 45.75 && ?long>= 4.8 && ?lat<= 45.77 && ?long<= 4.9)"+
-                "   }"+
-                "LIMIT 100";
 
-        Query query = QueryFactory.create(sparqlQueryString1);
-        QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        ResultSet results = qexec.execSelect();
-        results.
-        ResultSetFormatter.out(System.out, results, query);
+        if (id == android.R.id.home){
+            if(CurrentCircuitTravel.getInstance().toDelete){
+                CurrentCircuitTravel.getInstance().setCircuitEnCours(null);
+            }
+            finish();
+        }
 
-        qexec.close();
-        TextView zoneText = (TextView) findViewById(R.id.textViewDescription);
-   }*/
-
-
+        return super.onOptionsItemSelected(item);
+    }
 
     public void Querying (String parameters) throws IOException {
         GetTask getPlaceNearby = new GetTask("https://kgsearch.googleapis.com/v1/entities:search?query="+parameters+"&key="+API_KEY+"&limit=1&indent=True&languages=fr");
@@ -119,17 +148,49 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         JsonElement name = object.get("name");
         JsonElement descriptionCourte = object.get("description");
         JsonObject imagesURL = object.get("image").getAsJsonObject();
+        JsonElement imageURL = imagesURL.get("contentUrl");
         JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
         JsonElement description = descriptionLongue.get("articleBody");
         textViewTitle.setText("");
-        textViewTitle.append(name.getAsString());
-        textViewSubtitle.setText("");
-        textViewSubtitle.append(descriptionCourte.getAsString());
-        textViewDescription.setText("");
-        textViewDescription.append(description.getAsString());
-        if(results !=null){
-           //textViewDescription.append(results.toString());
+        if(name !=null) {
+            textViewTitle.append(name.getAsString());
+        }else{
+            textViewTitle.append(place.getName());
         }
+        textViewSubtitle.setText("");
+        if(descriptionCourte!=null) {
+            textViewSubtitle.append(descriptionCourte.getAsString());
+        }else{
+            for(int i = 0; i<place.getKeywords().size(); i++) {
+                textViewSubtitle.append(place.getKeywords().get(i));
+                textViewSubtitle.append(" ");
+            }
+        }
+        textViewDescription.setText("");
+        if(description!=null) {
+            textViewDescription.append(description.getAsString());
+        }else{
+            textViewDescription.append(place.getDescription());
+        }
+        if(imageURL !=null){
+            new DownloadImageTask(imageView).execute(imageURL.getAsString());
+        }
+        if(place.getAddress()!=null){
+            textViewAddress.setText("adresse : "+place.getAddress());
+        }else{
+            textViewAddress.setText("");
+        }
+        if(place.getPhone()!=null){
+            textViewNumTel.setText("adresse : "+place.getPhone());
+        }else{
+            textViewNumTel.setText("");
+        }
+        if(place.getWebsite()!=null){
+            textViewWebSite.setText("adresse : "+place.getWebsite());
+        }else{
+            textViewWebSite.setText("");
+        }
+        ratingBar.setRating(place.getNoteOn5());
     }
 }
 
@@ -147,53 +208,27 @@ class HandleGetPlaceNearbyResponse implements GetTask.AsyncResponse{
     }
 }
 
+class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    ImageView bmImage;
 
-/*
-
-
-class Result{
-    String text;
-    public void setText(String s){
-        text = s;
+    public DownloadImageTask(ImageView bmImage) {
+        this.bmImage = bmImage;
     }
-    public String getText(){
-        return text;
+
+    protected Bitmap doInBackground(String... urls) {
+        String urldisplay = urls[0];
+        Bitmap mIcon11 = null;
+        try {
+            InputStream in = new java.net.URL(urldisplay).openStream();
+            mIcon11 = BitmapFactory.decodeStream(in);
+        } catch (Exception e) {
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
+        return mIcon11;
+    }
+
+    protected void onPostExecute(Bitmap result) {
+        bmImage.setImageBitmap(result);
     }
 }
-class RequestTask extends AsyncTask<String, String, String> {
-    Result result;
-    public RequestTask(Result r){
-        result = r;
-    }
-    @Override
-    protected String doInBackground(String... uri) {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpResponse response;
-        String responseString = null;
-        try {
-            response = httpclient.execute(new HttpGet(uri[0]));
-            StatusLine statusLine = response.getStatusLine();
-            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                responseString = out.toString();
-                out.close();
-            } else{
-                //Closes the connection.
-                response.getEntity().getContent().close();
-                throw new IOException(statusLine.getReasonPhrase());
-            }
-        } catch (ClientProtocolException e) {
-            //TODO Handle problems..
-        } catch (IOException e) {
-            //TODO Handle problems..
-        }
-        return responseString;
-    }
-
-    @Override
-    protected void onPostExecute(String result1) {
-        super.onPostExecute(result1);
-        result.setText(result1);
-    }
-}*/
