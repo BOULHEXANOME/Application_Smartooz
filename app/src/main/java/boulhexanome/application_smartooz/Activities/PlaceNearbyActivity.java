@@ -146,14 +146,23 @@ public class PlaceNearbyActivity extends AppCompatActivity {
 
     public void placeReceived(JsonObject results){
         JsonArray item = results.get("itemListElement").getAsJsonArray();
-        JsonElement element = item.get(0);
-        JsonObject object = element.getAsJsonObject().get("result").getAsJsonObject();
-        JsonElement name = object.get("name");
-        JsonElement descriptionCourte = object.get("description");
-        JsonObject imagesURL = object.get("image").getAsJsonObject();
-        JsonElement imageURL = imagesURL.get("contentUrl");
-        JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
-        JsonElement description = descriptionLongue.get("articleBody");
+
+        JsonElement name = null;
+        JsonElement descriptionCourte = null;
+        JsonElement imageURL = null;
+        JsonElement description = null;
+        try{
+            JsonElement element = item.get(0);
+            JsonObject object = element.getAsJsonObject().get("result").getAsJsonObject();
+            name = object.get("name");
+            descriptionCourte = object.get("description");
+            JsonObject imagesURL = object.get("image").getAsJsonObject();
+            imageURL = imagesURL.get("contentUrl");
+            JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
+            description = descriptionLongue.get("articleBody");
+        }catch (Exception e){
+
+        }
 
         textViewTitle.setText("");
         if(name !=null) {
