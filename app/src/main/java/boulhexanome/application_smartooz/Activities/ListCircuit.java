@@ -35,7 +35,7 @@ public class ListCircuit extends AppCompatActivity {
     private int filterByNoteAsc;
     private Menu menu;
     private ParcoursAdapter adapter;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
