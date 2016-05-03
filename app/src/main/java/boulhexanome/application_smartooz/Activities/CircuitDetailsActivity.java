@@ -3,6 +3,7 @@ package boulhexanome.application_smartooz.Activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,14 +11,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import org.apache.commons.codec.binary.Base64;
+import android.util.Base64;
+
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -61,8 +67,10 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +81,7 @@ import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
 
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.LocationService;
@@ -231,7 +240,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                         Toast.makeText(getApplication(), "Camera not supported", Toast.LENGTH_LONG).show();
                     }
 
-                    url = Config.getRequest(Config.UPLOAD_PICTURE_PLACE_CIRCUIT + "/" + Integer.toString(theCircuit.getId()));
+                    url = Config.getRequest(Config.UPLOAD_IMAGE_CIRCUIT + Integer.toString(theCircuit.getId()));
 
                     //postTask.execute(newfile);
                 }
@@ -595,38 +604,54 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == RESULT_OK) {
 
-            selectedImage = data.getData();
-            photo = (Bitmap) data.getExtras().get("data");
+            if (Build.VERSION.SDK_INT < 19) {
+                selectedImage = data.getData();
+                photo = (Bitmap) data.getExtras().get("data");
 
-            // Cursor to get image uri to display
+                // Cursor to get image uri to display
 
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            picturePath = cursor.getString(columnIndex);
-            cursor.close();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                picturePath = cursor.getString(columnIndex);
+                cursor.close();
 
-//            Bitmap photo = (Bitmap) data.getExtras().get("data");
-//            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
-//            imageView.setImageBitmap(photo);
+                //            Bitmap photo = (Bitmap) data.getExtras().get("data");
+                //            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
+                //            imageView.setImageBitmap(photo);
 
 
-            Bitmap bm = BitmapFactory.decodeFile(picturePath);
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-            byte[] ba = bao.toByteArray();
-            ba1 = Arrays.toString(Base64.encodeBase64(ba));
+                Bitmap bm = BitmapFactory.decodeFile(picturePath);
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
+                byte[] ba = bao.toByteArray();
+                //            ba1 = Base64.encodeBase64(ba);
+                ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
 
-            Log.e("base64", "-----" + ba1);
-
-            // Upload image to server
-            new UploadToServer(this, url, ba1).execute();
+            }else{
+                Bitmap bm = (Bitmap)data.getExtras().get("data");
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
+                byte[] ba = bao.toByteArray();
+                //            ba1 = Base64.encodeBase64(ba);
+                ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
+            }
+            (new UploadToServer(this, url, ba1)).execute();
 
         }
     }
@@ -719,6 +744,12 @@ class UploadToServer extends AsyncTask<Void, Void, String> {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                httppost.setHeader("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
+
             HttpResponse response = httpclient.execute(httppost);
             String st = EntityUtils.toString(response.getEntity());
             Log.v("log_tag", "In the try Loop" + st);
