@@ -311,6 +311,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         if (markers.contains(marker)){
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                             markers.remove(marker);
+                            currentLine.remove();
                             //Toast.makeText(CreerParcours.this, markers.toString(), Toast.LENGTH_LONG).show();
                             //Affichage dynamique du parcours
                             showPolyline();
@@ -369,6 +370,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 barre_recherche.setText("");
                 filter("");
                 barre_recherche.setVisibility(View.INVISIBLE);
+                barre_recherche.setWidth(0);
                 toolbar.setDisplayShowTitleEnabled(true);
             } else {
                 finish();
@@ -387,6 +389,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 EditText barre_recherche = (EditText) findViewById(R.id.barre_recherche);
                 getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
                 barre_recherche.setVisibility(View.VISIBLE);
+                barre_recherche.setWidth(500);
                 toolbar.setDisplayShowTitleEnabled(false);
             }
         }
@@ -490,8 +493,12 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        currentLine.remove();
+        markers.clear();
+        mClusterManager.clearItems();
+        clusterAdded.clear();
         if (resultCode == 2) {
-            finish();
+
         }
     }
 
