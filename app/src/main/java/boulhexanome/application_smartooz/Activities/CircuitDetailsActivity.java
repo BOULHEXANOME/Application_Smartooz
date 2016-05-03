@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,6 +56,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -90,7 +92,7 @@ import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class CircuitDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
+    private boolean not_first_time_showing_info_window;
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private Polyline currentLine;
@@ -468,7 +470,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-
+                    not_first_time_showing_info_window = false;
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                     marker.showInfoWindow();
                     return true;
@@ -487,7 +489,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                 // Defines the contents of the InfoWindow
                 @Override
-                public View getInfoContents(final Marker arg0) {
+                public View getInfoContents(Marker arg0) {
 
                     // Getting view from the layout file info_window_layout
                     View v = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
@@ -504,14 +506,19 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                     TextView title = (TextView) v.findViewById(R.id.title_place);
                     TextView description = (TextView) v.findViewById(R.id.description);
-                    TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                    RatingBar noteOn5 = (RatingBar) v.findViewById(R.id.noteOn5);
                     TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
                     ImageView image = (ImageView) v.findViewById(R.id.imagePi);
                     title.setText(placeMarked.getName());
                     description.setText(placeMarked.getDescription());
-                    noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
+                    noteOn5.setRating(Float.valueOf(placeMarked.getNoteOn5()));
                     if(placeMarked.getUrlImage()!=null){
-                        new DownloadImageTask(image).execute(placeMarked.getUrlImage());
+                        if(not_first_time_showing_info_window){
+                            Picasso.with(CircuitDetailsActivity.this).load(placeMarked.getUrlImage()).into(image);
+                        }else{
+                            not_first_time_showing_info_window = true;
+                            Picasso.with(CircuitDetailsActivity.this).load(placeMarked.getUrlImage()).into(image, new InfoWindowRefresher(arg0));
+                        }
                     }
 
                     StringBuilder stringBuilder = new StringBuilder();
@@ -743,5 +750,3 @@ class UploadToServer extends AsyncTask<Void, Void, String> {
         pd.dismiss();
     }
 }
-
-
