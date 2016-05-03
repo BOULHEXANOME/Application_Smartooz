@@ -67,7 +67,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     Polyline currentLine;
 
-    ArrayList<Marker> markers;
+    public ArrayList<Marker> markers;
 
     boolean boucle;
     boolean modeAjout;
@@ -76,6 +76,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     Circuit parcours;
     ArrayList<Place> places = new ArrayList<>();
     ArrayList<MyCluster> clusterItems = new ArrayList<>();
+    public static ArrayList<MyCluster> clusterAdded = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         modeRechercher = false;
         boucle = false;
         markers = new ArrayList<Marker>();
+        clusterAdded = new ArrayList<MyCluster>();
 
         parcours = new Circuit();
         final FloatingActionButton ajouterPI = (FloatingActionButton) findViewById(R.id.action_ajouterPI);
@@ -264,6 +266,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             });
 
             mClusterManager = new ClusterManager(this, mMap);
+            mClusterManager.setRenderer(new MyClusterRenderer(this,mMap,mClusterManager));
             mMap.setOnCameraChangeListener(mClusterManager);
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
@@ -271,26 +274,32 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     if (!modeAjout){
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                         marker.showInfoWindow();
-                        return true;
                     } else {
                         if (markers.contains(marker)){
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                             markers.remove(marker);
                             //Affichage dynamique du parcours
                             showPolyline();
-                            return true;
                         } else {
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                             markers.add(marker);
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            marker.showInfoWindow();
+                            //marker.showInfoWindow();
                             //Affichage dynamique du parcours
                             if (markers.size() >= 2) {
                                 showPolyline();
                             }
-                            return true;
                         }
                     }
+                    clusterAdded.clear();
+                    for (int i = 0; i < markers.size(); i++){
+                        for (int j = 0; j < clusterItems.size(); j++){
+                            if (clusterItems.get(j).getPosition().equals(markers.get(i).getPosition())){
+                                clusterAdded.add(clusterItems.get(j));
+                            }
+                        }
+                    }
+                    return true;
                 }
             });
 
@@ -318,6 +327,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 ActionBar toolbar = getSupportActionBar();
                 EditText barre_recherche = (EditText) findViewById(R.id.barre_recherche);
                 getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+                barre_recherche.setText("");
+                filter("");
                 barre_recherche.setVisibility(View.INVISIBLE);
                 toolbar.setDisplayShowTitleEnabled(true);
             } else {
@@ -357,14 +368,15 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         keyword = keyword.toUpperCase();
         if (keyword == "") {
             for (int i = 0; i < places.size(); i++){
-                mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
+                mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
             }
-        }
-        for (int i = 0; i < places.size(); i++){
-            ArrayList<String> keywords = places.get(i).getKeywords();
-            for (int j = 0; j < keywords.size(); j++) {
-                if (keywords.get(j).contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
-                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude, places.get(i).getPosition().longitude));
+        } else {
+            for (int i = 0; i < places.size(); i++) {
+                ArrayList<String> keywords = places.get(i).getKeywords();
+                for (int j = 0; j < keywords.size(); j++) {
+                    if (keywords.get(j).contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
+                        mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude, places.get(i).getPosition().longitude, i));
+                    }
                 }
             }
         }
@@ -396,8 +408,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     places.add(new Place(resultsArray.get(i).getAsJsonObject()));
-                    clusterItems.add(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
-                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
+                    clusterItems.add(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
+                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
                 }
                 mMap.moveCamera(CameraUpdateFactory
                         .newLatLngBounds(GRAND_LYON,10));
