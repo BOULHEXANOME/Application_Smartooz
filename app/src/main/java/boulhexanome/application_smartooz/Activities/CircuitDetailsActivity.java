@@ -198,7 +198,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
             assert add != null;
-            if(theCircuit.getIdUser() != User.getInstance().get)
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
