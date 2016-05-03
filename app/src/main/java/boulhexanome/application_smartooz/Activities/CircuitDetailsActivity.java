@@ -1,9 +1,15 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +17,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import org.apache.commons.codec.binary.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,13 +26,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.internal.http.multipart.MultipartEntity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -39,10 +50,22 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
@@ -66,6 +89,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     private MapFragment mMapFragment;
     private GoogleMap mMap;
     private int numberOfReceivedPlaces;
+    private Uri fileUri;
 
     // Interface
     private ActionBar toolbar;
@@ -76,12 +100,18 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
     private RatingBar circuitRatingBar;
+    private RatingBar votingBar;
     private ListView placesList;
 
     // Infos issues du serveur
     private Circuit theCircuit;
     private ArrayList<Place> listOfPlaces = new ArrayList<Place>();
     private boolean parcoursEstLance = false;
+    private Uri selectedImage;
+    private Bitmap photo;
+    private String picturePath;
+    private String ba1;
+    private String url;
 
 
     @Override
@@ -131,6 +161,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         circuitTitle = (TextView) findViewById(R.id.circuit_title);
         circuitInformationsTextview = (TextView) findViewById(R.id.circuit_global_informations);
         circuitRatingBar = (RatingBar) findViewById(R.id.circuit_details_rating);
+        votingBar = (RatingBar) findViewById(R.id.voting_bar);
         circuitDescription = (TextView) findViewById(R.id.circuit_description);
         keywordsTextview = (TextView) findViewById(R.id.keywords_circuit_details);
         lengthKmTextview = (TextView) findViewById(R.id.length_km);
@@ -167,26 +198,83 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             });
 
             final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
+            assert add != null;
             add.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    int TAKE_PHOTO_CODE = 0;
-                    String file = "hola.jpg";
-                    File newfile = new File(file);
-                    try {
-                        newfile.createNewFile();
-                    }
-                    catch (IOException e)
-                    {
-                    }
-                    Uri outputFileUri = Uri.fromFile(newfile);
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+//                    int TAKE_PHOTO_CODE = 0;
+//                    String file = "hola.jpg";
+//                    File newfile = new File(file);
+//                    try {
+//                        newfile.createNewFile();
+//                    }
+//                    catch (IOException e)
+//                    {
+//                    }
+//                    Uri outputFileUri = Uri.fromFile(newfile);
+//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 
-                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+//                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+
+                    if (getApplicationContext().getPackageManager().hasSystemFeature(
+                            PackageManager.FEATURE_CAMERA)) {
+                        // Open default camera
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+                        // start the image capture Intent
+                        startActivityForResult(intent, 100);
+
+                    } else {
+                        Toast.makeText(getApplication(), "Camera not supported", Toast.LENGTH_LONG).show();
+                    }
+
+                    url = Config.getRequest(Config.UPLOAD_PICTURE_PLACE_CIRCUIT + "/" + Integer.toString(theCircuit.getId()));
+
+                    //postTask.execute(newfile);
                 }
             });
+
+            /*
+            if (votingBar != null) {
+                //System.out.print("Voting Bar listener");
+
+                votingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        System.out.println(rating);
+                        postVote(rating, fromUser);
+                    }
+                });
+            } */
+
+            votingBar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        float touchPositionX = event.getX();
+                        float width = votingBar.getWidth();
+                        float rating = (touchPositionX / width) * 5.0f;
+                        //int stars = (int)starsf + 1;
+                        votingBar.setRating(rating);
+                        //Toast.makeText(CircuitDetailsActivity.this, String.valueOf("test"), Toast.LENGTH_SHORT).show();
+                        postVote(rating);
+                        v.setPressed(false);
+
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        v.setPressed(true);
+                    }
+
+                    if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        v.setPressed(false);
+                    }
+                    return true;
+                }});
+
+
         }
 
         // Demarrage sur la map directement
@@ -194,7 +282,22 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
-    
+
+
+    protected void postVote(float rating) {
+        int placeId = theCircuit.getId();
+
+        PostTask voteTask = new PostTask(Config.getRequest(Config.VOTE_CIRCUIT));
+        voteTask.delegate = new HandleCircuitVote(CircuitDetailsActivity.this);
+
+        JsonObject vote = new JsonObject();
+        vote.addProperty("id", placeId);
+        vote.addProperty("note", rating);
+        //System.out.println("Vote : " + placeId + ", note : " + rating);
+
+        voteTask.execute(vote);
+    }
+
     public void clickLancerParcours(){
         Button lancerCeParcoursButton = (Button) findViewById(R.id.lancerCeParcours);
         if(!this.parcoursEstLance){
@@ -286,7 +389,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                System.out.println("Position : " + position);
+                //System.out.println("Position : " + position);
 
                 // Montrer la map
                 mMapFragment.getView().setVisibility(View.VISIBLE);
@@ -312,7 +415,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void getPlacesReceived(JsonObject results) {
         if (results != null) {
             JsonObject resultObject = results.getAsJsonObject("place");
-            System.out.println("Le results array : " + resultObject);
+           //System.out.println("Le results array : " + resultObject);
             if (resultObject != null) {
 
                 Place newPlace = new Place(resultObject);
@@ -490,6 +593,58 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+
+            selectedImage = data.getData();
+            photo = (Bitmap) data.getExtras().get("data");
+
+            // Cursor to get image uri to display
+
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+//            Bitmap photo = (Bitmap) data.getExtras().get("data");
+//            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
+//            imageView.setImageBitmap(photo);
+
+
+            Bitmap bm = BitmapFactory.decodeFile(picturePath);
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+            byte[] ba = bao.toByteArray();
+            ba1 = Arrays.toString(Base64.encodeBase64(ba));
+
+            Log.e("base64", "-----" + ba1);
+
+            // Upload image to server
+            new UploadToServer(this, url, ba1).execute();
+
+        }
+    }
+
+
+    public void handleRating(JsonObject results) {
+        if (results != null) {
+
+            if (results.get("status").getAsString().equals("OK")) {
+                Toast.makeText(CircuitDetailsActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(CircuitDetailsActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(CircuitDetailsActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+
 
 }
 
@@ -521,4 +676,61 @@ class HandleGetPlacesDetailsCircuit implements GetTask.AsyncResponse {
     }
 }
 
+class HandleCircuitVote implements PostTask.AsyncResponse{
 
+    private CircuitDetailsActivity circuitDetailsActivity;
+
+    public HandleCircuitVote(CircuitDetailsActivity circuitDetailsActivity) {
+        this.circuitDetailsActivity = circuitDetailsActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.circuitDetailsActivity.handleRating(results);
+    }
+}
+
+class UploadToServer extends AsyncTask<Void, Void, String> {
+
+    private final String url;
+    private final String base64;
+    private ProgressDialog pd;
+    protected void onPreExecute() {
+        super.onPreExecute();
+        pd.setMessage("Wait image uploading!");
+        pd.show();
+    }
+
+    public UploadToServer(CircuitDetailsActivity circuitDetailsActivity, String url, String base64){
+        pd = new ProgressDialog(circuitDetailsActivity);
+        this.url = url;
+        this.base64 = base64;
+    }
+
+    @Override
+    protected String doInBackground(Void... params) {
+
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("base64", base64));
+        nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
+        try {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(url);
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            HttpResponse response = httpclient.execute(httppost);
+            String st = EntityUtils.toString(response.getEntity());
+            Log.v("log_tag", "In the try Loop" + st);
+
+        } catch (Exception e) {
+            Log.v("log_tag", "Error in http connection " + e.toString());
+        }
+        return "Success";
+
+    }
+
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        pd.hide();
+        pd.dismiss();
+    }
+}

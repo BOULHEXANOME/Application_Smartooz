@@ -23,23 +23,28 @@
 
         <activity
             android:name=".Activities.Parcours"
-            android:label="@string/title_activity_parcours" />
-        <activity android:name=".Activities.InscriptionActivity" />
+            android:label="@string/title_activity_parcours"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.InscriptionActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.LoginActivity"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_login">
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity android:name=".Activities.VisiterLyonActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".Activities.ListCircuit"/>
+        <activity android:name=".Activities.ListCircuit"
+            android:screenOrientation="portrait"/>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -51,7 +56,8 @@
 
         <activity
             android:name=".Activities.ChoixDuThemeActivity"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.CreerParcours"
             android:label="@string/title_activity_creer_parcours"
@@ -61,16 +67,20 @@
         <activity
             android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.PlaceNearbyActivity">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
 
-        </activity>
-        <activity android:name=".Activities.MesParcoursActivity"></activity>
+        <activity android:name=".Activities.PlaceNearbyActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".Activities.MesParcoursActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

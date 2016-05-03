@@ -205,8 +205,8 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                     circuit = User.getInstance().getCircuit_en_creation();
 
                     circuit.setKeywords((ArrayList<String>) motsSelectionnes);
-                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString().toUpperCase());
-                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString().toUpperCase());
+                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
 
                     addCircuit();
                 }
