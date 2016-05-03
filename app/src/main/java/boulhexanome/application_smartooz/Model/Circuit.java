@@ -1,5 +1,7 @@
 package boulhexanome.application_smartooz.Model;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -30,6 +32,11 @@ public class Circuit {
     private int numberOfVotes;
     private int deniveleM;
     private int id;
+    private Bitmap bitmap;
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 
     public int getNumberOfVotes() {
         return numberOfVotes;
@@ -196,5 +203,9 @@ public class Circuit {
 
     public void addAllPlaces(Collection<Place> places){
         this.places.addAll(places);
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 }

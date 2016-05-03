@@ -1,6 +1,9 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,6 +23,7 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
 
 public class ListCircuit extends AppCompatActivity {
     private ListView listParcours;
@@ -29,9 +35,7 @@ public class ListCircuit extends AppCompatActivity {
     private int filterByNoteAsc;
     private Menu menu;
     private ParcoursAdapter adapter;
-
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +55,6 @@ public class ListCircuit extends AppCompatActivity {
         filterByNbVoteAsc = 0;
         filterByNoteAsc = 0;
 
-        adapter = new ParcoursAdapter(ListCircuit.this, parcours);
         listParcours.setClickable(true);
         listParcours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,7 +65,12 @@ public class ListCircuit extends AppCompatActivity {
                 ListCircuit.this.startActivity(myIntent);
             }
         });
-        listParcours.setAdapter(adapter);
+
+        for(Circuit c: parcours){
+            String urlImage = Config.PROTOCOL + "://" + Config.IP_SERV + ":" + Config.PORT + Config.DOWNLOAD_FOLDER + "/circuits/" + Integer.toString(c.getId());
+            new DownloadImageTaskCircuit(c, parcours.size()).execute(urlImage);
+        }
+
     }
 
     @Override
@@ -229,4 +237,37 @@ public class ListCircuit extends AppCompatActivity {
             return 0;
         }
     }
+
+    class DownloadImageTaskCircuit extends AsyncTask<String, Void, Bitmap> {
+        private final Circuit c;
+        public DownloadImageTaskCircuit(Circuit c, int end) {
+            this.c = c;
+        }
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            System.err.println("enter the get");
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                InputStream in = null;
+                try {
+                    in = new java.net.URL("http://www.mediterranee-air-training.fr/wp-content/plugins/lightbox/images/No-image-found.jpg").openStream();
+                    mIcon11 = BitmapFactory.decodeStream(in);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            return mIcon11;
+        }
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            c.setBitmap(result);
+            adapter = new ParcoursAdapter(ListCircuit.this, parcours);
+            listParcours.setAdapter(adapter);
+        }
+    }
 }
+

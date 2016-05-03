@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import boulhexanome.application_smartooz.Activities.ListCircuit;
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
@@ -82,9 +83,10 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         viewHolder.tags.setText(tag);
         viewHolder.note.setRating(parcours.getNoteOn5());
         viewHolder.note.setFocusable(false);
+        viewHolder.image.setImageBitmap(parcours.getBitmap());
 
-        urlImage = Config.PROTOCOL + "://" + Config.IP_SERV + ":" + Config.PORT + "/circuits/" + Integer.toString(parcours.getId());
-        new DownloadImageTask(viewHolder.image).execute(urlImage);
+
+
         return convertView;
     }
     private class ParcoursViewHolder{
@@ -97,32 +99,3 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
     }
 }
 
-class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
-    }
-    @Override
-    protected Bitmap doInBackground(String... urls) {
-        System.err.println("enter the get");
-        String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            InputStream in = null;
-            try {
-                in = new java.net.URL("http://www.mediterranee-air-training.fr/wp-content/plugins/lightbox/images/No-image-found.jpg").openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        return mIcon11;
-    }
-    @Override
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
-    }
-}
