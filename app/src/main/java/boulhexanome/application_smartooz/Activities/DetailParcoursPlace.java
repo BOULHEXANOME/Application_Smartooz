@@ -1,21 +1,14 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,14 +24,11 @@ import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuitDetail;
-import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
+import boulhexanome.application_smartooz.Model.CurrentPlaceDetail;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
@@ -82,9 +72,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        circuit = CurrentCircuitDetail.getInstance().getCircuitEnCours();
-        int placeId = CurrentCircuitDetail.getInstance().getPlaceIndex();
-        place = circuit.getPlaces().get(placeId);
+        place = CurrentPlaceDetail.getInstance().getPlaceEnCours();
         String nom = place.getName();
         nom+="+lyon";
         String keywords = "";
@@ -128,14 +116,14 @@ public class DetailParcoursPlace extends AppCompatActivity {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                     System.out.println(rating);
-                    handleVote(rating, fromUser);
+                    handleVote(rating);
                 }
             });
         }
     }
 
-    protected void handleVote(float rating, boolean fromUser){
-        int placeId = CurrentCircuitDetail.getInstance().getPlaceIndex();
+    protected void handleVote(float rating){
+        int placeId = CurrentPlaceDetail.getInstance().getPlaceEnCours().getId();
 
         PostTask inscription_thread = new PostTask(Config.getRequest(Config.VOTE_PLACE));
         inscription_thread.delegate = new HandleNoteReceived2(this);
@@ -155,9 +143,6 @@ public class DetailParcoursPlace extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home){
-            if(CurrentCircuitDetail.getInstance().toDelete){
-                CurrentCircuitDetail.getInstance().setCircuitEnCours(null);
-            }
             finish();
         }
 

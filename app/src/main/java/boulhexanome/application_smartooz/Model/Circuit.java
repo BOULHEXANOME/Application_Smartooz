@@ -19,8 +19,8 @@ import boulhexanome.application_smartooz.Model.Place;
  */
 public class Circuit {
 
-    private String name;
-    private String description;
+    private String name = "";
+    private String description = "";
     private float lengthKm;
     private float noteOn5;
     private int idUser;

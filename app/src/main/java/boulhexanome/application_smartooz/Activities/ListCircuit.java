@@ -52,19 +52,17 @@ public class ListCircuit extends AppCompatActivity {
         filterByNoteAsc = 0;
 
         adapter = new ParcoursAdapter(ListCircuit.this, parcours);
-        listParcours.setAdapter(adapter);
         listParcours.setClickable(true);
         listParcours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-
-                System.out.println("Rentre dans le Onclick !!");
                 Circuit c = (Circuit)listParcours.getItemAtPosition(position);
                 CurrentCircuitsSearch.getInstance().setSelectedCircuit(c);
                 Intent myIntent = new Intent(ListCircuit.this, CircuitDetailsActivity.class);
                 ListCircuit.this.startActivity(myIntent);
             }
         });
+        listParcours.setAdapter(adapter);
     }
 
     @Override

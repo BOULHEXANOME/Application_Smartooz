@@ -1,12 +1,9 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,9 +24,7 @@ import android.util.Base64;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,19 +37,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.internal.http.multipart.MultipartEntity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
@@ -68,18 +60,14 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
-import boulhexanome.application_smartooz.Model.CurrentCircuitDetail;
+import boulhexanome.application_smartooz.Model.CurrentPlaceDetail;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
@@ -315,9 +303,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         placesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //System.out.println("Position : " + position);
-
                 // Montrer la map
                 mMapFragment.getView().setVisibility(View.VISIBLE);
                 mScrollView.setVisibility(View.GONE);
@@ -333,22 +318,13 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                CurrentCircuitDetail.getInstance().setCircuitEnCours(theCircuit);
-                CurrentCircuitDetail.getInstance().setPlaceIndex(position);
+                CurrentPlaceDetail.getInstance().setPlaceEnCours(listOfPlaces.get(position));
                 Intent myIntent = new Intent(CircuitDetailsActivity.this, DetailParcoursPlace.class);
                 CircuitDetailsActivity.this.startActivity(myIntent);
-                // Lancer PlaceNearbyActivity : 
-
-                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
                 return true;
-
             }
         });
-
-
-
     }
 
     public void visualizeReceived(JsonObject results) {
@@ -577,24 +553,10 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
-    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-                getContentResolver().openFileDescriptor(uri, "r");
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        parcelFileDescriptor.close();
-        return image;
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == RESULT_OK) {
 
             if (Build.VERSION.SDK_INT < 19) {
-                selectedImage = data.getData();
-                photo = (Bitmap) data.getExtras().get("data");
-
-                // Cursor to get image uri to display
-
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 Cursor cursor = getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
@@ -603,11 +565,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 picturePath = cursor.getString(columnIndex);
                 cursor.close();
-
-                //            Bitmap photo = (Bitmap) data.getExtras().get("data");
-                //            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
-                //            imageView.setImageBitmap(photo);
-
 
                 Bitmap bm = BitmapFactory.decodeFile(picturePath);
                 ByteArrayOutputStream bao = new ByteArrayOutputStream();

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -28,12 +29,11 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
+import android.util.Base64;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -235,13 +235,14 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             bouton_creer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if(ba1 == null){
+                        Toast.makeText(ChoixDuThemeActivity.this, "Vous devez prendre une photo pour le circuit.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     circuit = User.getInstance().getCircuit_en_creation();
-
                     circuit.setKeywords((ArrayList<String>) motsSelectionnes);
                     circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
                     circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
-
                     addCircuit();
                 }
             });
@@ -314,9 +315,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             places_array.add(circuit.getPlaces().get(i).getId());
         }
         jsonObject.add("places", places_array);
-
-        System.out.println(jsonObject);
-
         postTask.execute(jsonObject);
     }
 
@@ -328,7 +326,9 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();
                 User.getInstance().setCircuit_en_creation(new Circuit());
                 this.setResult(2);
-                finish();
+                int idCircuitAjoute = results.get("id").getAsInt();
+                url += idCircuitAjoute;
+                (new UploadToServerChoix(this, url, ba1)).execute();
             } else if (results.get("status").getAsString().equals("KO")) {
                 Toast.makeText(ChoixDuThemeActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
             } else {
@@ -340,31 +340,31 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100 && resultCode == RESULT_OK) {
 
-            selectedImage = data.getData();
-            photo = (Bitmap) data.getExtras().get("data");
+            if (Build.VERSION.SDK_INT < 19) {
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
 
-            // Cursor to get image uri to display
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                picturePath = cursor.getString(columnIndex);
+                cursor.close();
 
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
+                Bitmap bm = BitmapFactory.decodeFile(picturePath);
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
+                byte[] ba = bao.toByteArray();
+                //            ba1 = Base64.encodeBase64(ba);
+                ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            Bitmap bm = BitmapFactory.decodeFile(picturePath);
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-            byte[] ba = bao.toByteArray();
-            ba1 = Arrays.toString(Base64.encodeBase64(ba));
-
-            Log.e("base64", "-----" + ba1);
-
-            // Upload image to server
-            new UploadToServerChoix(this, url, ba1).execute();
-
+            }else{
+                Bitmap bm = (Bitmap)data.getExtras().get("data");
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
+                byte[] ba = bao.toByteArray();
+                //            ba1 = Base64.encodeBase64(ba);
+                ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
+            }
         }
     }
 
@@ -380,6 +380,10 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 listMotsProposes.setAdapter(newAdapt);
             }
         }
+    }
+
+    public void uploadTermine() {
+        finish();
     }
 }
 
@@ -402,6 +406,7 @@ class UploadToServerChoix extends AsyncTask<Void, Void, String> {
 
     private final String url;
     private final String base64;
+    private final ChoixDuThemeActivity choixDuThemeActivity;
     private ProgressDialog pd;
     protected void onPreExecute() {
         super.onPreExecute();
@@ -411,6 +416,7 @@ class UploadToServerChoix extends AsyncTask<Void, Void, String> {
 
     public UploadToServerChoix(ChoixDuThemeActivity choixDuThemeActivity, String url, String base64){
         pd = new ProgressDialog(choixDuThemeActivity);
+        this.choixDuThemeActivity = choixDuThemeActivity;
         this.url = url;
         this.base64 = base64;
     }
@@ -433,11 +439,11 @@ class UploadToServerChoix extends AsyncTask<Void, Void, String> {
             Log.v("log_tag", "Error in http connection " + e.toString());
         }
         return "Success";
-
     }
 
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        choixDuThemeActivity.uploadTermine();
         pd.hide();
         pd.dismiss();
     }

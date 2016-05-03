@@ -17,13 +17,13 @@ import java.util.Arrays;
 public class Place {
 
     private LatLng position;
-    private String address;
-    private String phone;
-    private String website;
-    private String openingHours;
-    private String name;
-    private String description;
-    private String urlImage;
+    private String address = "";
+    private String phone = "";
+    private String website = "";
+    private String openingHours = "";
+    private String name = "";
+    private String description = "";
+    private String urlImage = "";
     private int idUser;
     private float noteOn5;
     private int numberOfVotes;

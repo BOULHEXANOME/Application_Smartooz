@@ -34,6 +34,8 @@ import boulhexanome.application_smartooz.Utils.Config;
  * Created by Hugo on 28/04/2016.
  */
 public class ParcoursAdapter extends ArrayAdapter<Circuit> {
+    private String urlImage;
+
     public ParcoursAdapter(Context context, List<Circuit> parcours) {
         super(context, 0, parcours);
     }
@@ -42,7 +44,7 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_liste_parcours,parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_liste_parcours, parent, false);
         }
 
         ParcoursViewHolder viewHolder = (ParcoursViewHolder) convertView.getTag();
@@ -63,8 +65,8 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.nom.setText(parcours.getName());
-        viewHolder.kilometre.setText("Longueur : "+String.valueOf(parcours.getLengthKm())+" km");
-        viewHolder.denivele.setText("Dénivelé : "+String.valueOf(parcours.getDeniveleM())+" m");
+        viewHolder.kilometre.setText("Longueur : "+ parcours.getLengthKm() +" km");
+        viewHolder.denivele.setText("Dénivelé : "+ parcours.getDeniveleM() +" m");
         ArrayList<String> tags = parcours.getKeywords();
         String tag="";
         for(int i = 0;i<tags.size();i++){
@@ -80,11 +82,9 @@ public class ParcoursAdapter extends ArrayAdapter<Circuit> {
         viewHolder.tags.setText(tag);
         viewHolder.note.setRating(parcours.getNoteOn5());
         viewHolder.note.setFocusable(false);
-        ArrayList<Place> places = parcours.getPlaces();
-        parcours.getNoteOn5();
-        String urlImage = Config.PROTOCOL + "://" + Config.IP_SERV + ":" + Config.PORT + "/circuits/" + Integer.toString(parcours.getId());
-        new DownloadImageTask(viewHolder.image).execute(urlImage);
 
+        urlImage = Config.PROTOCOL + "://" + Config.IP_SERV + ":" + Config.PORT + "/circuits/" + Integer.toString(parcours.getId());
+        new DownloadImageTask(viewHolder.image).execute(urlImage);
         return convertView;
     }
     private class ParcoursViewHolder{
