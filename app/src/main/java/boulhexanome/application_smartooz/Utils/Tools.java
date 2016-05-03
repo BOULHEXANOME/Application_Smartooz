@@ -152,10 +152,10 @@ public class Tools {
                return listePoints;
            } catch (Exception e) {
                Log.e("googleMapError", "Error while decoding polyline");
-               return new ArrayList<LatLng>();
+               return new ArrayList<>();
            }
        } else {
-           return new ArrayList<LatLng>();
+           return new ArrayList<>();
        }
     }
 

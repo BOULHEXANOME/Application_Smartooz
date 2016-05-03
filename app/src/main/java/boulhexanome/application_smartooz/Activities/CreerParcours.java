@@ -74,14 +74,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
-    private ActionMode mActionModeAjout;
-    private ActionMode mActionModeRecherche;
     private ClusterManager mClusterManager;
 
     public static final LatLngBounds GRAND_LYON = new LatLngBounds(new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
 
     public static Polyline currentLine;
 
+    //Markers du circuit
     public ArrayList<Marker> markers;
 
     boolean boucle;
@@ -89,8 +88,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     boolean modeRechercher;
 
     Circuit parcours;
+    //places chargées
     ArrayList<Place> places = new ArrayList<>();
+    //items clusters présent sur la carte.
     ArrayList<MyCluster> clusterItems = new ArrayList<>();
+    //clusters liés aux markers
     public static ArrayList<MyCluster> clusterAdded = new ArrayList<>();
 
     @Override
@@ -309,16 +311,22 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         if (markers.contains(marker)){
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                             markers.remove(marker);
+                            //Toast.makeText(CreerParcours.this, markers.toString(), Toast.LENGTH_LONG).show();
                             //Affichage dynamique du parcours
                             showPolyline();
                         } else {
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            markers.add(marker);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                            //marker.showInfoWindow();
-                            //Affichage dynamique du parcours
-                            if (markers.size() >= 2) {
-                                showPolyline();
+                            if (!(markers.size() >= 10)) {
+                                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                                markers.add(marker);
+                                //Toast.makeText(CreerParcours.this, markers.toString(), Toast.LENGTH_LONG).show();
+                                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                                //marker.showInfoWindow();
+                                //Affichage dynamique du parcours
+                                if (markers.size() >= 2) {
+                                    showPolyline();
+                                }
+                            } else {
+                                Toast.makeText(CreerParcours.this, "Vous ne pouvez pas rajouter plus d'étapes !", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
