@@ -152,7 +152,7 @@
                 android:max="5"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="5pdp" />
+                android:layout_marginBottom="5dp" />
 
             <TextView
                 android:id="@+id/circuit_preview_photos"

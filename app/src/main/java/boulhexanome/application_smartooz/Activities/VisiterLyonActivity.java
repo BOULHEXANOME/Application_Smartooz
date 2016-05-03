@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -158,6 +159,24 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisi = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisi);
+
+                switch (listMotsChoisis.getCount() ) {
+                    case 0 :
+                        listMotsChoisis.setMinimumHeight(0);
+                        break;
+                    case 1 :
+                        listMotsChoisis.setMinimumHeight(50);
+                        break;
+                    case 2 :
+                        listMotsChoisis.setMinimumHeight(100);
+                        break;
+                    case 3 :
+                        listMotsChoisis.setMinimumHeight(150);
+                        break;
+                    default :
+                        listMotsChoisis.setMinimumHeight(200);
+                        break;
+                }
             }
         });
 
@@ -196,6 +215,24 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
                 ListAdapter newAdaptChoisis = new ArrayAdapter<>(VisiterLyonActivity.this, android.R.layout.simple_list_item_1, motsSelectionnes);
                 listMotsChoisis.setAdapter(newAdaptChoisis);
+
+                switch (listMotsChoisis.getCount() ) {
+                    case 0 :
+                        listMotsChoisis.setMinimumHeight(0);
+                        break;
+                    case 1 :
+                        listMotsChoisis.setMinimumHeight(50);
+                        break;
+                    case 2 :
+                        listMotsChoisis.setMinimumHeight(100);
+                        break;
+                    case 3 :
+                        listMotsChoisis.setMinimumHeight(150);
+                        break;
+                    default :
+                        listMotsChoisis.setMinimumHeight(200);
+                        break;
+                }
             }
         });
 
@@ -236,6 +273,10 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
+
+        // pour qu'on n'ait pas le focus sur edittext
+        edittext.clearFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         checkPermissionLocation();
     }
 
@@ -340,7 +381,7 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
             Toast.makeText(VisiterLyonActivity.this, "Veuillez vous connecter avant d'utiliser nos services.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(VisiterLyonActivity.this, LoginActivity.class);
             startActivity(intent);
-        }else{
+        } else {
             GetTask getKeywordsThread = new GetTask(Config.getRequest(Config.GET_KEYWORDS_OF_CIRCUIT));
             getKeywordsThread.delegate = new HandleGetKeywordsResponse(this);
             getKeywordsThread.execute();

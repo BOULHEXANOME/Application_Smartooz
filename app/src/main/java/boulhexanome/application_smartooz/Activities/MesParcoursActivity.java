@@ -1,6 +1,7 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,17 +15,28 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Activities.Adapters.ParcoursAdapter;
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.Place;
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
+import boulhexanome.application_smartooz.WebServices.GetTask;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class MesParcoursActivity extends AppCompatActivity {
+public class MesParcoursActivity extends AppCompatActivity implements PostTask.AsyncResponse {
     private ListView listParcours;
     private ListView listParcoursCrees;
     private ActionBar toolbar;
@@ -37,6 +49,7 @@ public class MesParcoursActivity extends AppCompatActivity {
     private Menu menu;
     private ParcoursAdapter adapterEffectues;
     private ParcoursAdapter adapterCrees;
+    private List<Integer> idCircuitsEffectues;
 
 
 
@@ -47,17 +60,24 @@ public class MesParcoursActivity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         toolbar = getSupportActionBar();
+        assert toolbar != null;
         toolbar.setTitle("Mes Parcours");
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        // ---------------- PARCOURS CREES
+        // ------------ PARCOURS CREES ------------
 
         listParcoursCrees = (ListView) findViewById(R.id.mesParc_listView2);
 
-        //parcoursCrees = CurrentCircuits.getInstance().getListOfCircuits();
-        // Pour les tests :
         parcoursCrees = new ArrayList<Circuit>();
+
+        // ---------------- En vrai :
+        // on délègue la tâche de la requête à un handler
+        /*GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
+        getIdCircuitsCreatedThread.delegate = new HandleGetAllCreatedCircuitsResponse(this);
+        getIdCircuitsCreatedThread.execute();*/
+
+        // ---------------- Pour les tests :
         ArrayList<String> keywordsCrees = new ArrayList<>();
         keywordsCrees.add("tag1");
         keywordsCrees.add("tag2");
@@ -110,13 +130,19 @@ public class MesParcoursActivity extends AppCompatActivity {
             });
         }
 
-        // --------- PARCOURS EFFECTUES
+        // ------------ PARCOURS EFFECTUES ------------
 
         listParcours = (ListView) findViewById(R.id.mesParc_listView1);
 
-        //parcoursEffectues = CurrentCircuits.getInstance().getListOfCircuits();
-        // Pour les tests :
         parcoursEffectues = new ArrayList<>();
+
+        // -------- En vrai :
+        // on délègue la tâche de la requête à un handler
+        /*GetTask getIdCircuitsDoneThread = new GetTask(Config.getRequest(Config.GET_ID_CIRCUIT_DONE));
+        getIdCircuitsDoneThread.delegate = new HandleGetAllDoneCircuitsResponse(this);
+        getIdCircuitsDoneThread.execute();*/
+
+        // -------- Pour les tests :
         ArrayList<String> keywords = new ArrayList<>();
         keywords.add("tag1");
         keywords.add("tag2");
@@ -189,17 +215,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = 1;
                     item.setTitle("Dénivelé ∧");
                     adapterEffectues.sort(new ComparateurDeniveleAsc());
-                    adapterCrees.sort(new ComparateurDeniveleAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleAsc());
+                    }
                 }else if(filterByDeniveleAsc==1){
                     filterByDeniveleAsc = 0;
                     item.setTitle("Dénivelé ∨");
                     adapterEffectues.sort(new ComparateurDeniveleDesc());
-                    adapterCrees.sort(new ComparateurDeniveleDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleDesc());
+                    }
                 }else{
                     filterByDeniveleAsc = 1;
                     item.setTitle("Dénivelé ∧");
                     adapterEffectues.sort(new ComparateurDeniveleAsc());
-                    adapterCrees.sort(new ComparateurDeniveleAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurDeniveleAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_km:
@@ -210,17 +242,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Kilomètre ∧");
                     adapterEffectues.sort(new ComparateurKmAsc());
-                    adapterCrees.sort(new ComparateurKmAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmAsc());
+                    }
                 }else if(filterByKmAsc==1){
                     filterByKmAsc = 0;
                     item.setTitle("Kilomètre ∨");
                     adapterEffectues.sort(new ComparateurKmDesc());
-                    adapterCrees.sort(new ComparateurKmDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmDesc());
+                    }
                 }else{
                     filterByKmAsc = 1;
                     item.setTitle("Kilomètre ∧");
                     adapterEffectues.sort(new ComparateurKmAsc());
-                    adapterCrees.sort(new ComparateurKmAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurKmAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_notes:
@@ -231,17 +269,24 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Notes ∧");
                     adapterEffectues.sort(new ComparateurNoteAsc());
-                    adapterCrees.sort(new ComparateurNoteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteAsc());
+                    }
+
                 }else if(filterByNoteAsc==1){
                     filterByNoteAsc = 0;
                     item.setTitle("Notes ∨");
                     adapterEffectues.sort(new ComparateurNoteDesc());
-                    adapterCrees.sort(new ComparateurNoteDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteDesc());
+                    }
                 }else{
                     filterByNoteAsc = 1;
                     item.setTitle("Notes ∧");
                     adapterEffectues.sort(new ComparateurNoteAsc());
-                    adapterCrees.sort(new ComparateurNoteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurNoteAsc());
+                    }
                 }
                 break;
             case R.id.action_filter_popularity:
@@ -252,17 +297,23 @@ public class MesParcoursActivity extends AppCompatActivity {
                     filterByDeniveleAsc = -1;
                     item.setTitle("Popularité ∧");
                     adapterEffectues.sort(new ComparateurPopulariteAsc());
-                    adapterCrees.sort(new ComparateurPopulariteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteAsc());
+                    }
                 }else if(filterByNbVoteAsc==1){
                     filterByNbVoteAsc = 0;
                     item.setTitle("Popularité ∨");
                     adapterEffectues.sort(new ComparateurPopulariteDesc());
-                    adapterCrees.sort(new ComparateurPopulariteDesc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteDesc());
+                    }
                 }else{
                     filterByNbVoteAsc = 1;
                     item.setTitle("Popularité ∧");
                     adapterEffectues.sort(new ComparateurPopulariteAsc());
-                    adapterCrees.sort(new ComparateurPopulariteAsc());
+                    if(!parcoursCrees.isEmpty()) {
+                        adapterCrees.sort(new ComparateurPopulariteAsc());
+                    }
                 }
                 break;
             case android.R.id.home:
@@ -346,5 +397,131 @@ public class MesParcoursActivity extends AppCompatActivity {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        if (results != null) {
+            if (results.get("status").getAsString().equals("OK")) {
+                Toast.makeText(MesParcoursActivity.this, "Liste des parcours", Toast.LENGTH_SHORT).show();
+                setResult(2);
+                User.getInstance().setCircuit_en_creation(new Circuit());
+                finish();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(MesParcoursActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MesParcoursActivity.this, "BUG", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void createdCircuitsReceived(JsonObject results) {
+        System.out.println("LISTE CIRC CREES : "+results);
+
+        if(results != null) {
+            JsonArray resultsArray = results.getAsJsonArray("circuits");
+            if(resultsArray != null) {
+                for(int i = 0 ; i < resultsArray.size() ; i++) {
+                    parcoursEffectues.add(new Circuit(resultsArray.get(i).getAsJsonObject()));
+                }
+            }
+        }
+    }
+
+    // ce qui se passe quand on a reçu les id (dans results) depuis le serveur
+    public void doneCircuitsReceived(JsonObject results) {
+        System.out.println("LISTE ID RECUP (CIRC EFFECTUE) : "+results);
+        idCircuitsEffectues = new ArrayList<Integer>();
+        if (results != null) {
+            JsonArray resultsArray = results.getAsJsonArray("circuits");
+            if (resultsArray != null) {
+                for (int i = 0; i < resultsArray.size(); i++) {
+                    // Je ne sais pas comment récupérer l'id ! Là je pense que je récupère un objet "circuit" composé d'un int et d'une date
+                    idCircuitsEffectues.add(resultsArray.get(i).getAsInt());
+                }
+            }
+            // Pour les tests on rajoute deux id dans la liste
+            idCircuitsEffectues.add(1);
+
+            if(!idCircuitsEffectues.isEmpty()) {
+                for(int id:idCircuitsEffectues) {
+                    GetTask getTask = new GetTask(Config.getRequest(Config.GET_CIRCUIT_ID+"/"+id));
+                    getTask.delegate = new HandleGetCircuitById(this);
+                    getTask.execute();
+                }
+            }
+        }
+    }
+
+    public void logoutReceived(JsonObject results){
+        if (results == null || !results.get("status").getAsString().equals("OK")) {
+            System.err.println("ERROR LOGOUT : " + results);
+        }
+        finish();
+    }
+
+    // ce qui se passe quand on a reçu un circuit grâce à son id (dans results) depuis le serveur
+    public void circuitByIdReceived(JsonObject result) {
+        System.out.println("CIRCUIT RECUP AVEC ID : "+result);
+
+        if(result != null) {
+            parcoursEffectues.add(new Circuit(result));
+        }
+    }
+}
+
+class HandleGetAllDoneCircuitsResponse implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetAllDoneCircuitsResponse(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.doneCircuitsReceived(results);
+    }
+}
+
+class HandleGetAllCreatedCircuitsResponse implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetAllCreatedCircuitsResponse(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.createdCircuitsReceived(results);
+    }
+}
+
+class HandleLogoutParcours implements PostTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleLogoutParcours(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.logoutReceived(results);
+    }
+}
+
+class HandleGetCircuitById implements GetTask.AsyncResponse{
+
+    private MesParcoursActivity mesParcoursActivity;
+
+    public HandleGetCircuitById(MesParcoursActivity mesParcoursActivity) {
+        this.mesParcoursActivity = mesParcoursActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.mesParcoursActivity.circuitByIdReceived(results);
     }
 }
