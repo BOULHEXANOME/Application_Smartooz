@@ -233,24 +233,19 @@ class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
     @Override
     protected Bitmap doInBackground(String... urls) {
-        System.err.println("enter the get");
         String urldisplay = urls[0];
         Bitmap mIcon11 = null;
         try {
             InputStream in = new java.net.URL(urldisplay).openStream();
             mIcon11 = BitmapFactory.decodeStream(in);
-            System.err.println("try ended good");
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
-            System.err.println("error : "+e.getMessage());
             e.printStackTrace();
         }
-        System.err.println("search done");
         return mIcon11;
     }
     @Override
     protected void onPostExecute(Bitmap result) {
         bmImage.setImageBitmap(result);
-        System.err.println("set the result");
     }
 }
