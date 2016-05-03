@@ -413,13 +413,15 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     }
 
     public void showPolyline() {
-        if (currentLine != null) {
-            currentLine.remove();
+        if (markers.size() >= 2) {
+            if (currentLine != null) {
+                currentLine.remove();
+            }
+            URL url = Tools.generateGoogleMapURL(markers);
+            PostTask postTask = new PostTask(url.toString());
+            postTask.delegate = new HandleVisualization(CreerParcours.this);
+            postTask.execute();
         }
-        URL url = Tools.generateGoogleMapURL(markers);
-        PostTask postTask = new PostTask(url.toString());
-        postTask.delegate = new HandleVisualization(CreerParcours.this);
-        postTask.execute();
     }
 
     public void visualizeReceived(JsonObject results){

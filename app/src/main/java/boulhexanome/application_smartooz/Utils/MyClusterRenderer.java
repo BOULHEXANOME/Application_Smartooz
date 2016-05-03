@@ -23,9 +23,11 @@ import boulhexanome.application_smartooz.Activities.MyCluster;
 public class MyClusterRenderer extends DefaultClusterRenderer<MyCluster>{
 
     ArrayList<MyCluster> clusterAdded;
+    GoogleMap map;
 
     public MyClusterRenderer(Context context, GoogleMap map, ClusterManager clusterManager) {
         super(context, map, clusterManager);
+        this.map = map;
         clusterAdded = CreerParcours.clusterAdded;
     }
 
@@ -33,14 +35,13 @@ public class MyClusterRenderer extends DefaultClusterRenderer<MyCluster>{
     protected void onBeforeClusterItemRendered(MyCluster item, MarkerOptions markerOptions) {
         clusterAdded = CreerParcours.clusterAdded;
         if (clusterAdded.size() != 0) {
-            System.out.println("Salut");
             for (int i = 0; i < CreerParcours.clusterAdded.size(); i++) {
                 if (item.getId()== clusterAdded.get(i).getId()) {
-                    System.out.println("Kikoo");
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 }
             }
         }
         super.onBeforeClusterItemRendered(item, markerOptions);
+        map.clear();
     }
 }
