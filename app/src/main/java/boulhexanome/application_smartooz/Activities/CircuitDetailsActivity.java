@@ -79,6 +79,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import boulhexanome.application_smartooz.Model.Circuit;
+import boulhexanome.application_smartooz.Model.CurrentCircuitDetail;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
@@ -376,7 +377,10 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
+                CurrentCircuitDetail.getInstance().setCircuitEnCours(theCircuit);
+                CurrentCircuitDetail.getInstance().setPlaceIndex(position);
+                Intent myIntent = new Intent(CircuitDetailsActivity.this, DetailParcoursPlace.class);
+                CircuitDetailsActivity.this.startActivity(myIntent);
                 // Lancer PlaceNearbyActivity : 
 
                 //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
