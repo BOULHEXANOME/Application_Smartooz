@@ -10,12 +10,15 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/tacobelltacomeat"
-        />
+        android:layout_margin="5dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
         <TextView
             android:id="@+id/numero_place"
             android:layout_width="wrap_content"
