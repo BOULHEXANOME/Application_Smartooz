@@ -78,8 +78,9 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         circuit = CurrentCircuitTravel.getInstance().getCircuitEnCours();
         int placeId = CurrentCircuitTravel.getInstance().getPlaceIndex();
         place = circuit.getPlaces().get(placeId);
-        //String nom = place.getName();
-        String nom="parc+tete+or";
+        System.out.println(place.getName());
+        String nom = place.getName();
+        //String nom="parc+tete+or";
         nom+="+lyon";
         String keywords = "";
         try {
@@ -198,12 +199,12 @@ public class PlaceNearbyActivity extends AppCompatActivity {
 
         textViewNumTel.setText("");
         if(place.getPhone()!=null){
-            textViewNumTel.setText("adresse : "+place.getPhone());
+            textViewNumTel.setText("Numéro téléphone : "+place.getPhone());
         }
 
         textViewWebSite.setText("");
         if(place.getWebsite()!=null){
-            textViewWebSite.setText("adresse : "+place.getWebsite());
+            textViewWebSite.setText("Site Web : "+place.getWebsite());
         }
         ratingBar.setRating(place.getNoteOn5());
     }

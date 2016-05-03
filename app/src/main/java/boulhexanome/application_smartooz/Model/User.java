@@ -23,6 +23,9 @@ public class User {
         return mInstance;
     }
 
+    public void setCookieManager(CookieManager cookieManager) {
+        this.cookieManager = cookieManager;
+    }
 
     public String getEmail() {
         return email;
@@ -73,5 +76,19 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static User getmInstance() {
+        return mInstance;
+    }
+
+    public static void setmInstance(User mInstance) {
+        User.mInstance = mInstance;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        getInstance().setmInstance(this.mInstance);
+        super.finalize(); // questionable, but you should ensure calling it somewhere.
     }
 }
