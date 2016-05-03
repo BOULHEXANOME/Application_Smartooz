@@ -1,9 +1,12 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -143,14 +146,23 @@ public class PlaceNearbyActivity extends AppCompatActivity {
 
     public void placeReceived(JsonObject results){
         JsonArray item = results.get("itemListElement").getAsJsonArray();
-        JsonElement element = item.get(0);
-        JsonObject object = element.getAsJsonObject().get("result").getAsJsonObject();
-        JsonElement name = object.get("name");
-        JsonElement descriptionCourte = object.get("description");
-        JsonObject imagesURL = object.get("image").getAsJsonObject();
-        JsonElement imageURL = imagesURL.get("contentUrl");
-        JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
-        JsonElement description = descriptionLongue.get("articleBody");
+
+        JsonElement name = null;
+        JsonElement descriptionCourte = null;
+        JsonElement imageURL = null;
+        JsonElement description = null;
+        try{
+            JsonElement element = item.get(0);
+            JsonObject object = element.getAsJsonObject().get("result").getAsJsonObject();
+            name = object.get("name");
+            descriptionCourte = object.get("description");
+            JsonObject imagesURL = object.get("image").getAsJsonObject();
+            imageURL = imagesURL.get("contentUrl");
+            JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
+            description = descriptionLongue.get("articleBody");
+        }catch (Exception e){
+
+        }
 
         textViewTitle.setText("");
         if(name !=null) {
@@ -216,25 +228,29 @@ class HandleGetPlaceNearbyResponse implements GetTask.AsyncResponse{
 
 class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
-
     public DownloadImageTask(ImageView bmImage) {
         this.bmImage = bmImage;
     }
-
+    @Override
     protected Bitmap doInBackground(String... urls) {
+        System.err.println("enter the get");
         String urldisplay = urls[0];
         Bitmap mIcon11 = null;
         try {
             InputStream in = new java.net.URL(urldisplay).openStream();
             mIcon11 = BitmapFactory.decodeStream(in);
+            System.err.println("try ended good");
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
+            System.err.println("error : "+e.getMessage());
             e.printStackTrace();
         }
+        System.err.println("search done");
         return mIcon11;
     }
-
+    @Override
     protected void onPostExecute(Bitmap result) {
         bmImage.setImageBitmap(result);
+        System.err.println("set the result");
     }
 }
