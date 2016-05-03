@@ -142,6 +142,9 @@ public class LocationService extends Service {
 
     public class MyLocationListener implements LocationListener
     {
+        private boolean precisionAccrue = false;
+        private boolean gpsDesactive = false;
+
         public void onLocationChanged(final Location loc)
         {
             if(isBetterLocation(loc, previousBestLocation)) {
@@ -184,12 +187,20 @@ public class LocationService extends Service {
 
         public void onProviderDisabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "Le GPS n'est pas activé", Toast.LENGTH_SHORT ).show();
+            if(!this.gpsDesactive) {
+                this.gpsDesactive = true;
+                this.precisionAccrue = false;
+                Toast.makeText(getApplicationContext(), "Le GPS n'est pas activé", Toast.LENGTH_SHORT).show();
+            }
         }
 
         public void onProviderEnabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "GPS activé : précision accrue.", Toast.LENGTH_SHORT).show();
+            if(!this.precisionAccrue) {
+                this.precisionAccrue = true;
+                this.gpsDesactive = false;
+                Toast.makeText(getApplicationContext(), "GPS activé : précision accrue.", Toast.LENGTH_SHORT).show();
+            }
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras)

@@ -459,7 +459,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void onMapReady(GoogleMap googleMap) {
         theCircuit = CurrentCircuitsSearch.getInstance().getSelectedCircuit();
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
@@ -578,11 +577,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 getTask.execute();
             }
 
+            mMap.moveCamera(Tools.goOnParcours(markers));
+
 
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
                 public void onMapLoaded() {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(GRAND_LYON, 10));
+                    if (!mMap.getCameraPosition().equals(Tools.goOnParcours(markers)))
+                        mMap.moveCamera(Tools.goOnParcours(markers));
                 }
             });
 
