@@ -18,6 +18,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import org.apache.commons.codec.binary.Base64;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -73,6 +75,7 @@ import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
 
+import boulhexanome.application_smartooz.Model.User;
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.LocationService;
@@ -231,7 +234,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                         Toast.makeText(getApplication(), "Camera not supported", Toast.LENGTH_LONG).show();
                     }
 
-                    url = Config.getRequest(Config.UPLOAD_PICTURE_PLACE_CIRCUIT + "/" + Integer.toString(theCircuit.getId()));
+                    url = Config.getRequest(Config.UPLOAD_IMAGE_CIRCUIT + Integer.toString(theCircuit.getId()));
 
                     //postTask.execute(newfile);
                 }
@@ -617,14 +620,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             Bitmap bm = BitmapFactory.decodeFile(picturePath);
             ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+            bm.compress(Bitmap.CompressFormat.JPEG, 30, bao);
             byte[] ba = bao.toByteArray();
-            ba1 = Arrays.toString(Base64.encodeBase64(ba));
-
+//            ba1 = Base64.encodeBase64(ba);
+            System.out.println(Base64.encodeBase64(ba));
             Log.e("base64", "-----" + ba1);
 
             // Upload image to server
-            new UploadToServer(this, url, ba1).execute();
+//            new UploadToServer(this, url, ba1).execute();
 
         }
     }
@@ -717,6 +720,12 @@ class UploadToServer extends AsyncTask<Void, Void, String> {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                httppost.setHeader("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
+
             HttpResponse response = httpclient.execute(httppost);
             String st = EntityUtils.toString(response.getEntity());
             Log.v("log_tag", "In the try Loop" + st);

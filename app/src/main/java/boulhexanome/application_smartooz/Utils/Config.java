@@ -7,7 +7,7 @@ public class Config {
 
     public static final String PROTOCOL = "http";
     public static final String IP_SERV = "142.4.215.20";
-    public static final String PORT = "1723";
+    public static final String PORT = "5001";
 
     /************USER************/
     public static final String LOGIN = "/login";
@@ -38,13 +38,12 @@ public class Config {
     public static final String GET_ID_CIRCUIT_DONE = "/get-id-circuits-done";
     public static final String CIRCUIT_DONE = "/circuit-done";
     public static final String GET_CIRCUITS_CREATED_BY_USER = "/get-circuits-created-by-user";
-    public static final String UPLOAD_IMAGE_CIRCUIT = "/upload-image-circuit/"; // + circuit id !!!!
-    public static final String DOWNLOAD_IMAGE_CIRCUIT = "/download-picture/"; // + circuit id !!!!
 
     /************PICTURE************/
-    public static final String UPLOAD_PICTURE_PLACE = "/upload";
-    public static final String UPLOAD_PICTURE_PLACE_CIRCUIT = "/upload-image-circuit";
-    public static final String DOWNLOAD_PICTURE = "/download-picture";
+    public static final String UPLOAD_PICTURE_PLACE_CIRCUIT = "/upload/";
+    public static final String UPLOAD_IMAGE_CIRCUIT = "/upload-image-circuit/"; // + circuit id !!!!
+    public static final String DOWNLOAD_PICTURE = "/download-picture/";
+    public static final String DOWNLOAD_IMAGE_CIRCUIT = "/download-picture/"; // + circuit id !!!!
 
 
     public static String getRequest(String service) {
