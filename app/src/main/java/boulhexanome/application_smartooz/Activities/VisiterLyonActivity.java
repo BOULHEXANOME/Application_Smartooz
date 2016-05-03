@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -236,6 +237,10 @@ public class VisiterLyonActivity extends AppCompatActivity implements Navigation
 
             }
         });
+
+        // pour qu'on n'ait pas le focus sur edittext
+        edittext.clearFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         checkPermissionLocation();
     }
 

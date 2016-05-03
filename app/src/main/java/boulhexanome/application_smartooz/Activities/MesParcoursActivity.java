@@ -74,7 +74,7 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
         parcoursCrees = new ArrayList<Circuit>();
 
         // on délègue la tâche de la requête à un handler
-        GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUIT_ID));
+        GetTask getIdCircuitsCreatedThread = new GetTask(Config.getRequest(Config.GET_CIRCUITS_CREATED_BY_USER));
         getIdCircuitsCreatedThread.delegate = new HandleGetAllCreatedCircuitsResponse(this);
         getIdCircuitsCreatedThread.execute();
 
@@ -415,19 +415,24 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
     }
 
     public void createdCircuitsReceived(JsonObject results) {
-        System.out.println("RESULTATS CIRC CREES : "+results);
-        if(results != null) {
+        System.out.println("LISTE CIRC CREES : "+results);
 
+        if(results != null) {
+            JsonArray resultsArray = results.getAsJsonArray("circuits");
+            if(resultsArray != null) {
+                for(int i = 0 ; i < resultsArray.size() ; i++) {
+                    parcoursEffectues.add(new Circuit(resultsArray.get(i).getAsJsonObject()));
+                }
+            }
         }
     }
 
     // ce qui se passe quand on a reçu les id (dans results) depuis le serveur
     public void doneCircuitsReceived(JsonObject results) {
-        System.out.println("RESULTATS : "+results);
+        System.out.println("LISTE ID RECUP (CIRC EFFECTUE) : "+results);
         idCircuitsEffectues = new ArrayList<Integer>();
         if (results != null) {
             JsonArray resultsArray = results.getAsJsonArray("circuits");
-            System.out.println("RESULTARRAY : "+resultsArray);
             if (resultsArray != null) {
                 for (int i = 0; i < resultsArray.size(); i++) {
                     idCircuitsEffectues.add(resultsArray.get(i).getAsInt());
@@ -456,9 +461,9 @@ public class MesParcoursActivity extends AppCompatActivity implements PostTask.A
 
     // ce qui se passe quand on a reçu un circuit grâce à son id (dans results) depuis le serveur
     public void circuitByIdReceived(JsonObject result) {
-        System.out.println("RESULTAT CIRCUIT : "+result);
+        System.out.println("CIRCUIT RECUP AVEC ID : "+result);
 
-        if(result.getAsJsonObject("circuit") != null) {
+        if(result != null) {
             parcoursEffectues.add(new Circuit(result));
         }
     }
