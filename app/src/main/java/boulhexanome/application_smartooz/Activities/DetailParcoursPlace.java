@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Objects;
 
 import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentPlaceDetail;
@@ -74,7 +75,6 @@ public class DetailParcoursPlace extends AppCompatActivity {
 
         place = CurrentPlaceDetail.getInstance().getPlaceEnCours();
         String nom = place.getName();
-        nom+="+lyon";
         String keywords = "";
         try {
             keywords = URLEncoder.encode(nom, "UTF-8");
@@ -149,22 +149,22 @@ public class DetailParcoursPlace extends AppCompatActivity {
     public void placeReceived(JsonObject results){
         JsonArray item = results.get("itemListElement").getAsJsonArray();
 
+        JsonElement element = null;
+        JsonObject object = null;
         JsonElement name = null;
+        JsonObject imagesURL = null;
+        JsonObject descriptionLongue = null;
         JsonElement descriptionCourte = null;
         JsonElement imageURL = null;
         JsonElement description = null;
-        try{
-            JsonElement element = item.get(0);
-            JsonObject object = element.getAsJsonObject().get("result").getAsJsonObject();
-            name = object.get("name");
-            descriptionCourte = object.get("description");
-            JsonObject imagesURL = object.get("image").getAsJsonObject();
-            imageURL = imagesURL.get("contentUrl");
-            JsonObject descriptionLongue = object.get("detailedDescription").getAsJsonObject();
-            description = descriptionLongue.get("articleBody");
-        }catch (Exception e){
-
-        }
+        try{element = item.get(0);}catch (Exception e){}
+        try{object = element.getAsJsonObject().get("result").getAsJsonObject();}catch (Exception e){}
+        try{name = object.get("name");}catch (Exception e){}
+        try{descriptionCourte = object.get("description");}catch (Exception e){}
+        try{descriptionLongue = object.get("detailedDescription").getAsJsonObject();}catch (Exception e){}
+        try{description = descriptionLongue.get("articleBody");}catch (Exception e){}
+        try{imagesURL = object.get("image").getAsJsonObject();}catch (Exception e){}
+        try{imageURL = imagesURL.get("contentUrl");}catch (Exception e){}
 
         textViewTitle.setText("");
         if(name !=null) {
@@ -197,7 +197,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         }
 
         textViewNumTel.setText("");
-        if(place.getPhone()!=null){
+        if(place.getPhone() != null && !place.getPhone().equals("")){
             textViewNumTel.setVisibility(View.VISIBLE);
             textViewNumTel.setText("Numéro téléphone : "+place.getPhone());
         }else{
@@ -205,7 +205,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         }
 
         textViewAddress.setText("");
-        if(place.getAddress()!=null){
+        if(place.getAddress()!=null && !place.getAddress().equals("")){
             textViewAddress.setVisibility(View.VISIBLE);
             textViewAddress.setText("Adresse : "+place.getAddress());
         }else{
@@ -213,7 +213,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         }
 
         textViewWebSite.setText("");
-        if(place.getWebsite()!=null){
+        if(place.getWebsite()!=null && !place.getWebsite().equals("")){
             textViewWebSite.setVisibility(View.VISIBLE);
             textViewWebSite.setText("Site Web : "+place.getWebsite());
         }else{

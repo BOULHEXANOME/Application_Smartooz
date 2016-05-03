@@ -105,15 +105,13 @@ public class CongratulationsCircuitEndActivity extends AppCompatActivity impleme
         } else if (results.get("status").getAsString().equals("KO")) {
             Toast.makeText(CongratulationsCircuitEndActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(CongratulationsCircuitEndActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CongratulationsCircuitEndActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void circuitDoneReceived(JsonObject results) {
         if (results.get("status").getAsString().equals("KO")) {
             Toast.makeText(CongratulationsCircuitEndActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(CongratulationsCircuitEndActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
         }
     }
 }

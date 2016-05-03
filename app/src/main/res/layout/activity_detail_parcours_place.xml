@@ -85,20 +85,26 @@
                         android:layout_height="wrap_content"
                         android:text="New Text"
                         android:id="@+id/textViewTitlePlace"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="New Text"
-                        android:id="@+id/textViewSubtitlePlace"/>
+                        android:id="@+id/textViewSubtitlePlace"
+                        android:layout_gravity="center_horizontal"
+                        android:autoText="false"
+                        android:gravity="center" />
 
                     <RatingBar
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/ratingBarPD"
-                        style="@style/foodRatingBar"/>
+                        style="@style/foodRatingBar"
+                        android:layout_gravity="center_horizontal" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
