@@ -636,7 +636,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                 Bitmap bm = BitmapFactory.decodeFile(picturePath);
                 ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG, 30, bao);
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
                 byte[] ba = bao.toByteArray();
                 //            ba1 = Base64.encodeBase64(ba);
                 ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
@@ -644,7 +644,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             }else{
                 Bitmap bm = (Bitmap)data.getExtras().get("data");
                 ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG, 30, bao);
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, bao);
                 byte[] ba = bao.toByteArray();
                 //            ba1 = Base64.encodeBase64(ba);
                 ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
