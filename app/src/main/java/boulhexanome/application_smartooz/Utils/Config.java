@@ -35,6 +35,7 @@ public class Config {
     public static final String GET_KEYWORDS_OF_CIRCUIT = "/get-all-circuits-keywords";
     public static final String GET_CIRCUITS = "/get-circuits";
     public static final String DELETE_CIRCUIT = "/delete-circuit";
+    public static final String GET_ID_CIRCUIT_DONE = "/get-id-circuits-done";
     public static final String CIRCUIT_DONE = "/circuit-done";
     public static final String GET_CIRCUITS_CREATED_BY_USER = "/get-circuits-created-by-user";
     public static final String UPLOAD_IMAGE_CIRCUIT = "/upload-image-circuit/"; // + circuit id !!!!
