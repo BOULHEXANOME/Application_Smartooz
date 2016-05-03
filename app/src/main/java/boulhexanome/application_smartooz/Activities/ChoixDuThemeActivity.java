@@ -90,7 +90,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                 String texte = (String) listMotsProposes.getItemAtPosition(position);
 
                 if(!motsSelectionnes.contains(texte))
-                    motsSelectionnes.add(texte);
+                    motsSelectionnes.add(texte.toLowerCase());
                 motsClefs.remove(texte);
 
                 if(edittext.getText().toString().length() > 0) {
@@ -205,8 +205,8 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
                     circuit = User.getInstance().getCircuit_en_creation();
 
                     circuit.setKeywords((ArrayList<String>) motsSelectionnes);
-                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString().toUpperCase());
-                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString().toUpperCase());
+                    circuit.setName(((EditText) findViewById(R.id.nomParcours_editText)).getText().toString());
+                    circuit.setDescription(((EditText) findViewById(R.id.description_editText)).getText().toString());
 
                     addCircuit();
                 }
