@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -431,6 +432,11 @@ class UploadToServerChoix extends AsyncTask<Void, Void, String> {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            if(User.getInstance().getCookieManager().getCookieStore().getCookies().size() > 0)
+            {
+                httppost.setHeader("Cookie",
+                        TextUtils.join(";",  User.getInstance().getCookieManager().getCookieStore().getCookies()));
+            }
             HttpResponse response = httpclient.execute(httppost);
             String st = EntityUtils.toString(response.getEntity());
             Log.v("log_tag", "In the try Loop" + st);
@@ -443,8 +449,8 @@ class UploadToServerChoix extends AsyncTask<Void, Void, String> {
 
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        choixDuThemeActivity.uploadTermine();
         pd.hide();
         pd.dismiss();
+        choixDuThemeActivity.uploadTermine();
     }
 }
