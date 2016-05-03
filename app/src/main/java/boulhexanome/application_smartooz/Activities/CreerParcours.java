@@ -4,7 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -13,12 +17,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +44,14 @@ import com.google.gson.JsonObject;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +68,7 @@ import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class CreerParcours extends AppCompatActivity implements OnMapReadyCallback {
-
+    private boolean not_first_time_showing_info_window;
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
     private GoogleMap mMap;
@@ -81,6 +93,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creer_parcours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -170,6 +183,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        not_first_time_showing_info_window = false;
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory
@@ -207,13 +221,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
                 // Defines the contents of the InfoWindow
                 @Override
-                public View getInfoContents(final Marker arg0) {
+                public View getInfoContents(Marker marker) {
 
                     // Getting view from the layout file info_window_layout
                     View v = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
                     v.setFocusableInTouchMode(true);
 
-                    LatLng position = arg0.getPosition();
+                    LatLng position = marker.getPosition();
                     Place placeMarked = null;
                     for (int i = 0; i < places.size(); i++){
                         if (places.get(i).getPosition().equals(position)){
@@ -232,7 +246,12 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
                         ImageView image = (ImageView)v.findViewById(R.id.imagePi);
                         if(placeMarked.getUrlImage()!=null){
-                            new DownloadImageTask(image).execute(placeMarked.getUrlImage());
+                            if(not_first_time_showing_info_window){
+                                Picasso.with(CreerParcours.this).load(placeMarked.getUrlImage()).into(image);
+                            }else{
+                                not_first_time_showing_info_window = true;
+                                Picasso.with(CreerParcours.this).load(placeMarked.getUrlImage()).into(image, new InfoWindowRefresher(marker));
+                            }
                         }
 
                         String numeroListe ="";
@@ -264,6 +283,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         tags.setText(stringBuilder.toString());
 
                         final Place finalPlaceMarked = placeMarked;
+
+
                     }
 
                     // Returning the view containing InfoWindow contents
@@ -277,6 +298,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
+                    not_first_time_showing_info_window = false;
                     if (!modeAjout){
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                         marker.showInfoWindow();
@@ -492,3 +514,15 @@ class HandleGetPlaces implements GetTask.AsyncResponse{
     }
 }
 
+class InfoWindowRefresher implements Callback {
+    private Marker markerToRefresh;
+    public InfoWindowRefresher(Marker markerToRefresh){
+        this.markerToRefresh = markerToRefresh;
+    }
+    @Override
+    public void onSuccess(){
+        markerToRefresh.showInfoWindow();
+    }
+    @Override
+    public void onError(){}
+}
