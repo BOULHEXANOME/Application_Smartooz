@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -529,13 +530,12 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
                     TextView title = (TextView) v.findViewById(R.id.title_place);
                     TextView description = (TextView) v.findViewById(R.id.description);
-                    TextView noteOn5 = (TextView) v.findViewById(R.id.noteon5);
+                    RatingBar noteOn5 = (RatingBar) v.findViewById(R.id.noteOn5);
                     TextView tags = (TextView) v.findViewById(R.id.tags_infowindow);
                     ImageView image = (ImageView) v.findViewById(R.id.imagePi);
                     title.setText(placeMarked.getName());
                     description.setText(placeMarked.getDescription());
-                    noteOn5.setText("Note : " + String.valueOf(placeMarked.getNoteOn5()) + " / 5");
-
+                    noteOn5.setRating(Float.valueOf(placeMarked.getNoteOn5()));
                     if(placeMarked.getUrlImage()!=null){
                         if(not_first_time_showing_info_window){
                             Picasso.with(CircuitDetailsActivity.this).load(placeMarked.getUrlImage()).into(image);
