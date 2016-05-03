@@ -14,8 +14,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <service android:enabled="true" android:name=".Utils.LocationService" />
+        <service
+            android:name=".Utils.LocationService"
+            android:enabled="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -24,27 +25,28 @@
         <activity
             android:name=".Activities.Parcours"
             android:label="@string/title_activity_parcours"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activities.InscriptionActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.InscriptionActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.LoginActivity"
-            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <activity android:name=".Activities.VisiterLyonActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".Activities.VisiterLyonActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Activities.ListCircuit"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activities.ListCircuit"
+            android:screenOrientation="portrait" />
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -56,31 +58,29 @@
 
         <activity
             android:name=".Activities.ChoixDuThemeActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activities.CreerParcours"
             android:label="@string/title_activity_creer_parcours"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".Activities.CircuitDetailsActivity"
             android:label="@string/title_activity_circuit_details"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.CongratulationsCircuitEndActivity"
             android:label="@string/title_activity_congratulations_circuit_end"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Activities.PlaceNearbyActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Activities.MesParcoursActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.PlaceNearbyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.MesParcoursActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.DetailParcoursPlace"></activity>
     </application>
 
 </manifest>
