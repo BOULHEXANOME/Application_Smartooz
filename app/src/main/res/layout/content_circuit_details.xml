@@ -124,25 +124,35 @@
 
                 <Button
                     android:layout_width="225dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:text="@string/lancer_ce_parcours"
                     android:id="@+id/lancerCeParcours"
-                    android:layout_margin="15dp"
-                    android:layout_gravity="center_horizontal" />
+                    android:backgroundTint="@color/colorAccent"
+                    android:textColor="#ffffff"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginLeft="10dp" />
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <android.support.design.widget.FloatingActionButton
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/action_add_photo"
+                    android:gravity="right"
+                    android:src="@drawable/ic_add_a_photo_white_24dp" />
 
-                    <android.support.design.widget.FloatingActionButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/action_add_photo"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_add_a_photo_white_24dp" />
-                </LinearLayout>
             </LinearLayout>
+
+            <RatingBar
+                style="?@android:attr/ratingBarStyleIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/voting_bar"
+                android:progressTint="?attr/colorAccent"
+                android:rating="0"
+                android:max="5"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5pdp" />
 
             <TextView
                 android:id="@+id/circuit_preview_photos"
@@ -164,7 +174,7 @@
 
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 android:id="@+id/places_list"
                 />
 

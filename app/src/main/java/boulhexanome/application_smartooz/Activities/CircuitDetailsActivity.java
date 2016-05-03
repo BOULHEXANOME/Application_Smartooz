@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -76,6 +77,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
     private RatingBar circuitRatingBar;
+    private RatingBar votingBar;
     private ListView placesList;
 
     // Infos issues du serveur
@@ -131,6 +133,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         circuitTitle = (TextView) findViewById(R.id.circuit_title);
         circuitInformationsTextview = (TextView) findViewById(R.id.circuit_global_informations);
         circuitRatingBar = (RatingBar) findViewById(R.id.circuit_details_rating);
+        votingBar = (RatingBar) findViewById(R.id.voting_bar);
         circuitDescription = (TextView) findViewById(R.id.circuit_description);
         keywordsTextview = (TextView) findViewById(R.id.keywords_circuit_details);
         lengthKmTextview = (TextView) findViewById(R.id.length_km);
@@ -193,6 +196,45 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                     //postTask.execute(newfile);
                 }
             });
+
+            /*
+            if (votingBar != null) {
+                //System.out.print("Voting Bar listener");
+
+                votingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        System.out.println(rating);
+                        postVote(rating, fromUser);
+                    }
+                });
+            } */
+
+            votingBar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        float touchPositionX = event.getX();
+                        float width = votingBar.getWidth();
+                        float rating = (touchPositionX / width) * 5.0f;
+                        //int stars = (int)starsf + 1;
+                        votingBar.setRating(rating);
+                        Toast.makeText(CircuitDetailsActivity.this, String.valueOf("test"), Toast.LENGTH_SHORT).show();
+                        postVote(rating);
+                        v.setPressed(false);
+
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        v.setPressed(true);
+                    }
+
+                    if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        v.setPressed(false);
+                    }
+                    return true;
+                }});
+
+
         }
 
         // Demarrage sur la map directement
@@ -227,6 +269,20 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         public void processFinish(JsonObject results) {
             this.creerParcours.getPlacesReceived(results);
         }
+    }
+
+    protected void postVote(float rating) {
+        int placeId = theCircuit.getId();
+
+        PostTask voteTask = new PostTask(Config.getRequest(Config.VOTE_CIRCUIT));
+        voteTask.delegate = new HandleCircuitVote(CircuitDetailsActivity.this);
+
+        JsonObject vote = new JsonObject();
+        vote.addProperty("id", placeId);
+        vote.addProperty("note", rating);
+        //System.out.println("Vote : " + placeId + ", note : " + rating);
+
+        voteTask.execute(vote);
     }
 
 
@@ -321,7 +377,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                System.out.println("Position : " + position);
+                //System.out.println("Position : " + position);
 
                 // Montrer la map
                 mMapFragment.getView().setVisibility(View.VISIBLE);
@@ -347,7 +403,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void getPlacesReceived(JsonObject results) {
         if (results != null) {
             JsonObject resultObject = results.getAsJsonObject("place");
-            System.out.println("Le results array : " + resultObject);
+           //System.out.println("Le results array : " + resultObject);
             if (resultObject != null) {
 
                 Place newPlace = new Place(resultObject);
@@ -526,6 +582,22 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
 
+    public void handleRating(JsonObject results) {
+        if (results != null) {
+
+            if (results.get("status").getAsString().equals("OK")) {
+                Toast.makeText(CircuitDetailsActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
+            } else if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(CircuitDetailsActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(CircuitDetailsActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+
+
 }
 
 class HandleVisualizationDetailsCircuit implements PostTask.AsyncResponse {
@@ -556,4 +628,17 @@ class HandleGetPlacesDetailsCircuit implements GetTask.AsyncResponse {
     }
 }
 
+class HandleCircuitVote implements PostTask.AsyncResponse{
+
+    private CircuitDetailsActivity circuitDetailsActivity;
+
+    public HandleCircuitVote(CircuitDetailsActivity circuitDetailsActivity) {
+        this.circuitDetailsActivity = circuitDetailsActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.circuitDetailsActivity.handleRating(results);
+    }
+}
 
