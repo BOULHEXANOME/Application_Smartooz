@@ -40,10 +40,10 @@ public class Config {
     public static final String GET_CIRCUITS_CREATED_BY_USER = "/get-circuits-created-by-user";
 
     /************PICTURE************/
-    public static final String UPLOAD_PICTURE_PLACE_CIRCUIT = "/upload/";
+    public static final String UPLOAD_IMAGE_PLACE_CIRCUIT = "/upload/";
     public static final String UPLOAD_IMAGE_CIRCUIT = "/upload-image-circuit/"; // + circuit id !!!!
-    public static final String DOWNLOAD_PICTURE = "/download-picture/";
-    public static final String DOWNLOAD_IMAGE_CIRCUIT = "/download-picture/"; // + circuit id !!!!
+    public static final String DOWNLOAD_FOLDER = "/pictures/"; // + user_{id_user}/circuit_{id_circuit}/place_{id_place} OU
+                                                               // + circuits/{id_circuit}
 
 
     public static String getRequest(String service) {
