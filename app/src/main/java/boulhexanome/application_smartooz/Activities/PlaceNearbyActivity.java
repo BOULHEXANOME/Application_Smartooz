@@ -1,9 +1,12 @@
 package boulhexanome.application_smartooz.Activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -20,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -36,7 +40,9 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.Place;
 import boulhexanome.application_smartooz.R;
+import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.WebServices.GetTask;
+import boulhexanome.application_smartooz.WebServices.PostTask;
 
 public class PlaceNearbyActivity extends AppCompatActivity {
     private TextView textViewDescription;
@@ -116,6 +122,30 @@ public class PlaceNearbyActivity extends AppCompatActivity {
                 startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
             }
         });
+
+        RatingBar rating = (RatingBar) findViewById(R.id.ratingBarPN);
+        if (ratingBar != null) {
+            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    System.out.println(rating);
+                    handleVote(rating, fromUser);
+                }
+            });
+        }
+    }
+
+    protected void handleVote(float rating, boolean fromUser){
+        int placeId = CurrentCircuitTravel.getInstance().getPlaceIndex();
+
+        PostTask inscription_thread = new PostTask(Config.getRequest(Config.VOTE_PLACE));
+        inscription_thread.delegate = new HandleNoteReceived(this);
+
+        JsonObject vote = new JsonObject();
+        vote.addProperty("id", placeId);
+        vote.addProperty("note", rating);
+
+        inscription_thread.execute(vote);
     }
 
     @Override
@@ -208,6 +238,14 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         }
         ratingBar.setRating(place.getNoteOn5());
     }
+
+    public void noteReceived(JsonObject results) {
+        if (results.get("status").getAsString().equals("KO")) {
+            Toast.makeText(PlaceNearbyActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(PlaceNearbyActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
 
 class HandleGetPlaceNearbyResponse implements GetTask.AsyncResponse{
@@ -226,11 +264,10 @@ class HandleGetPlaceNearbyResponse implements GetTask.AsyncResponse{
 
 class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
-
     public DownloadImageTask(ImageView bmImage) {
         this.bmImage = bmImage;
     }
-
+    @Override
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
         Bitmap mIcon11 = null;
@@ -243,8 +280,20 @@ class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         }
         return mIcon11;
     }
-
+    @Override
     protected void onPostExecute(Bitmap result) {
         bmImage.setImageBitmap(result);
+    }
+}
+class HandleNoteReceived implements PostTask.AsyncResponse{
+    private PlaceNearbyActivity placeNearbyActivity;
+
+    public HandleNoteReceived(PlaceNearbyActivity placeNearbyActivity) {
+        this.placeNearbyActivity = placeNearbyActivity;
+    }
+
+    @Override
+    public void processFinish(JsonObject results) {
+        this.placeNearbyActivity.noteReceived(results);
     }
 }

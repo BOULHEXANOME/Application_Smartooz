@@ -175,21 +175,27 @@ public class ListCircuit extends AppCompatActivity {
     public class ComparateurKmDesc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c1.getLengthKm()-c2.getLengthKm());
+            if (c2.getLengthKm() > c1.getLengthKm()) return -1;
+            if (c2.getLengthKm() < c1.getLengthKm()) return 1;
+            return 0;
         }
     }
 
     public class ComparateurDeniveleDesc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c1.getDeniveleM()-c2.getDeniveleM());
+            if (c2.getDeniveleM() > c1.getDeniveleM()) return -1;
+            if (c2.getDeniveleM() < c1.getDeniveleM()) return 1;
+            return 0;
         }
     }
 
     public class ComparateurNoteDesc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c1.getNoteOn5()-c2.getNoteOn5());
+            if (c2.getNoteOn5() > c1.getNoteOn5()) return -1;
+            if (c2.getNoteOn5() < c1.getNoteOn5()) return 1;
+            return 0;
         }
     }
     public class ComparateurPopulariteAsc implements Comparator<Circuit> {
@@ -202,21 +208,27 @@ public class ListCircuit extends AppCompatActivity {
     public class ComparateurKmAsc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c2.getLengthKm()-c1.getLengthKm());
+            if (c2.getLengthKm() < c1.getLengthKm()) return -1;
+            if (c2.getLengthKm() > c1.getLengthKm()) return 1;
+            return 0;
         }
     }
 
     public class ComparateurDeniveleAsc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c2.getDeniveleM()-c1.getDeniveleM());
+            if (c2.getDeniveleM() < c1.getDeniveleM()) return -1;
+            if (c2.getDeniveleM() > c1.getDeniveleM()) return 1;
+            return 0;
         }
     }
 
     public class ComparateurNoteAsc implements Comparator<Circuit> {
         @Override
         public int compare(Circuit c1, Circuit c2){
-            return (int)(c2.getNoteOn5()-c1.getNoteOn5());
+            if (c2.getNoteOn5() < c1.getNoteOn5()) return -1;
+            if (c2.getNoteOn5() > c1.getNoteOn5()) return 1;
+            return 0;
         }
     }
 }
