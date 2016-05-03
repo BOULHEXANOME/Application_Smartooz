@@ -19,6 +19,7 @@ public class CurrentCircuitTravel {
 
     private Circuit circuitEnCours;
     private int placeIndex;
+    public boolean toDelete = false;
 
     public Circuit getCircuitEnCours() {
         return circuitEnCours;
