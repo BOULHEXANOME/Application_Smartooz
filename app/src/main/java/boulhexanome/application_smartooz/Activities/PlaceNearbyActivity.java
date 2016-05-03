@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -222,20 +223,30 @@ public class PlaceNearbyActivity extends AppCompatActivity {
             new DownloadImageTask(imageView).execute(place.getUrlImage());
         }
 
-        textViewAddress.setText("");
-        if(place.getAddress()!=null){
-            textViewAddress.setText("adresse : "+place.getAddress());
-        }
-
         textViewNumTel.setText("");
         if(place.getPhone()!=null){
+            textViewNumTel.setVisibility(View.VISIBLE);
             textViewNumTel.setText("Numéro téléphone : "+place.getPhone());
+        }else{
+            textViewNumTel.setVisibility(View.GONE);
+        }
+
+        textViewAddress.setText("");
+        if(place.getAddress()!=null){
+            textViewAddress.setVisibility(View.VISIBLE);
+            textViewAddress.setText("Adresse : "+place.getAddress());
+        }else{
+            textViewAddress.setVisibility(View.GONE);
         }
 
         textViewWebSite.setText("");
         if(place.getWebsite()!=null){
+            textViewWebSite.setVisibility(View.VISIBLE);
             textViewWebSite.setText("Site Web : "+place.getWebsite());
+        }else{
+            textViewWebSite.setVisibility(View.GONE);
         }
+
         ratingBar.setRating(place.getNoteOn5());
     }
 

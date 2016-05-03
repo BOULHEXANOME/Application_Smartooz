@@ -85,8 +85,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         circuit = CurrentCircuitDetail.getInstance().getCircuitEnCours();
         int placeId = CurrentCircuitDetail.getInstance().getPlaceIndex();
         place = circuit.getPlaces().get(placeId);
-        //String nom = place.getName();
-        String nom="parc+tete+or";
+        String nom = place.getName();
         nom+="+lyon";
         String keywords = "";
         try {
@@ -222,20 +221,30 @@ public class DetailParcoursPlace extends AppCompatActivity {
             new DownloadImageTask(imageView).execute(place.getUrlImage());
         }
 
-        textViewAddress.setText("");
-        if(place.getAddress()!=null){
-            textViewAddress.setText("adresse : "+place.getAddress());
-        }
-
         textViewNumTel.setText("");
         if(place.getPhone()!=null){
-            textViewNumTel.setText("adresse : "+place.getPhone());
+            textViewNumTel.setVisibility(View.VISIBLE);
+            textViewNumTel.setText("Numéro téléphone : "+place.getPhone());
+        }else{
+            textViewNumTel.setVisibility(View.GONE);
+        }
+
+        textViewAddress.setText("");
+        if(place.getAddress()!=null){
+            textViewAddress.setVisibility(View.VISIBLE);
+            textViewAddress.setText("Adresse : "+place.getAddress());
+        }else{
+            textViewAddress.setVisibility(View.GONE);
         }
 
         textViewWebSite.setText("");
         if(place.getWebsite()!=null){
-            textViewWebSite.setText("adresse : "+place.getWebsite());
+            textViewWebSite.setVisibility(View.VISIBLE);
+            textViewWebSite.setText("Site Web : "+place.getWebsite());
+        }else{
+            textViewWebSite.setVisibility(View.GONE);
         }
+
         ratingBar.setRating(place.getNoteOn5());
     }
 
