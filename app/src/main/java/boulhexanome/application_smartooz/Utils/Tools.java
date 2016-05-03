@@ -142,17 +142,21 @@ public class Tools {
     }
 
     public static List<LatLng> decodeDirections(JsonObject jsonObject) {
-        JsonArray resultsArray = jsonObject.getAsJsonArray("routes");
-        JsonObject routes = resultsArray.get(0).getAsJsonObject();
-        String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
-        show = show.replace("\\\\", "\\");
-        try {
-            List<LatLng> listePoints = PolyUtil.decode(show);
-            return listePoints;
-        } catch(Exception e) {
-            Log.e("googleMapError", "Error while decoding polyline");
-            return new ArrayList<LatLng>();
-        }
+       if (jsonObject.get("status").getAsString().equals("OK")) {
+           JsonArray resultsArray = jsonObject.getAsJsonArray("routes");
+           JsonObject routes = resultsArray.get(0).getAsJsonObject();
+           String show = routes.get("overview_polyline").getAsJsonObject().get("points").getAsString();
+           show = show.replace("\\\\", "\\");
+           try {
+               List<LatLng> listePoints = PolyUtil.decode(show);
+               return listePoints;
+           } catch (Exception e) {
+               Log.e("googleMapError", "Error while decoding polyline");
+               return new ArrayList<LatLng>();
+           }
+       } else {
+           return new ArrayList<LatLng>();
+       }
     }
 
     public static CameraUpdate goOnParcours(ArrayList<Marker> markers) {

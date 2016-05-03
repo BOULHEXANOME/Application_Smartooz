@@ -80,7 +80,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     public static final LatLngBounds GRAND_LYON = new LatLngBounds(new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
 
-    Polyline currentLine;
+    public static Polyline currentLine;
 
     public ArrayList<Marker> markers;
 
@@ -429,6 +429,9 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     public void visualizeReceived(JsonObject results){
         if (results != null) {
             List<LatLng> listePoints = Tools.decodeDirections(results);
+            if (listePoints.isEmpty()){
+                Toast.makeText(CreerParcours.this, "An error has occured while loading polyline... Perhaps you should remove some waypoints", Toast.LENGTH_SHORT).show();
+            }
             currentLine = mMap.addPolyline(new PolylineOptions()
                     .addAll(listePoints != null ? listePoints : new ArrayList<LatLng>()));
         }
