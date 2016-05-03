@@ -115,7 +115,6 @@ public class DetailParcoursPlace extends AppCompatActivity {
             ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    System.out.println(rating);
                     handleVote(rating);
                 }
             });
@@ -237,10 +236,11 @@ public class DetailParcoursPlace extends AppCompatActivity {
         if (results.get("status").getAsString().equals("KO")) {
             Toast.makeText(DetailParcoursPlace.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(DetailParcoursPlace.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailParcoursPlace.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
         }
     }
 }
+
 class HandleNoteReceived2 implements PostTask.AsyncResponse{
     private DetailParcoursPlace detailParcoursPlace;
 
@@ -253,6 +253,7 @@ class HandleNoteReceived2 implements PostTask.AsyncResponse{
         this.detailParcoursPlace.noteReceived(results);
     }
 }
+
 class HandleGetPlaceNearbyResponse2 implements GetTask.AsyncResponse{
 
     private DetailParcoursPlace detailParcoursPlace;

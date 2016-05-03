@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/noteOn5"
-            android:progressTint="#ffffff"
+            android:progressTint="@color/colorAccent"
             style="?@android:attr/ratingBarStyleIndicator"
             android:max="5"
             />

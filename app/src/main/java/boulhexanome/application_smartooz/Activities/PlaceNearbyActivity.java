@@ -129,7 +129,6 @@ public class PlaceNearbyActivity extends AppCompatActivity {
             ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    System.out.println(rating);
                     handleVote(rating, fromUser);
                 }
             });
@@ -254,7 +253,7 @@ public class PlaceNearbyActivity extends AppCompatActivity {
         if (results.get("status").getAsString().equals("KO")) {
             Toast.makeText(PlaceNearbyActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(PlaceNearbyActivity.this, "Erreur connexion serveur", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlaceNearbyActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
         }
     }
 }

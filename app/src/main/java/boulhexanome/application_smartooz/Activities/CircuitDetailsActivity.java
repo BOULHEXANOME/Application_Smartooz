@@ -198,8 +198,8 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             final FloatingActionButton add = (FloatingActionButton) findViewById(R.id.action_add_photo);
             assert add != null;
+            if(theCircuit.getIdUser() != User.getInstance().get)
             add.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
 
@@ -223,7 +223,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
 
             if (votingBar != null) {
-                //System.out.print("Voting Bar listener");
+                System.out.print("Voting Bar listener");
 
                 votingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
@@ -508,7 +508,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                 getTask.execute();
             }
 
-            mMap.moveCamera(Tools.goOnParcours(markers));
+//            mMap.moveCamera(Tools.goOnParcours(markers));
 
 
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {

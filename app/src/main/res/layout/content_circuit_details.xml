@@ -65,7 +65,7 @@
         android:id="@+id/circuit_details_scrollview"
         android:layout_width="fill_parent"
         android:padding="10dp"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/linear_layout_scrollview"
@@ -148,7 +148,6 @@
             </LinearLayout>
 
             <RatingBar
-                style="?@android:attr/ratingBarStyleIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/voting_bar"
@@ -157,8 +156,7 @@
                 android:max="5"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:clickable="true" />
+                android:layout_marginBottom="5dp"/>
 
             <TextView
                 android:id="@+id/circuit_preview_photos"
@@ -180,7 +178,7 @@
 
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="500dp"
                 android:id="@+id/places_list"
                 />
 
