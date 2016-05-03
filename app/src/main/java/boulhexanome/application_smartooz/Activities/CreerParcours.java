@@ -353,6 +353,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
 
     public void filter(String keyword){
         mMap.clear();
+        mClusterManager.clearItems();
+        keyword = keyword.toUpperCase();
         if (keyword == "") {
             for (int i = 0; i < places.size(); i++){
                 mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
@@ -360,7 +362,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
         for (int i = 0; i < places.size(); i++){
             ArrayList<String> keywords = places.get(i).getKeywords();
-            if (keywords.contains(keyword)) {
+            if (keywords.contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
                 mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
             }
         }
