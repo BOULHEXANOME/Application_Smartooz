@@ -125,6 +125,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         }
                     }
                 }
+                System.out.println(User.getInstance().getCircuit_en_creation().getPlacesId());
                 Intent intent = new Intent(CreerParcours.this, ChoixDuThemeActivity.class);
                 startActivity(intent);
             }
@@ -286,9 +287,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                             //marker.showInfoWindow();
                             //Affichage dynamique du parcours
-                            if (markers.size() >= 2) {
-                                showPolyline();
-                            }
+                            showPolyline();
                         }
                     }
                     clusterAdded.clear();
@@ -380,18 +379,20 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 }
             }
         }
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngBounds(GRAND_LYON,10));
+        showPolyline();
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mMap.getCameraPosition()));
     }
 
     public void showPolyline() {
-        if (currentLine != null) {
-            currentLine.remove();
+        if (markers.size() >= 2) {
+            if (currentLine != null) {
+                currentLine.remove();
+            }
+            URL url = Tools.generateGoogleMapURL(markers);
+            PostTask postTask = new PostTask(url.toString());
+            postTask.delegate = new HandleVisualization(CreerParcours.this);
+            postTask.execute();
         }
-        URL url = Tools.generateGoogleMapURL(markers);
-        PostTask postTask = new PostTask(url.toString());
-        postTask.delegate = new HandleVisualization(CreerParcours.this);
-        postTask.execute();
     }
 
     public void visualizeReceived(JsonObject results){
