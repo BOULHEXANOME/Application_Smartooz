@@ -63,9 +63,9 @@
 
     <ScrollView
         android:id="@+id/circuit_details_scrollview"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:padding="10dp"
-        android:layout_height="fill_parent">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/linear_layout_scrollview"
@@ -117,20 +117,32 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp" />
 
-            <Button
-                android:layout_width="225dp"
-                android:layout_height="wrap_content"
-                android:text="@string/lancer_ce_parcours"
-                android:id="@+id/lancerCeParcours"
-                android:layout_margin="15dp"
-                android:layout_gravity="center_horizontal" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <android.support.design.widget.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/action_add_photo"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_add_a_photo_white_24dp" />
+                <Button
+                    android:layout_width="225dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lancer_ce_parcours"
+                    android:id="@+id/lancerCeParcours"
+                    android:layout_margin="15dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/action_add_photo"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_add_a_photo_white_24dp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/circuit_preview_photos"
@@ -151,9 +163,10 @@
                 android:layout_marginBottom="5dp" />
 
             <ListView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/places_list" />
+                android:id="@+id/places_list"
+                />
 
         </LinearLayout>
     </ScrollView>

@@ -38,6 +38,8 @@ public class Config {
     public static final String GET_ID_CIRCUIT_DONE = "/get-id-circuits-done";
     public static final String CIRCUIT_DONE = "/circuit-done";
     public static final String GET_CIRCUITS_CREATED_BY_USER = "/get-circuits-created-by-user";
+    public static final String UPLOAD_IMAGE_CIRCUIT = "/upload-image-circuit/"; // + circuit id !!!!
+    public static final String DOWNLOAD_IMAGE_CIRCUIT = "/download-picture/"; // + circuit id !!!!
 
     /************PICTURE************/
     public static final String UPLOAD_PICTURE = "/upload";

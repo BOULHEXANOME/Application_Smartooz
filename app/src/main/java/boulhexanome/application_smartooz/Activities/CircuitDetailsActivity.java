@@ -11,8 +11,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -46,6 +49,7 @@ import boulhexanome.application_smartooz.Model.Circuit;
 import boulhexanome.application_smartooz.Model.CurrentCircuitTravel;
 import boulhexanome.application_smartooz.Model.CurrentCircuitsSearch;
 import boulhexanome.application_smartooz.Model.Place;
+
 import boulhexanome.application_smartooz.R;
 import boulhexanome.application_smartooz.Utils.Config;
 import boulhexanome.application_smartooz.Utils.LocationService;
@@ -53,7 +57,7 @@ import boulhexanome.application_smartooz.Utils.Tools;
 import boulhexanome.application_smartooz.WebServices.GetTask;
 import boulhexanome.application_smartooz.WebServices.PostTask;
 
-public class CircuitDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GetTask.AsyncResponse {
+public class CircuitDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int ASK_FOR_ACCESS_COARSE_LOCATION = 1;
     private static final int ASK_FOR_ACCESS_FINE_LOCATION = 2;
@@ -61,12 +65,13 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     ArrayList<Marker> markers = new ArrayList<>();
     private MapFragment mMapFragment;
     private GoogleMap mMap;
+    private int numberOfReceivedPlaces;
 
     // Interface
     private ActionBar toolbar;
     private ScrollView mScrollView;
     private LinearLayout scrollButtonLayout;
-    boolean mapIsVisible;
+    boolean mapIsHidden;
 
     // Les elements qu'on doit mettre a jour
     private TextView circuitTitle, circuitInformationsTextview, circuitDescription, keywordsTextview, lengthKmTextview, heightDifferenceTextview;
@@ -82,6 +87,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        // Pour ne lancer la requete Gmap que quand on a recupere toutes les places
+        numberOfReceivedPlaces = 0;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_circuit_details);
 
@@ -91,7 +99,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setDisplayShowHomeEnabled(true);
 
-        mapIsVisible = false;
+        mapIsHidden = false;
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.circuit_details_map);
         mMapFragment.getMapAsync(this);
@@ -106,14 +114,14 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         scrollButtonLayout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
-                if (mapIsVisible) {
-                    mMapFragment.getView().setVisibility(View.GONE);
-                    mScrollView.setVisibility(View.VISIBLE);
-                    mapIsVisible = false;
-                } else {
+                if (mapIsHidden) {
                     mMapFragment.getView().setVisibility(View.VISIBLE);
                     mScrollView.setVisibility(View.GONE);
-                    mapIsVisible = true;
+                    mapIsHidden = false;
+                } else {
+                    mMapFragment.getView().setVisibility(View.GONE);
+                    mScrollView.setVisibility(View.VISIBLE);
+                    mapIsHidden = true;
                 }
 
             }
@@ -150,13 +158,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             lengthKmTextview.setText("Distance : " + theCircuit.getLengthKm() + " km");
             heightDifferenceTextview.setText("Dénivelé : " + theCircuit.getDeniveleM() + " m");
 
-            // Appels au Back pour recuperer les Places associees
-            // Pour chaque id de place contenue dans circuit, on envoie une requete au back pour recuperer ce circuit
-            //for (int i = 0; i < theCircuit.getPlaces.lenght; i++) {
-
-
-            //}
-
             Button lancerCeParcoursButton = (Button)findViewById(R.id.lancerCeParcours);
             lancerCeParcoursButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -188,6 +189,9 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             });
         }
 
+        // Demarrage sur la map directement
+        mMapFragment.getView().setVisibility(View.VISIBLE);
+        mScrollView.setVisibility(View.GONE);
 
     } // Fin onCreate
     
@@ -201,7 +205,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             mMapFragment.getView().setVisibility(View.VISIBLE);
             mScrollView.setVisibility(View.GONE);
-            mapIsVisible = true;
+            mapIsHidden = true;
         }else{
             this.parcoursEstLance = false;
             stopService(new Intent(CircuitDetailsActivity.this, LocationService.class));
@@ -210,25 +214,18 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
-
-    //Recupere le JSON un fois la requete au serveur effectuee
     @Override
-    synchronized public void processFinish(JsonObject results) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        // Les Json qui arrivent sont des places, les ajouter à la liste des places et maj la vue
-        if (results != null) {
-
-            JsonObject thePlaceJson = results.getAsJsonObject("place");
-            System.out.println(thePlaceJson);
-            if (thePlaceJson != null) {
-
-                Place newPlace = new Place(thePlaceJson);
-                listOfPlaces.add(newPlace);
-                // MAJ de la vue avec le nouveau Place
-                refreshPlacesList();
-
-            }
+        if (id == android.R.id.home){
+            finish();
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void refreshPlacesList() {
@@ -243,7 +240,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         final ListAdapter adapter = new ArrayAdapter<>(CircuitDetailsActivity.this, android.R.layout.simple_list_item_1, placesListString);
         placesList.setAdapter(adapter);
 
-
+/*
         // Taille de la liste dynamique
         if (adapter != null) {
 
@@ -261,16 +258,48 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
             int totalDividersHeight = placesList.getDividerHeight() *
                     (numberOfItems - 1);
 
+            System.out.println("Heights : " + totalItemsHeight + " " + totalDividersHeight);
+
             // Set list height.
             ViewGroup.LayoutParams params = placesList.getLayoutParams();
             params.height = totalItemsHeight + totalDividersHeight;
             placesList.setLayoutParams(params);
+            invalidate
             placesList.requestLayout();
 
         }
+        */
+
+        // Permettre le scroll avec la ScrollView
+        /*
+        placesList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });*/
+
+
+        // Set le listener pour afficher sur la carte quand on clique sur la liste
+        placesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                System.out.println("Position : " + position);
+
+                // Montrer la map
+                mMapFragment.getView().setVisibility(View.VISIBLE);
+                mScrollView.setVisibility(View.GONE);
+                mapIsHidden = true;
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(markers.get(position).getPosition()));
+                markers.get(position).showInfoWindow();
+
+            }
+        });
 
     }
-
 
     public void visualizeReceived(JsonObject results) {
         if (results != null) {
@@ -283,31 +312,41 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     public void getPlacesReceived(JsonObject results) {
         if (results != null) {
             JsonObject resultObject = results.getAsJsonObject("place");
-            //System.out.println("Le results array : " + resultObject);
+            System.out.println("Le results array : " + resultObject);
             if (resultObject != null) {
 
                 Place newPlace = new Place(resultObject);
                 listOfPlaces.add(newPlace);
+                numberOfReceivedPlaces++;
 
-                // MAJ du circuit
-                theCircuit.setPlaces(listOfPlaces);
-
-                // MAJ graphique de la liste des places
-                refreshPlacesList();
-
-                // Calcul de la polyligne via Google Maps
                 Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
                 markers.add(newMarker);
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
-                //newMarker.showInfoWindow();
 
-                //Affichage dynamique du parcours
-                URL url = Tools.generateGoogleMapURL(markers);
-                PostTask postTask = new PostTask(url.toString());
-                postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
-                postTask.execute();
+                //mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition()));
 
 
+                if (numberOfReceivedPlaces == theCircuit.getPlacesId().size()) {
+
+                    // MAJ du circuit
+                    theCircuit.setPlaces(listOfPlaces);
+
+                    // MAJ graphique de la liste des places
+                    refreshPlacesList();
+
+                    // Calcul de la polyligne via Google Maps
+                    /*
+                    Marker newMarker = mMap.addMarker(new MarkerOptions().position(newPlace.getPosition()));
+                    markers.add(newMarker);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(newMarker.getPosition())); */
+                    //newMarker.showInfoWindow();
+
+                    //Affichage dynamique du parcours
+                    URL url = Tools.generateGoogleMapURL(markers);
+                    PostTask postTask = new PostTask(url.toString());
+                    postTask.delegate = new HandleVisualizationDetailsCircuit(CircuitDetailsActivity.this);
+                    postTask.execute();
+
+                }
 
             }
         }
@@ -316,7 +355,7 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setMyLocationEnabled(true);
 
         final LatLngBounds GRAND_LYON = new LatLngBounds(
                 new LatLng(45.720301, 4.779128), new LatLng(45.797678, 4.926584));
