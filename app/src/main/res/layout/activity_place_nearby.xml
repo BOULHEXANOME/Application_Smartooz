@@ -33,15 +33,16 @@
         android:layout_alignStart="@+id/toolbarC"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:id="@+id/linearLayoutPN"
         android:weightSum="1">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_marginTop="7dp"
-            android:layout_marginLeft="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -108,8 +109,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
-            android:layout_marginRight="7dp"
-            android:layout_marginLeft="0dp">
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
 
 
 
@@ -125,17 +126,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Numéro de téléphone"
                         android:id="@+id/textViewNumTel" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Site internet"
                         android:id="@+id/textViewWebSite" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Adresse"
                         android:id="@+id/textViewAddress" />
                     <TextView
                         android:layout_width="match_parent"
