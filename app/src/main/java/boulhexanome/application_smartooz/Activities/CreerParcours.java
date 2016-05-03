@@ -362,8 +362,10 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         }
         for (int i = 0; i < places.size(); i++){
             ArrayList<String> keywords = places.get(i).getKeywords();
-            if (keywords.contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
-                mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude));
+            for (int j = 0; j < keywords.size(); j++) {
+                if (keywords.get(j).contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
+                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude, places.get(i).getPosition().longitude));
+                }
             }
         }
         mMap.moveCamera(CameraUpdateFactory
