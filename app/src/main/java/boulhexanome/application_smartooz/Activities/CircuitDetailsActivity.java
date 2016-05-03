@@ -354,47 +354,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
         final ListAdapter adapter = new ArrayAdapter<>(CircuitDetailsActivity.this, android.R.layout.simple_list_item_1, placesListString);
         placesList.setAdapter(adapter);
 
-/*
-        // Taille de la liste dynamique
-        if (adapter != null) {
-
-            int numberOfItems = adapter.getCount();
-
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = adapter.getView(itemPos, null, placesList);
-                item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight();
-            }
-
-            // Get total height of all item dividers.
-            int totalDividersHeight = placesList.getDividerHeight() *
-                    (numberOfItems - 1);
-
-            System.out.println("Heights : " + totalItemsHeight + " " + totalDividersHeight);
-
-            // Set list height.
-            ViewGroup.LayoutParams params = placesList.getLayoutParams();
-            params.height = totalItemsHeight + totalDividersHeight;
-            placesList.setLayoutParams(params);
-            invalidate
-            placesList.requestLayout();
-
-        }
-        */
-
-        // Permettre le scroll avec la ScrollView
-        /*
-        placesList.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });*/
-
-
         // Set le listener pour afficher sur la carte quand on clique sur la liste
         placesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -412,6 +371,23 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
 
             }
         });
+
+        placesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Lancer PlaceNearbyActivity : 
+
+                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                //intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+                return true;
+
+            }
+        });
+
+
 
     }
 
