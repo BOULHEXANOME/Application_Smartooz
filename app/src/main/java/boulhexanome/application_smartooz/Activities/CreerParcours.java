@@ -327,6 +327,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 ActionBar toolbar = getSupportActionBar();
                 EditText barre_recherche = (EditText) findViewById(R.id.barre_recherche);
                 getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+                barre_recherche.setText("");
+                filter("");
                 barre_recherche.setVisibility(View.INVISIBLE);
                 toolbar.setDisplayShowTitleEnabled(true);
             } else {
@@ -368,12 +370,13 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
             for (int i = 0; i < places.size(); i++){
                 mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
             }
-        }
-        for (int i = 0; i < places.size(); i++){
-            ArrayList<String> keywords = places.get(i).getKeywords();
-            for (int j = 0; j < keywords.size(); j++) {
-                if (keywords.get(j).contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
-                    mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude, places.get(i).getPosition().longitude,i));
+        } else {
+            for (int i = 0; i < places.size(); i++) {
+                ArrayList<String> keywords = places.get(i).getKeywords();
+                for (int j = 0; j < keywords.size(); j++) {
+                    if (keywords.get(j).contains(keyword) || places.get(i).getName().toUpperCase().contains(keyword)) {
+                        mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude, places.get(i).getPosition().longitude, i));
+                    }
                 }
             }
         }
