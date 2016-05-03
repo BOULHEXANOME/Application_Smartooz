@@ -7,7 +7,7 @@ public class Config {
 
     public static final String PROTOCOL = "http";
     public static final String IP_SERV = "142.4.215.20";
-    public static final String PORT = "1723";
+    public static final String PORT = "5001";
 
     /************USER************/
     public static final String LOGIN = "/login";

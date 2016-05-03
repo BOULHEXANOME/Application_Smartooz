@@ -188,11 +188,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         not_first_time_showing_info_window = false;
         mMap = googleMap;
 
-        mMap.moveCamera(Tools.goOnParcours(markers));
-
         GetTask getTask = new GetTask(Config.getRequest(Config.GET_PLACES));
         getTask.delegate = new HandleGetPlaces(this);
         getTask.execute();
+
+        mMap.moveCamera(Tools.goOnParcours(markers));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -439,7 +439,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                     clusterItems.add(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
                     mClusterManager.addItem(new MyCluster(places.get(i).getPosition().latitude,places.get(i).getPosition().longitude,i));
                 }
-                mMap.moveCamera(Tools.goOnParcours(markers));
+                mClusterManager.cluster();
             }
         }
     }

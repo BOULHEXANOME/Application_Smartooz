@@ -377,7 +377,6 @@ public class CircuitDetailsActivity extends AppCompatActivity implements OnMapRe
                         postTask.execute();
 
                     }
-
                 }
             } else if (results.get("status").getAsString().equals("KO")) {
                 Toast.makeText(CircuitDetailsActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
