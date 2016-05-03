@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -32,7 +33,6 @@ public class MyClusterRenderer extends DefaultClusterRenderer<MyCluster>{
         clusterAdded = CreerParcours.clusterAdded;
         polyline = CreerParcours.currentLine;
     }
-
     @Override
     protected void onBeforeClusterItemRendered(MyCluster item, MarkerOptions markerOptions) {
         polyline = CreerParcours.currentLine;
