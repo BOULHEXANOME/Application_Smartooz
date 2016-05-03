@@ -59,7 +59,7 @@ public class DetailParcoursPlace extends AppCompatActivity {
         textViewNumTel = (TextView)findViewById(R.id.textViewNumTel);
         textViewWebSite = (TextView)findViewById(R.id.textViewWebSite);
         textViewAddress = (TextView)findViewById(R.id.textViewAddress);
-        ratingBar = (RatingBar)findViewById(R.id.ratingBarPN);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBarPD);
         textViewDescription.setVerticalScrollBarEnabled(true);
         imageView = (ImageView)findViewById(R.id.imageViewPlace);
         RelativeLayout RL = (RelativeLayout)findViewById(R.id.relativeLayoutPN);
@@ -110,15 +110,6 @@ public class DetailParcoursPlace extends AppCompatActivity {
             }
         });
 
-        RatingBar rating = (RatingBar) findViewById(R.id.ratingBarPN);
-        if (ratingBar != null) {
-            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                @Override
-                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    handleVote(rating);
-                }
-            });
-        }
     }
 
     protected void handleVote(float rating){
@@ -228,8 +219,15 @@ public class DetailParcoursPlace extends AppCompatActivity {
         }else{
             textViewWebSite.setVisibility(View.GONE);
         }
-
-        ratingBar.setRating(place.getNoteOn5());
+        if (ratingBar != null) {
+            ratingBar.setRating(place.getNoteOn5());
+            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    handleVote(rating);
+                }
+            });
+        }
     }
 
     public void noteReceived(JsonObject results) {

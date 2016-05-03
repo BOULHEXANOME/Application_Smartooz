@@ -121,7 +121,7 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                 if (modeAjout == false) {
                     ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccentPlus)));
                     modeAjout = true;
-                    toolbar.setTitle("Création de parcours");
+                    toolbar.setTitle("Création parcours");
                     Toast.makeText(CreerParcours.this, "Sélectionnez les étapes du parcours...", Toast.LENGTH_SHORT).show();
                 } else {
                     ajouterPI.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));

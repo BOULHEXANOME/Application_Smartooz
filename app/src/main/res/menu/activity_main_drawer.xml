@@ -4,13 +4,13 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_home_black_24dp"
+            android:icon="@drawable/ic_search_black_24dp"
             android:title="Visiter Lyon" />
 
         <item
             android:id="@+id/create_parcours"
-            android:icon="@drawable/ic_add_black_24dp"
-            android:title="Proposer un parcours" />
+            android:icon="@drawable/ic_place_black_24dp"
+            android:title="Carte" />
 
         <item
             android:id="@+id/nav_tours"
