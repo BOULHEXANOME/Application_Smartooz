@@ -104,9 +104,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
         final ActionBar toolbar = getSupportActionBar();
         EditText barre_recherche = (EditText) findViewById(R.id.barre_recherche);
         barre_recherche.setVisibility(View.INVISIBLE);
+        barre_recherche.setWidth(0);
         toolbar.setDisplayShowTitleEnabled(true);
         toolbar.setTitle("Centres d'intérêts");
         toolbar.setDisplayHomeAsUpEnabled(true);
+
 
         currentLine = null;
         modeRechercher = false;
@@ -493,12 +495,11 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        currentLine.remove();
-        markers.clear();
-        mClusterManager.clearItems();
-        clusterAdded.clear();
         if (resultCode == 2) {
-
+            currentLine.remove();
+            markers.clear();
+            mClusterManager.clearItems();
+            clusterAdded.clear();
         }
     }
 

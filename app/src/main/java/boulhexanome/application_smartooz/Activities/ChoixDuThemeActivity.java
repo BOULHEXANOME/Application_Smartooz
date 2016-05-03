@@ -326,7 +326,6 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
             if (results.get("status").getAsString().equals("OK")) {
                 Toast.makeText(ChoixDuThemeActivity.this, "Le parcours a bien été ajouté ! ", Toast.LENGTH_SHORT).show();
                 User.getInstance().setCircuit_en_creation(new Circuit());
-                this.setResult(2);
                 int idCircuitAjoute = results.get("id").getAsInt();
                 url += idCircuitAjoute;
                 (new UploadToServerChoix(this, url, ba1)).execute();
@@ -384,6 +383,7 @@ public class ChoixDuThemeActivity extends AppCompatActivity implements PostTask.
     }
 
     public void uploadTermine() {
+        this.setResult(2);
         finish();
     }
 }
