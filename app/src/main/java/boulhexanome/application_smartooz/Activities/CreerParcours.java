@@ -313,7 +313,8 @@ public class CreerParcours extends AppCompatActivity implements OnMapReadyCallba
                         if (markers.contains(marker)){
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                             markers.remove(marker);
-                            currentLine.remove();
+                            if (currentLine!=null)
+                                currentLine.remove();
                             //Toast.makeText(CreerParcours.this, markers.toString(), Toast.LENGTH_LONG).show();
                             //Affichage dynamique du parcours
                             showPolyline();
