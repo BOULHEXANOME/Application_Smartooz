@@ -48,7 +48,7 @@ public class CurrentCircuitTravel {
 
         Place placeLaPlusProche = null;
         double distanceLaPlusProche = 99999;
-        if(circuitEnCours.getPlaces() == null){
+        if(circuitEnCours != null && circuitEnCours.getPlaces() == null){
             System.err.println("Error : places null");
             return null;
         }

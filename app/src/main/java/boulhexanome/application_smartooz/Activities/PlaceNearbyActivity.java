@@ -250,10 +250,12 @@ public class PlaceNearbyActivity extends AppCompatActivity {
     }
 
     public void noteReceived(JsonObject results) {
-        if (results.get("status").getAsString().equals("KO")) {
-            Toast.makeText(PlaceNearbyActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(PlaceNearbyActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
+        if(results != null) {
+            if (results.get("status").getAsString().equals("KO")) {
+                Toast.makeText(PlaceNearbyActivity.this, results.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(PlaceNearbyActivity.this, "Vote reçu.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
